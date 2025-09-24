@@ -282,7 +282,7 @@ class FrontController extends Controller
         if($request->has('max')) $max = $request->query('max');
         if($request->has('search')) $search = $request->query('search');  
         $data['ads'] = Ad::with('AdImage')->where('delete_status', '0')->where('status', 'Published')->type($type)->search($min, $max)->SearchData($search)->paginate($perPage)->withQueryString();
-        return redirect()->route('ads-list',['search'=>$search]);
+        return redirect()->route('list-all-ads',['search'=>$search]);
     }
     public function saveadRreview(Request $request)
     {
@@ -342,7 +342,7 @@ class FrontController extends Controller
                 }
                 else
                 {
-                    return redirect()->route('ads-list')
+                    return redirect()->route('list-all-ads')
                         ->withErrors('Ad not found');
                 }
             }  

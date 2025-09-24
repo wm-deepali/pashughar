@@ -13,7 +13,7 @@
     <title>
         Welcome to Pashughar
     </title>
-    {!! getCommomPageMetaTag('user/login'); !!}
+    {!! getCommomPageMetaTag('user-login') !!}
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @stack('before-styles')
     @stack('after-styles')
@@ -592,7 +592,7 @@
                                     location.reload();
                                 }
                                 else{
-                                    window.location.href= `{{url('/user/login')}}`
+                                    window.location.href= `{{url('/user-login')}}`
                                 }
                                 
                             //location.reload();

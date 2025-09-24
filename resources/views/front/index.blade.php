@@ -5,7 +5,7 @@ Welcome to Afar Logistic & Trade Marketing | Afar Region | Ethiopia
 @endsection
 
 @section('metatags')
-{!! getCommomPageMetaTag('/'); !!}
+{!! getCommomPageMetaTag('/') !!}
 @endsection
 
 @push('after-styles')
@@ -28,7 +28,7 @@ Welcome to Afar Logistic & Trade Marketing | Afar Region | Ethiopia
 <!--                    <h2>Find your needs in our best <span>Featured Ads</span></h2>-->
 <!--                    <p>Explore our top-rated featured ads to find exactly what you need. From the latest gadgets to essential services, we offer a curated selection of trusted sellers and great deals. Whether you're shopping or booking services, our featured ads ensure quality and convenience for a smooth experience every time.</p>-->
 <!--                    <div class="price-btn mobile-view-btn">-->
-<!--                    <a class='btn btn-inline' href="{{route('ads-list', array('type' => 'featured'))}}">-->
+<!--                    <a class='btn btn-inline' href="{{route('list-all-ads', array('type' => 'featured'))}}">-->
 <!--                        <i class="fas fa-eye"></i>-->
 <!--                        <span>View All Featured Ads</span>-->
 <!--                    </a>-->
@@ -83,7 +83,7 @@ Welcome to Afar Logistic & Trade Marketing | Afar Region | Ethiopia
 <!--                @endif-->
 <!--                 </div>-->
 <!--                                    <div class="price-btn desktop-view-btn mt-3">-->
-<!--                    <a class='btn btn-inline' href="{{route('ads-list', array('type' => 'featured'))}}">-->
+<!--                    <a class='btn btn-inline' href="{{route('list-all-ads', array('type' => 'featured'))}}">-->
 <!--                        <i class="fas fa-eye"></i>-->
 <!--                        <span>View All Featured Ads</span>-->
 <!--                    </a>-->
@@ -169,7 +169,7 @@ Welcome to Afar Logistic & Trade Marketing | Afar Region | Ethiopia
                 <div class="col-lg-12">
                     <div class="center-50">
                                             <div class="price-btn">
-                    <a class='btn btn-inline' href="{{route('ads-list', array('type' => 'recommend'))}}">
+                    <a class='btn btn-inline' href="{{route('list-all-ads', array('type' => 'recommend'))}}">
                             <i class="fas fa-eye"></i>
                             <span>View All Recommended Ads</span>
                         </a>
@@ -240,7 +240,7 @@ Welcome to Afar Logistic & Trade Marketing | Afar Region | Ethiopia
             <div class="col-lg-12">
                 <div class="center-20">
                                         <div class="price-btn">
-                    <a class='btn btn-inline' href="{{route('ads-list', array('type' => 'trending'))}}">
+                    <a class='btn btn-inline' href="{{route('list-all-ads', array('type' => 'trending'))}}">
                         <i class="fas fa-eye"></i>
                         <span>View All Trending Ads</span>
                     </a>
@@ -323,7 +323,7 @@ Welcome to Afar Logistic & Trade Marketing | Afar Region | Ethiopia
                 <div class="col-lg-12">
                     <div class="center-50">
                                             <div class="price-btn">
-                    <a class='btn btn-inline' href="{{route('ads-list', array('type' => 'recommend'))}}">
+                    <a class='btn btn-inline' href="{{route('list-all-ads', array('type' => 'recommend'))}}">
                             <i class="fas fa-eye"></i>
                             <span>View All Recommended Ads</span>
                         </a>
@@ -442,7 +442,7 @@ Welcome to Afar Logistic & Trade Marketing | Afar Region | Ethiopia
             <div class="col-lg-12">
                 <div class="center-20">
                                         <div class="price-btn">
-                    <a class='btn btn-inline' href="{{route('categories')}}">
+                    <a class='btn btn-inline' href="{{route('list-categories')}}">
                         <i class="fas fa-eye"></i>
                         <span>Post Your Ad</span>
                     </a>
@@ -455,7 +455,7 @@ Welcome to Afar Logistic & Trade Marketing | Afar Region | Ethiopia
         <!--<div class="row">-->
         <!--    <div class="col-lg-12">-->
         <!--        <div class="center-20">-->
-        <!--            <a class='btn btn-inline' href="{{route('categories')}}">-->
+        <!--            <a class='btn btn-inline' href="{{route('list-categories')}}">-->
         <!--                <i class="fas fa-eye"></i>-->
         <!--                <span>view all categories</span>-->
         <!--            </a>-->
@@ -482,7 +482,7 @@ Welcome to Afar Logistic & Trade Marketing | Afar Region | Ethiopia
                     <h2>Do you have something to advertise?</h2>
                     <p>Have something to advertise? Reach a wider audience by promoting your products or services with us. Boost visibility, attract more customers, and grow your business with our effective advertising platform.</p>
                                         <div class="price-btn mb-3">
-                    <a class='btn btn-outline' href="{{route('user.ad-post')}}">
+                    <a class='btn btn-outline' href="{{route('user.post-your-ad')}}">
                         <i class="fas fa-plus-circle"></i>
                         <span>Post Your Ad</span>
                     </a>

@@ -5,7 +5,7 @@ Contact Us
 @endsection
 
 @section('metatags')
-{!! getCommomPageMetaTag('contact-us'); !!}
+{!! getCommomPageMetaTag('contact-us') !!}
 @endsection
 
 @section('page_name') Contact Us @endsection

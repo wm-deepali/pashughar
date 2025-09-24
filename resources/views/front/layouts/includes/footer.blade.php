@@ -67,12 +67,12 @@ Subscribe now to receive the latest offers and exclusive deals directly to your 
                                  <li><a href="{{route('user.login')}}">Sign Up</a></li>
                         
                                 @endif
-                                <li><a href="{{route('user.ad-post')}}">Post Free Ads</a></li>
-                                <li><a href="{{route('ads-list')}}">All Ads</a></li>
-                                <li><a href="{{route('purchase-subscription')}}">Pricing Plan</a></li>
-                                 <li><a href="{{route('categories')}}">Show All Categories</a></li>
+                                <li><a href="{{route('user.post-your-ad')}}">Post Free Ads</a></li>
+                                <li><a href="{{route('list-all-ads')}}">All Ads</a></li>
+                                <li><a href="{{route('subscription-plan')}}">Pricing Plan</a></li>
+                                 <li><a href="{{route('list-categories')}}">Show All Categories</a></li>
                                   <li><a href="{{route('user.login')}}">Become Seller</a></li>
-                                   <li><a href="{{route('bulk-enquiry')}}">Bulk Enquiry</a></li>
+                                   <li><a href="{{route('submit-bulk-stock-request')}}">Bulk Enquiry</a></li>
                                
                                
                             </ul>
@@ -86,10 +86,10 @@ Subscribe now to receive the latest offers and exclusive deals directly to your 
                                 <li><a href="{{route('our-team')}}">Our Team</a></li>
                                 <li><a href="{{route('contact-us')}}">Contact Us</a></li>
                                 <li><a href="{{route('faqs')}}">FAQ</a></li>
-                                <li><a href="{{route('blog')}}">Blogs</a></li>
-                                <!--<li><a href="{{route('user.ad-post')}}">Post Ads</a></li>-->
-                                <!--<li><a href="{{route('ads-list')}}">All Ads</a></li>-->
-                                <!--<li><a href="{{route('purchase-subscription')}}">Pricing Plan</a></li>-->
+                                <li><a href="{{route('blog-listing')}}">Blogs</a></li>
+                                <!--<li><a href="{{route('user.post-your-ad')}}">Post Ads</a></li>-->
+                                <!--<li><a href="{{route('list-all-ads')}}">All Ads</a></li>-->
+                                <!--<li><a href="{{route('subscription-plan')}}">Pricing Plan</a></li>-->
                                 <!--@if(Auth::guard('member')->user() !='' && !empty(Auth::guard('member')->user()))-->
                                 <!--<li><a href="{{route('user.dashboard')}}">Dashboard</a></li>-->
                                 <!--@else-->

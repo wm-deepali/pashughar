@@ -5,7 +5,7 @@ About Us
 @endsection
 
 @section('metatags')
-{!! getCommomPageMetaTag('about-us'); !!}
+{!! getCommomPageMetaTag('about-us') !!}
 @endsection
 
 @php

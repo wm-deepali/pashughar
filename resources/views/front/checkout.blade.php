@@ -611,7 +611,7 @@ Checkout
                                     timer: 2000,
                                     timerProgressBar: true,
                                     onClose: () => {
-                                        window.location.href = "{{ route('purchase-subscription') }}";
+                                        window.location.href = "{{ route('subscription-plan') }}";
                                     }
                                 });
                             }

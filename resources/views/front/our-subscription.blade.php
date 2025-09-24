@@ -5,7 +5,7 @@ Buy New Subscription
 @endsection
 
 @section('metatags')
-{!! getCommomPageMetaTag('purchase-subscription'); !!}
+{!! getCommomPageMetaTag('subscription-plan') !!}
 @endsection
 
 @section('page_name') Buy New Subscription @endsection
@@ -99,7 +99,7 @@ Buy New Subscription
                 <div class="section-center-heading">
                     <h2>Choose the right Plan for Livestock & Product Ads</h2>
                     <p>List your Livestock & Dairy Products by selecting one of our tailored pricing plans. Whether you're a retail seller or a Bulk Supplier, we have the right package to maximize your reach and visibility.</p>
-                    <a class='btn btn-outline' href="{{route('user.ad-post')}}">
+                    <a class='btn btn-outline' href="{{route('user.post-your-ad')}}">
                         <i class="fas fa-plus-circle"></i>
                         <span>post your ad</span>
                     </a>

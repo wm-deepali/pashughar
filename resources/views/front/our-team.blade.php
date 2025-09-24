@@ -5,7 +5,7 @@ Our Team
 @endsection
 
 @section('metatags')
-{!! getCommomPageMetaTag('our-team'); !!}
+{!! getCommomPageMetaTag('our-team') !!}
 @endsection
 
 @section('page_name') Our Team @endsection

@@ -5,7 +5,7 @@
 @endsection
 
 @section('metatags')
-{!! getDetailsPageMetaTag($category->meta_title, $category->meta_keyword, $category->meta_description, Request::url()); !!}
+{!! getDetailsPageMetaTag($category->meta_title ?? 'Pashughar', $category->meta_keyword, $category->meta_description, Request::url()) !!}
 @endsection
 
 @section('page_name') {{$category->name}} @endsection

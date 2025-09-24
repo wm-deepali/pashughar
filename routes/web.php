@@ -35,12 +35,12 @@ use App\Http\Controllers\SeoController;
 */
 
 Route::get('/',[FrontController::class,'index']);
-Route::get('categories',[FrontController::class,'categoryList'])->name('categories');
+Route::get('list-categories',[FrontController::class,'categoryList'])->name('list-categories');
 Route::get('category-details/{slug}',[FrontController::class,'categoryDetail'])->name('category-details');
 Route::get('sub-details/{subcategoryname}/{id}',[FrontController::class,'subcategoryDetail'])->name('sub-details');
 Route::get('ad-details/{id}/{slug}',[FrontController::class,'adDetail'])->name('ad-details');
-Route::get('purchase-subscription',[FrontController::class,'purchaseSubscription'])->name('purchase-subscription');
-Route::get('ads-list',[FrontController::class,'allAds'])->name('ads-list');
+Route::get('subscription-plan',[FrontController::class,'purchaseSubscription'])->name('subscription-plan');
+Route::get('list-all-ads',[FrontController::class,'allAds'])->name('list-all-ads');
 Route::post('cities-by-state',[FrontController::class,'cities_by_state'])->name('cities-by-state');
 Route::post('save-Subscriber',[FrontController::class,'saveSubscribers'])->name('save-Subscriber');
 
@@ -84,15 +84,15 @@ Route::get('terms-condition', function () {
 
 Route::get('our-team',[FrontController::class,'ourTeam'])->name('our-team');
 
-Route::get('blog',[FrontController::class,'blog'])->name('blog');
+Route::get('blog-listing',[FrontController::class,'blog'])->name('blog-listing');
 Route::get('blog-details/{id}',[FrontController::class,'blogdetail'])->name('blog-details');
 Route::post('Add-Comment', [FrontController::class,'addComment'])->name('comment.store');
 
-Route::get('bulk-enquiry',[EnquiryController::class,'bulkEnquiry'])->name('bulk-enquiry');
+Route::get('submit-bulk-stock-request',[EnquiryController::class,'bulkEnquiry'])->name('submit-bulk-stock-request');
 Route::post('get-cites',[EnquiryController::class,'getCites'])->name('get-cites');
 Route::post('Add-Enquiry',[EnquiryController::class,'addEnquiry'])->name('enquiry.add');
 
-Route::get('faqs',[FrontController::class,'faqs'])->name('faqs');
+Route::get('faqs',[FrontController::class,'faq'])->name('faqs');
 Route::get('about-us',[FrontController::class,'about'])->name('about-us');
 Route::post('getAdsBySearch',[FrontController::class,'getAdsBySearch'])->name('getAdsBySearch');
 
@@ -101,9 +101,15 @@ Route::post('save-contact-us',[FrontController::class,'saveContactUs'])->name('s
 
 Route::post('add-save-ad-post',[MemberAuthController::class,'saveAdPost'])->name('add-save-ad-post');
 
-Route::get('user/login', function () {
+Route::get('user-login', function () {
     return view('front.user-login');
 })->name('user.login');
+
+Route::get('signup', function () {
+    return redirect()->route('user.login');
+});
+
+
 Route::controller(GoogleController::class)->group(function() {
     Route::get('user/google/redirect', 'redirectToGoogle')->name('google.redirect');
     Route::get('user/google/callback', 'handleGoogleCallback')->name('google.callback');
@@ -140,7 +146,7 @@ Route::controller(MemberAuthController::class)->group(function() {
     })->name('user.thankyou'); 
     Route::get('user/dashboard', 'dashboard')->name('user.dashboard');
     Route::get('user/profile', 'profile')->name('user.profile');
-    Route::get('user/ad-post', 'adPost')->name('user.ad-post');
+    Route::get('user/post-your-ad', 'adPost')->name('user.post-your-ad');
     Route::get('user/my-ads', 'myAds')->name('user.my-ads');
     Route::get('user/settings', 'settings')->name('user.settings');
     Route::post('save/settings', 'saveSettings')->name('save.settings');

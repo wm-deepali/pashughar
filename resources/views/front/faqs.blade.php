@@ -8,7 +8,7 @@ FAQs
 @endsection
 
 @section('metatags')
-{!! getCommomPageMetaTag('faqs'); !!}
+{!! getCommomPageMetaTag('faqs')!!}
 @endsection
 
 @section('page_name') FAQs @endsection

@@ -11,7 +11,7 @@
               <div class="sidebar-profile">
                   <a href="#" class="sidebar-avatar"><img src="{{asset('front/images/avatar/01.jpg')}}" alt="avatar"></a>
                   <h4><a href="#" class="sidebar-name">Jackon Honson</a></h4>
-                  <a class='btn btn-inline sidebar-post' href="{{route('user.ad-post')}}">
+                  <a class='btn btn-inline sidebar-post' href="{{route('user.post-your-ad')}}">
                       <i class="fas fa-plus-circle"></i>
                       <span>post your ad</span>
                   </a>
@@ -31,7 +31,7 @@
                                   <i class="fas fa-plus"></i>
                               </a>
                               <ul class="dropdown-list">
-                                  <li><a class='dropdown-link' href="{{route('categories')}}">category list</a></li>
+                                  <li><a class='dropdown-link' href="{{route('list-categories')}}">category list</a></li>
                                   <li><a class='dropdown-link' href='category-details.html'>category details</a></li>
                               </ul>
                           </li>
@@ -89,7 +89,7 @@
                       <ul class="navbar-list">
                           <li class="navbar-item"><a class='navbar-link' href='dashboard.html'>Dashboard</a></li>
                           <li class="navbar-item"><a class='navbar-link' href='profile.html'>Profile</a></li>
-                          <li class="navbar-item"><a class='navbar-link' href="{{route('user.ad-post')}}">Ad Post</a></li>
+                          <li class="navbar-item"><a class='navbar-link' href="{{route('user.post-your-ad')}}">Ad Post</a></li>
                           <li class="navbar-item"><a class='navbar-link' href='my-ads.html'>My Ads</a></li>
                           <li class="navbar-item"><a class='navbar-link' href='setting.html'>Settings</a></li>
                           <li class="navbar-item navbar-dropdown">

@@ -95,7 +95,7 @@ $pendingadCount = App\Models\Ad::where('user_id', Auth::guard('member')->user()-
                                 <ul style="padding-left:0px;">
                                     <li><a class="{{ Route::is('user.dashboard') ? 'active' : '' }}" href="{{route('user.dashboard')}}">dashboard</a></li>
                                     <li><a class="{{ Route::is('user.profile') ? 'active' : '' }}" href="{{route('user.profile')}}">Profile</a></li>
-                                    <li><a class="{{ Route::is('user.ad-post') ? 'active' : '' }}" href="{{route('user.ad-post')}}">ad post</a></li>
+                                    <li><a class="{{ Route::is('user.post-your-ad') ? 'active' : '' }}" href="{{route('user.post-your-ad')}}">ad post</a></li>
                                     <li><a class="{{ Route::is('user.my-ads') ? 'active' : '' }}" href="{{route('user.my-ads')}}">my ads</a></li>
                                     <li><a class="{{ Route::is('user.settings') ? 'active' : '' }}" href="{{route('user.settings')}}">settings</a></li>
                                     <li><a class="{{ Route::is('user.my-wallet') ? 'active' : '' }}" href="{{route('user.my-wallet')}}">My Wallet</a></li>

@@ -13,7 +13,7 @@
     <title>
         Welcome to Pashugha.com | Livestock Market | India
     </title>
-  {!! getCommomPageMetaTag('bulk-enquiry'); !!}
+  {!! getCommomPageMetaTag('submit-bulk-stock-request') !!}
     
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @stack('before-styles')

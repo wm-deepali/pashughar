@@ -28,7 +28,7 @@ $suggestCategories = App\Models\Category::all();
                          
                        <p><i class="fa fa-user"></i>&nbsp;&nbsp;Become Vendor</p>
                        <div class="line"></div>
-                        <p><a href="{{route('bulk-enquiry')}} " style="color:#000;text-decoration:none;"><i class="fas fa-mail-bulk"></i>&nbsp;&nbsp;Send Bulk Enquiry</a></p>
+                        <p><a href="{{route('submit-bulk-stock-request')}} " style="color:#000;text-decoration:none;"><i class="fas fa-mail-bulk"></i>&nbsp;&nbsp;Send Bulk Enquiry</a></p>
 
                      
                     
@@ -61,7 +61,7 @@ $suggestCategories = App\Models\Category::all();
     </form>
 </div>
 
-                        <p><a href="{{route('bulk-enquiry')}} " style="color:#fff;text-decoration:none;"><i class="fas fa-mail-bulk"></i>&nbsp;&nbsp; Bulk Enquiry</a></p>
+                        <p><a href="{{route('submit-bulk-stock-request')}} " style="color:#fff;text-decoration:none;"><i class="fas fa-mail-bulk"></i>&nbsp;&nbsp; Bulk Enquiry</a></p>
 
                      
                     
@@ -109,7 +109,7 @@ $suggestCategories = App\Models\Category::all();
                         </a>
                         @endif
                         
-                        <a class='btn btn-inline post-btn top-post-add' style="background:#59984c;color:#fff" href="{{route('user.ad-post')}}">
+                        <a class='btn btn-inline post-btn top-post-add' style="background:#59984c;color:#fff" href="{{route('user.post-your-ad')}}">
                             <i class="fas fa-plus-circle"></i>
                             <span>post your ad</span>
                         </a>
@@ -159,7 +159,7 @@ $suggestCategories = App\Models\Category::all();
                                     <li><a style="color:gray;text-decoration:none;" class="{{ Route::is('user.dashboard') ? 'active' : '' }}" href="{{route('user.dashboard')}}"><i class="fa fa-home"></i>&nbsp;Dashboard</a></li>
                                     <li><a style="color:gray;text-decoration:none;" class="{{ Route::is('user.profile') ? 'active' : '' }}" href="{{route('user.profile')}}"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;Profile</a></li>
                                     <li><a style="color:gray;text-decoration:none;" class="{{ Route::is('my-enquiry') ? 'active' : '' }}" href="{{route('user.my-enquiries')}}"><i class="fa-solid fa-clipboard-list"></i></i>&nbsp;My Enquiries</a></li>
-                                    <li><a style="color:gray;text-decoration:none;" class="{{ Route::is('user.ad-post') ? 'active' : '' }}" href="{{route('user.ad-post')}}"><i class="fa fa-plus"></i>&nbsp;Ad Post</a></li>
+                                    <li><a style="color:gray;text-decoration:none;" class="{{ Route::is('user.post-your-ad') ? 'active' : '' }}" href="{{route('user.post-your-ad')}}"><i class="fa fa-plus"></i>&nbsp;Ad Post</a></li>
                                     <li><a style="color:gray;text-decoration:none;" class="{{ Route::is('user.my-ads') ? 'active' : '' }}" href="{{route('user.my-ads')}}"><i class="fa fa-list-alt" aria-hidden="true"></i>&nbsp;My Ads</a></li>
                                     <li><a style="color:gray;text-decoration:none;" class="{{ Route::is('user.settings') ? 'active' : '' }}" href="{{route('user.settings')}}"><i class="fa fa-cog"></i>&nbsp;Settings</a></li>
                                     <li><a style="color:gray;text-decoration:none;" class="{{ Route::is('user.my-wallet') ? 'active' : '' }}" href="{{route('user.my-wallet')}}"><i class="fa fa-wallet"></i>&nbsp;My Wallet</a></li>
@@ -181,7 +181,7 @@ $suggestCategories = App\Models\Category::all();
                                                                                 <ul style="padding-left:0px;" class="dashmenu" >
                                     <li><a class="{{ Route::is('user.dashboard') ? 'active' : '' }}" href="{{route('user.dashboard')}}" style="color:#000; text-decoration:none;"><i class="fa-solid fa-house"></i> Dashboard</a></li>
                                     <li><a class="{{ Route::is('user.profile') ? 'active' : '' }}" href="{{route('user.profile')}}" style="color:#000; text-decoration:none;"><i class="fa-solid fa-user"></i> Profile</a></li>
-                                    <li><a class="{{ Route::is('user.ad-post') ? 'active' : '' }}" href="{{route('user.ad-post')}}" style="color:#000; text-decoration:none;"><i class="fa-solid fa-signs-post"></i> Ad Post</a></li>
+                                    <li><a class="{{ Route::is('user.post-your-ad') ? 'active' : '' }}" href="{{route('user.post-your-ad')}}" style="color:#000; text-decoration:none;"><i class="fa-solid fa-signs-post"></i> Ad Post</a></li>
                                     <li><a class="{{ Route::is('user.my-ads') ? 'active' : '' }}" href="{{route('user.my-ads')}}" style="color:#000; text-decoration:none;"><i class="fa-solid fa-user-tag"></i> My Ads</a></li>
                                     <li><a class="{{ Route::is('user.settings') ? 'active' : '' }}" href="{{route('user.settings')}}" style="color:#000; text-decoration:none;"><i class="fa-solid fa-gear"></i> Settings</a></li>
                                     <li><a class="{{ Route::is('user.my-wallet') ? 'active' : '' }}" href="{{route('user.my-wallet')}}" style="color:#000; text-decoration:none;"><i class="fa-solid fa-wallet"></i> My Wallet</a></li>

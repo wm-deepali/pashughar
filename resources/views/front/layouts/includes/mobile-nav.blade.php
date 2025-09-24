@@ -32,7 +32,7 @@
                @endif
              
             
-             <a class='mobile-widget' href="{{route('purchase-subscription')}}">
+             <a class='mobile-widget' href="{{route('subscription-plan')}}">
 <img src="{{asset('front/images/forex.png')}}" alt="logo" style="width:15px;margin-bottom: 6px;">
                 <span>Price & Plan </span>
             </a>
@@ -41,7 +41,7 @@
 <!--                <span>Enquiries  </span>-->
 <!--            </a>-->
             
-                         <a class='mobile-widget plus-btn' href="{{route('user.ad-post')}}">
+                         <a class='mobile-widget plus-btn' href="{{route('user.post-your-ad')}}">
                 <i class="fas fa-plus"></i>
                 <span>Ad Post</span>
             </a>

@@ -1077,7 +1077,7 @@ class MemberAuthController extends Controller
                             'meta_description' => 'required|string',
                         ]);
                         if($validator->fails()){
-                            return redirect()->route('user.ad-post')
+                            return redirect()->route('user.post-your-ad')
                             ->withErrors('All fields are required!');
                         }
                         $ad = new Ad();
@@ -1174,18 +1174,18 @@ class MemberAuthController extends Controller
                         ->withSuccess('You have successfully Post Ad!');
                     }
                     else{
-                        return redirect()->route('user.ad-post')
+                        return redirect()->route('user.post-your-ad')
                     ->withErrors('Subscription not found!');
                     }  
                 }
                 else{
-                    return redirect()->route('user.ad-post')
+                    return redirect()->route('user.post-your-ad')
                 ->withErrors('Subscription Expired!');
                 }
             
             }
             else{
-                return redirect()->route('user.ad-post')
+                return redirect()->route('user.post-your-ad')
                 ->withErrors('Ads bucket zero');
             }
         }
@@ -1297,7 +1297,7 @@ class MemberAuthController extends Controller
                 
             }
             else{
-                return redirect()->route('user.ad-post')
+                return redirect()->route('user.post-your-ad')
                 ->withErrors('Ad not found');
             }
         }
@@ -1502,7 +1502,7 @@ class MemberAuthController extends Controller
                 
             }
             else{
-                return redirect()->route('user.ad-post')
+                return redirect()->route('user.post-your-ad')
                 ->withErrors('Ad not found');
             }
         }

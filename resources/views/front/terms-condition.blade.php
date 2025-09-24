@@ -5,7 +5,7 @@ Terms and Conditions
 @endsection
 
 @section('metatags')
-{!! getCommomPageMetaTag('terms-condition'); !!}
+{!! getCommomPageMetaTag('terms-condition') !!}
 @endsection
 
 @section('page_name') Terms and Conditions @endsection

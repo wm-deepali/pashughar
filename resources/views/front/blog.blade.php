@@ -5,7 +5,7 @@ Blogs
 @endsection
 
 @section('metatags')
-{!! getCommomPageMetaTag('blog'); !!}
+{!! getCommomPageMetaTag('blog-listing') !!}
 @endsection
 
 @section('page_name') Blogs @endsection

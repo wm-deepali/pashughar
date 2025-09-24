@@ -5,7 +5,7 @@ Buy Subscription
 @endsection
 
 @section('metatags')
-{!! getCommomPageMetaTag('purchase-subscription'); !!}
+{!! getCommomPageMetaTag('purchase-subscription') !!}
 @endsection
 
 @push('after-styles')

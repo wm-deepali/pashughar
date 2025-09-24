@@ -8,9 +8,9 @@ All Ads
 
 @if(app('request')->has('type'))
 @php $stype = app('request')->input('type'); @endphp
-{!! getCommomPageMetaTag($stype); !!}
+{!! getCommomPageMetaTag($stype)!!}
 @else
-{!! getCommomPageMetaTag('ads-list'); !!}
+{!! getCommomPageMetaTag('list-all-ads') !!}
 @endif
 
 @endsection

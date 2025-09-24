@@ -9,11 +9,7 @@
 
 
     <meta name="author" content="Pashughar">
-    
-    <title>
-        Pashughar
-        
-    </title>
+ 
     
     @yield('metatags')
     <meta name="csrf-token" content="{{ csrf_token() }}">
