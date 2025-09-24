@@ -673,7 +673,7 @@ class MemberAuthController extends Controller
                     $data['brandcategories'] = BrandCategory::all();
                     $data['subscriptions'] = Subscription::where('status',1)->orderBy('offer_price', 'asc')->get();
                      $data['brand'] = Brand::all();
-                    return view('front.ad-post', $data);
+                    return view('front.post-your-ad', $data);
                 }
                 else{
                     return redirect()->route('user.buy-subscription')->withErrors('Our Team is reviewing your payment detail once it is verified we will notify you on your email, thank you for your patience.');

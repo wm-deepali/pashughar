@@ -53,6 +53,7 @@ Route::get('contact-us', function () {
 })->name('contact-us');
 
 
+
 Route::get('/linkstorage', function () {
     Artisan::call('storage:link');
     $data= Artisan::call('storage:link');

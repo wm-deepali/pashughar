@@ -183,17 +183,17 @@
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://pashughar.com/ads-list?type=recommend</loc>
+  <loc>https://pashughar.com/list-all-ads?type=recommend</loc>
   <lastmod>2025-09-22T04:59:37+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://pashughar.com/ads-list?type=trending</loc>
+  <loc>https://pashughar.com/list-all-ads?type=trending</loc>
   <lastmod>2025-09-22T04:59:37+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://pashughar.com/ads-list</loc>
+  <loc>https://pashughar.com/list-all-ads</loc>
   <lastmod>2025-09-22T04:59:37+00:00</lastmod>
   <priority>0.80</priority>
 </url>
