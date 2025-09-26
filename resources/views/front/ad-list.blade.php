@@ -118,7 +118,7 @@ else{
                                     <li class="breadcrumb-item active" aria-current="page">{{$ad->title}}</li>
                                 </ol>
                                 <h5 class="product-title">
-                                    <a href="{{route('ad-details', [base64_encode($ad->id), $ad->slug])}}">{{Str::of($ad->description)->words(10, ' ...')}}</a>
+                                    <a href="{{route('ad-details', [$ad->category->name,$ad->slug])}}">{{Str::of($ad->description)->words(10, ' ...')}}</a>
                                 </h5>
                                 <div class="product-meta">
                                     <span><i class="fas fa-map-marker-alt"></i>{{$ad->author_address ?? ''}}</span>

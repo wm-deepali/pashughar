@@ -190,8 +190,8 @@ class MemberAuthController extends Controller
                         
                         if(isset($revew) && !empty($revew))
                         {
-                            $ad =Ad::where('id', $revew->ad_id)->first();
-                            return redirect()->route('ad-details', [base64_encode($ad->id), $ad->slug])->withErrors('Please complete your review!');
+                            $ad =Ad::where('id', $revew->ad_id)->with('category')->first();
+                            return redirect()->route('ad-details', [$ad->category->name, $ad->slug])->withErrors('Please complete your review!');
                         }
                         else
                         {

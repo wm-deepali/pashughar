@@ -36,10 +36,10 @@ use App\Http\Controllers\SeoController;
 
 Route::get('/',[FrontController::class,'index']);
 Route::get('list-categories',[FrontController::class,'categoryList'])->name('list-categories');
-Route::get('/category/{slug}', [FrontController::class, 'categoryDetail'])->name('category-details');
+Route::get('/{slug}', [FrontController::class, 'categoryDetail'])->name('category-details');
 
 Route::get('sub-details/{subcategoryname}/{id}',[FrontController::class,'subcategoryDetail'])->name('sub-details');
-Route::get('ad-details/{id}/{slug}',[FrontController::class,'adDetail'])->name('ad-details');
+Route::get('/{category_name}/{slug}',[FrontController::class,'adDetail'])->name('ad-details');
 Route::get('subscription-plan',[FrontController::class,'purchaseSubscription'])->name('subscription-plan');
 Route::get('list-all-ads',[FrontController::class,'allAds'])->name('list-all-ads');
 Route::post('cities-by-state',[FrontController::class,'cities_by_state'])->name('cities-by-state');

@@ -266,9 +266,9 @@ $suggestCategories = App\Models\Category::all();
                     $('.dropdownsearch').empty();
                     if(data){
                         $.each(data, function(index, value) {
-                            var base64Id = btoa(value.id);
+                            var category_name = value.category.name;
                             var slug = value.slug;
-                            var url = "{{ route('ad-details', ['__id__', ':slug']) }}".replace('__id__', base64Id).replace(':slug', slug);
+                            var url = "{{ route('ad-details', ['category_name', ':slug']) }}".replace('category_name', category_name).replace(':slug', slug);
                             $('.dropdownsearch').append('<li><a href="' + url + '">' + value.title + '</a></li>');
                         });
                     }

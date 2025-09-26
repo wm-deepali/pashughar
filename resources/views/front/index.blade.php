@@ -115,7 +115,7 @@ Welcome to Afar Logistic & Trade Marketing | Afar Region | Ethiopia
                     <div class="recomend-slider slider-arrow">
                     @if(count($recommendAds) > 0)
                     @foreach ($recommendAds as $rad) 
-                        <div class="product-card" onclick="window.location.href='{{route('ad-details', [base64_encode($rad->id), $rad->slug])}}'">
+                        <div class="product-card" onclick="window.location.href='{{route('ad-details', [$rad->category->name,$rad->slug])}}'">
                             <div class="product-media">
                                 <div class="product-img">
                                     @if(isset($rad->adImage) && count($rad->adImage)>0)
@@ -139,7 +139,7 @@ Welcome to Afar Logistic & Trade Marketing | Afar Region | Ethiopia
                                     <li class="breadcrumb-item active" aria-current="page">{{$rad->title ?? ''}}</li>
                                 </ol>
                                 <h5 class="product-title">
-                                    <a href="{{route('ad-details', [base64_encode($rad->id), $rad->slug])}}">{{Str::of($rad->description)->words(4, ' ...')}}</a>
+                                    <a href="{{route('ad-details', [$rad->category->name,$rad->slug])}}">{{Str::of($rad->description)->words(4, ' ...')}}</a>
                                 </h5>
                                 <div class="product-meta">
                                     <span><i class="fas fa-map-marker-alt"></i>{{$rad->author_address ?? ''}}</span>
@@ -196,7 +196,7 @@ Welcome to Afar Logistic & Trade Marketing | Afar Region | Ethiopia
         @if(count($trendingAds) > 0)
         @foreach ($trendingAds as $tad) 
             <div class="col-md-11 col-lg-8 col-xl-6">
-                <div class="product-card standard" onclick="window.location.href='{{route('ad-details', [base64_encode($tad->id), $tad->slug])}}'">
+                <div class="product-card standard" onclick="window.location.href='{{route('ad-details', [$tad->category->name,$tad->slug])}}'">
                     <div class="product-media">
                         <div class="product-img">
                             @if(isset($tad->adImage) && count($tad->adImage)>0)
@@ -218,7 +218,7 @@ Welcome to Afar Logistic & Trade Marketing | Afar Region | Ethiopia
                             <li class="breadcrumb-item active" aria-current="page">{{$tad->title ?? ' '}}</li>
                         </ol>
                         <h5 class="product-title">
-                        <a href="{{route('ad-details', [base64_encode($tad->id), $tad->slug])}}">{{Str::of($tad->description)->words(6, ' ...')}}</a>
+                        <a href="{{route('ad-details', [$tad->category->name,$tad->slug])}}">{{Str::of($tad->description)->words(6, ' ...')}}</a>
                         </h5>
                         <div class="product-meta">
                         <span><i class="fas fa-map-marker-alt"></i>{{$tad->author_address ?? ''}}</span>
@@ -269,7 +269,7 @@ Welcome to Afar Logistic & Trade Marketing | Afar Region | Ethiopia
                     <div class="recomend-slider slider-arrow">
                     @if(count($recommendAds) > 0)
                     @foreach ($recommendAds as $rad) 
-                        <div class="product-card" onclick="window.location.href='{{route('ad-details', [base64_encode($rad->id), $rad->slug])}}'">
+                        <div class="product-card" onclick="window.location.href='{{route('ad-details', [$rad->category->name,$rad->slug])}}'">
                             <div class="product-media">
                                 <div class="product-img">
                                     @if(isset($rad->adImage) && count($rad->adImage)>0)
@@ -293,7 +293,7 @@ Welcome to Afar Logistic & Trade Marketing | Afar Region | Ethiopia
                                     <li class="breadcrumb-item active" aria-current="page">{{$rad->title ?? ''}}</li>
                                 </ol>
                                 <h5 class="product-title">
-                                    <a href="{{route('ad-details', [base64_encode($rad->id), $rad->slug])}}">{{Str::of($rad->description)->words(4, ' ...')}}</a>
+                                    <a href="{{route('ad-details', [$rad->category->name,$rad->slug])}}">{{Str::of($rad->description)->words(4, ' ...')}}</a>
                                 </h5>
                                 <div class="product-meta">
                                     <span><i class="fas fa-map-marker-alt"></i>{{$rad->author_address ?? ''}}</span>
