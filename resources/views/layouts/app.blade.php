@@ -1,4 +1,5 @@
 <x-laravel-ui-adminlte::adminlte-layout>
+    <link rel="icon" href="{{asset('front/images/favicon-new.ico')}}">
     <body class="hold-transition sidebar-mini layout-fixed">
         <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css" />
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />

@@ -61,10 +61,10 @@ Blogs
                                 </li>
                             </ul>
                             <div class="blog-text">
-                                <h4><a href='{{route('blog-details', $blog->id)}}'>{{$blog->title}}</a></h4>
+                                <h4><a href='{{route('blogs.show', $blog->slug)}}'>{{$blog->title}}</a></h4>
                                 <p> {{ \Illuminate\Support\Str::limit($blog->short_description, 150) }}</p>
                             </div>
-                            <a class='blog-read' href='{{route('blog-details', $blog->id)}}'>
+                            <a class='blog-read' href='{{route('blogs.show', $blog->slug)}}'>
                                 <span>read more</span>
                                 <i class="fas fa-long-arrow-alt-right"></i>
                             </a>

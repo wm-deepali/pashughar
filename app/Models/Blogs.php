@@ -13,6 +13,7 @@ class Blogs extends Model
 
     protected $fillable = [
         'title',
+        'slug',
         'short_description',
         'detail_content',
         'thumb_image',
@@ -29,6 +30,6 @@ class Blogs extends Model
 
     public function comments()
     {
-        return $this->hasMany(Comments::class,'blog_id');
+        return $this->hasMany(Comments::class, 'blog_id');
     }
 }

@@ -45,20 +45,23 @@ class PagesController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:pages,slug', // unique slug
             'heading' => 'required',
             'detail_content' => 'required',
         ]);
 
         $page = new Pages();
         $page->name = $request->name;
+        $page->slug = \Str::slug($request->slug); // clean slug
         $page->heading = $request->heading;
         $page->detail_content = $request->detail_content;
         $page->meta_title = $request->meta_title;
         $page->meta_keyword = $request->meta_keyword;
         $page->meta_description = $request->meta_description;
         $page->canonical = $request->canonical;
-        $page->status = $request->status;
+        $page->status = $request->status ?? 0;
         $page->save();
+
 
         return redirect()->route('pages.index')->with('success', 'Page Added successfully!');
     }
@@ -86,12 +89,14 @@ class PagesController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:pages,slug,' . $id,
             'heading' => 'required',
             'detail_content' => 'required',
         ]);
 
         $page = Pages::where('id', $id)->first();
         $page->name = $request->name;
+        $page->slug = \Str::slug($request->slug); // clean slug
         $page->heading = $request->heading;
         $page->detail_content = $request->detail_content;
         $page->meta_title = $request->meta_title;
@@ -115,8 +120,8 @@ class PagesController extends Controller
 
     public function addEditorImage(Request $request)
     {
-        $path  = config('image.profile_image_path_view');
-        $link = CommonController::saveImage($request->image, $path , 'editorImages');
+        $path = config('image.profile_image_path_view');
+        $link = CommonController::saveImage($request->image, $path, 'editorImages');
         return response()->json(['url' => $link]);
     }
 
@@ -127,9 +132,8 @@ class PagesController extends Controller
 
         $pathurl = substr($path, $storagePos + strlen('/storage'));
 
-        if(File::exists('storage'.$pathurl))
-        {
-            File::delete('storage'.$pathurl);
+        if (File::exists('storage' . $pathurl)) {
+            File::delete('storage' . $pathurl);
         }
         return response()->json(['status' => true, 'msg' => 'Image delete from storage.']);
     }

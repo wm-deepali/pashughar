@@ -27,7 +27,7 @@
                     CSS LINK PART START
         =======================================-->
         <!-- FAVICON -->
-        <link rel="icon" href="{{asset('front/images/favicona.ico')}}">
+        <link rel="icon" href="{{asset('front/images/favicon-new.ico')}}">
 
         <!-- FONTS -->
         <link rel="stylesheet" href="{{asset('front/fonts/flaticon/flaticon.css')}}">

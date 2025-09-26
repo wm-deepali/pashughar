@@ -39,7 +39,7 @@ Categories
                     
                     <img src="{{asset('storage/'.$category->image)}}" alt="car">
                     
-                        <a href="{{route('category-details', base64_encode($category->id))}}" class="category-content">
+                        <a href="{{route('category-details', $category->slug)}}" class="category-content">
                             <h4>{{$category->name}}</h4>
                             <p>({{isset($category->ads) && $category->ads !='' ? $category->ads->where('status', 'Published')->count() : 0}})</p>
                         </a>

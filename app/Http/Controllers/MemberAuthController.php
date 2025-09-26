@@ -146,6 +146,7 @@ class MemberAuthController extends Controller
     }
     public function authenticate(Request $request)
     {
+        
          if(Auth::guard('member')->check())
         {
             return view('front.dashboard');
@@ -666,14 +667,14 @@ class MemberAuthController extends Controller
                 $subscriber_history_check  = DB::table('subscription_history')->where('user_id',$userid)->whereDate('subscription_expiry','>=',date('Y-m-d'))->where('payment_status', 'Completed')->where('remaining_ads','>', 0)->first();
                 if(!empty($subscriber_history_check))
                 {
-                    $categories =$subscriber_history_check->category_id;
+                    $categories = $subscriber_history_check->category_id;
                     $categoryArr = explode(', ', $categories);
-                    //$data['categories'] = Category::all();
+                    // $data['categories'] = Category::all();
                     $data['categories'] = Category::whereIn('id', $categoryArr)->get();
                     $data['brandcategories'] = BrandCategory::all();
                     $data['subscriptions'] = Subscription::where('status',1)->orderBy('offer_price', 'asc')->get();
                      $data['brand'] = Brand::all();
-                    return view('front.post-your-ad', $data);
+                    return view('front.ad-post', $data);
                 }
                 else{
                     return redirect()->route('user.buy-subscription')->withErrors('Our Team is reviewing your payment detail once it is verified we will notify you on your email, thank you for your patience.');

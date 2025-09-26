@@ -159,7 +159,7 @@ $suggestCategories = App\Models\Category::all();
                         <div class="cat-list border-bottom mb-2" style="position: relative;">
                             <div class="category-item cat-list " data-category-id="{{ $category->id }}" style="cursor: pointer;display:flex;gap:10px;">
                                 <img src="{{ asset('storage') }}/{{$category->image}}" alt="car" style="width: 50px;">
-                                <a href="{{route('category-details', base64_encode($category->id))}}"><h6 class="m-0" style="display:flex;align-items:center;">{{$category->name}}</h6>
+                                <a href="{{route('category-details', $category->slug)}}"><h6 class="m-0" style="display:flex;align-items:center;">{{$category->name}}</h6>
                                 <p style="color:#000;padding-left:0px; margin-top:18px;">
                                     ({{isset($category->ads) && $category->ads != '' ? $category->ads->where('status', 'Published')->count() : 0}})
                                 </p></a>
@@ -195,7 +195,7 @@ $suggestCategories = App\Models\Category::all();
                                 <li ><a href="{{route('blog-listing')}}" style="color:#000">Blogs</a></li>
                                  <?php $pages = App\Models\Pages::all(); ?>
                                 @foreach($pages as $page)
-                                <li><a style="color:#000" href="{{ route('pagedetail', $page->id) }}">{{$page->name}}</a></li>
+                                <li><a style="color:#000" href="{{ route('page.show', $page->slug) }}">{{$page->name}}</a></li>
                                 @endforeach
                                 
                                

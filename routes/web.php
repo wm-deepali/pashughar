@@ -36,7 +36,8 @@ use App\Http\Controllers\SeoController;
 
 Route::get('/',[FrontController::class,'index']);
 Route::get('list-categories',[FrontController::class,'categoryList'])->name('list-categories');
-Route::get('category-details/{slug}',[FrontController::class,'categoryDetail'])->name('category-details');
+Route::get('/category/{slug}', [FrontController::class, 'categoryDetail'])->name('category-details');
+
 Route::get('sub-details/{subcategoryname}/{id}',[FrontController::class,'subcategoryDetail'])->name('sub-details');
 Route::get('ad-details/{id}/{slug}',[FrontController::class,'adDetail'])->name('ad-details');
 Route::get('subscription-plan',[FrontController::class,'purchaseSubscription'])->name('subscription-plan');
@@ -77,7 +78,7 @@ Route::get('veterinary-help', function () {
     return view('front.veterinary-help');
 })->name('veterinary-help');
 
-Route::get('Page-Detail/{id}',[FrontController::class,'pagedetail'])->name('pagedetail');
+Route::get('/page/{slug}', [FrontController::class, 'pagedetail'])->name('page.show');
 
 Route::get('terms-condition', function () {
     return view('front.terms-condition');
@@ -86,7 +87,7 @@ Route::get('terms-condition', function () {
 Route::get('our-team',[FrontController::class,'ourTeam'])->name('our-team');
 
 Route::get('blog-listing',[FrontController::class,'blog'])->name('blog-listing');
-Route::get('blog-details/{id}',[FrontController::class,'blogdetail'])->name('blog-details');
+Route::get('/blogs/{slug}', [FrontController::class, 'blogdetail'])->name('blogs.show');
 Route::post('Add-Comment', [FrontController::class,'addComment'])->name('comment.store');
 
 Route::get('submit-bulk-stock-request',[EnquiryController::class,'bulkEnquiry'])->name('submit-bulk-stock-request');

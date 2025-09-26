@@ -51,9 +51,9 @@ class FrontController extends Controller
         return view('front.index', $data);
     }
 
-    public function pagedetail($id)
+    public function pagedetail($slug)
     {
-        $data['page'] = Pages::where('id',$id)->first();
+        $data['page'] = Pages::where('slug',$slug)->first();
         return view('front.page-detail', $data);
     }
 
@@ -63,12 +63,12 @@ class FrontController extends Controller
         return view('front.blog', $data);
     }
 
-    public function blogdetail($id)
+    public function blogdetail($slug)
     {
         $data['blog'] = Blogs::with(['comments' => function ($query) {
             $query->where('approve', 1); // Fetch comments where status is 1
-        }])->where('id', $id)->first();
-        $data['blogs'] = Blogs::where('id', '!=' ,$id)->get();
+        }])->where('slug', $slug)->first();
+        $data['blogs'] = Blogs::where('slug', '!=' ,$slug)->get();
         // print_r($data['blog']->toarray()); die;
         return view('front.blog-details', $data);
     }
@@ -121,7 +121,7 @@ class FrontController extends Controller
         return view('front.categories', $data);
     }
 
-    public function categoryDetail(Request $request, $id)
+    public function categoryDetail(Request $request, $slug)
     {
         $min = null;
         $max = null;
@@ -132,12 +132,12 @@ class FrontController extends Controller
         if($request->has('min')) $min = $request->query('min');
         if($request->has('max')) $max = $request->query('max');
             
-        $decodeId = base64_decode($id);
-        $data['category'] = Category::with('subcategory')->where('id', $decodeId)->first();
+        // $decodeId = base64_decode($id);
+        $data['category'] = Category::with('subcategory')->where('slug', $slug)->first();
         
         // $data['ads'] = Ad::with('AdImage')->where('delete_status', '0')->where('status', 'Published')->where('category_id', $decodeId)->type($type)->search($min, $max)->paginate($perPage)->withQueryString();
         // print_r($request->all()); die;
-        $decodeId = base64_decode($id);
+        // $decodeId = base64_decode($data['category']->id);
         $query = Ad::with('AdImage')
             ->where('delete_status', '0')
             ->where('status', 'Published')
@@ -147,7 +147,7 @@ class FrontController extends Controller
         if ($request->subcatid) {
             $query->whereIn('subcategory_id', $request->subcatid);
         } else {
-            $query->where('category_id', $decodeId);
+            $query->where('category_id', $data['category']->id);
         }
         $data['ads'] = $query->paginate($perPage)->withQueryString();
 
@@ -185,6 +185,7 @@ class FrontController extends Controller
         
         $data['adCount'] = Ad::where('delete_status', '0')->where('status', 'Published')->where('user_id', $ad->user_id)->count();
         $data['states']=State::where('country_id',1)->get();
+
         return view('front.ad-details', $data);
     }
 
@@ -199,6 +200,7 @@ class FrontController extends Controller
 		$id 		= $request->state_id;
 		$city 		= DB::table('cities')->where('state_id',$id)->get();
 		//dd($city);
+        $response = '';
 		if(isset($city))
 		{
 		    $response 	= '<option value="">Select City </option>';

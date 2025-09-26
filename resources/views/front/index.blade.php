@@ -377,7 +377,7 @@ Welcome to Afar Logistic & Trade Marketing | Afar Region | Ethiopia
                         <img src="{{asset('storage')}}/{{$pcategory->image}}" alt="car">
                         @endif
                        
-                        <a href="{{route('category-details', base64_encode($pcategory->id))}}" class="category-content">
+                        <a href="{{route('category-details', $pcategory->slug)}}" class="category-content">
                             <h4>{{$pcategory->name}}</h4>
                             <p>({{isset($pcategory->ads) && $pcategory->ads !='' ? $pcategory->ads->where('status', 'Published')->count() : 0}})</p>
                         </a>
@@ -416,7 +416,7 @@ Welcome to Afar Logistic & Trade Marketing | Afar Region | Ethiopia
                         <img src="{{asset('storage')}}/{{$pcategory->image}}" alt="car">
                         @endif
                        
-                        <a href="{{route('category-details', base64_encode($pcategory->id))}}" class="category-content">
+                        <a href="{{route('category-details', $pcategory->slug)}}" class="category-content">
                             <h4>{{$pcategory->name}}</h4>
                             <p>({{isset($pcategory->ads) && $pcategory->ads !='' ? $pcategory->ads->where('status', 'Published')->count() : 0}})</p>
                         </a>

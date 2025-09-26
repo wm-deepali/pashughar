@@ -1,26 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
     
-<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
 <head>
         
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-
     <meta name="author" content="Pashughar">
- 
-    
     @yield('metatags')
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    @stack('before-styles')
-   
 
+    @stack('before-styles')
     <!--=====================================
                 CSS LINK PART START
     =======================================-->
     <!-- FAVICON -->
-    <link rel="icon" href="{{asset('front/images/favicona.ico')}}">
+    <link rel="icon" href="{{asset('front/images/favicon-new.ico')}}">
 
     <!-- FONTS -->
     <link rel="stylesheet" href="{{asset('front/fonts/flaticon/flaticon.css')}}">
