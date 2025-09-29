@@ -67,7 +67,7 @@
                                </div>
                                <div class="col-sm-4">
                                    <label class="con-label">Discount Amount(ETB)</label><br>
-                                   <h3 class="text-con-label">{{ ($subscription->mrp *$subscription->discount_amount)/100 ?? '' }}</h3>
+                                   <h3 class="text-con-label">{{ ($subscription->mrp -  $subscription->offered_price) }}</h3>
                                </div>
                                
                            </div>  
@@ -77,6 +77,7 @@
                                    <label class="con-label">Offered Price</label><br>
                                    <h3 class="text-con-label">{{ $subscription->offered_price ?? '' }}</h3>
                                </div>
+                               @if($subscription->gst_amount > 0)
                                <div class="col-sm-4">
                                    <label class="con-label">GST</label><br>
                                    <h3 class="text-con-label">{{ $subscription->gst_type ?? '' }}</h3>
@@ -85,7 +86,7 @@
                                    <label class="con-label">GST Amount</label><br>
                                    <h3 class="text-con-label">{{ $subscription->gst_amount ?? '' }}</h3>
                                </div>
-                               
+                               @endif
                            </div> 
                            
                            <div class="form-group row">

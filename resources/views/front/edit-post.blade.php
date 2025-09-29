@@ -52,7 +52,7 @@ Ad Post
                             <div class="col-lg-6 subcategory_div">
                                 <div class="form-group">
                                     <label class="form-label">SubCategory</label>
-                                    <select class="form-control custom-select" name="subcategory_id" id="subcategory_id" required>
+                                    <select class="form-control custom-select" name="subcategory_id" id="subcategory_id" >
                                         <option value="">Select SubCategory</option>
                                         @foreach($subcategories as $subcategory)
                                         <option value="{{$subcategory->id}}" {{($ad->subcategory_id !='' && $ad->subcategory_id == $subcategory->id) ? 'selected': ''}}>{{$subcategory->name}}</option>

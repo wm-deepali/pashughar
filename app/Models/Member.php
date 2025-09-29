@@ -10,7 +10,15 @@ class Member extends Authenticatable
 {
     protected $table = 'members';
     protected $fillable = [
-        'full_name', 'email', 'password','otp','mobile','mobile_verified_at','email_verified_at','google_id', 'profile_pic',
+        'full_name',
+        'email',
+        'password',
+        'otp',
+        'mobile',
+        'mobile_verified_at',
+        'email_verified_at',
+        'google_id',
+        'profile_pic',
         'member_id',
         'no_of_ads',
         'user_type',
@@ -39,7 +47,8 @@ class Member extends Authenticatable
         'mobile_verified_at' => 'datetime',
     ];
 
-    public function ads(){
+    public function ads()
+    {
         return $this->hasMany(Ad::class, 'user_id', 'id');
     }
     public function cityname()
@@ -58,4 +67,28 @@ class Member extends Authenticatable
     {
         return $this->hasOne(Subscription::class, 'id', 'active_subscription_id');
     }
+
+    public function getFullAddressAttribute()
+    {
+        $parts = [];
+
+        if ($this->address) {
+            $parts[] = $this->address;
+        }
+        if ($this->cityname) {
+            $parts[] = $this->cityname->name;
+        }
+        if ($this->statename) {
+            $parts[] = $this->statename->name;
+        }
+        if ($this->countryname) {
+            $parts[] = $this->countryname->name;
+        }
+        if ($this->zipcode) {
+            $parts[] = $this->zipcode;
+        }
+
+        return implode(', ', $parts);
+    }
+
 }

@@ -44,10 +44,40 @@ class FrontController extends Controller
         $data['suggestCategories'] = Category::with('subcategory', 'ads')->where('bottom_categories', 'yes')->get();
         $data['pageCategories'] = Category::with('subcategory', 'ads')->where('bottom_categories', 'yes')->take(8)->get();
         $data['subscriptions'] = Subscription::where('status', 1)->orderBy('offer_price', 'asc')->get();
-        $data['featureAds'] = Ad::with('AdImage')->where('delete_status', '0')->where('status', 'Published')->type('featured')->take(4)->get();
-        $data['recommendAds'] = Ad::with('AdImage')->where('delete_status', '0')->where('status', 'Published')->type('recommend')->take(5)->get();
-        $data['trendingAds'] = Ad::with('AdImage')->where('delete_status', '0')->where('status', 'Published')->type('trending')->take(6)->get();
+        $data['featureAds'] = Ad::with('AdImage')
+            ->wherehas('category')
+            ->where('delete_status', '0')
+            ->where('status', 'Published')
+            ->where(function ($q) {
+                $q->whereNull('expire_at')->orWhere('expire_at', '>=', now());
+            })
+            ->type('featured')
+            ->take(4)
+            ->get();
+
+        $data['recommendAds'] = Ad::with('AdImage', 'category')
+            ->wherehas('category')
+            ->where('delete_status', '0')
+            ->where('status', 'Published')
+            ->where(function ($q) {
+                $q->whereNull('expire_at')->orWhere('expire_at', '>=', now());
+            })
+            ->type('recommend')
+            ->take(5)
+            ->get();
+
+        $data['trendingAds'] = Ad::with('AdImage')
+            ->wherehas('category')
+            ->where('delete_status', '0')
+            ->where('status', 'Published')
+            ->where(function ($q) {
+                $q->whereNull('expire_at')->orWhere('expire_at', '>=', now());
+            })
+            ->type('trending')
+            ->take(6)
+            ->get();
         // print_r($data['pageCategories']->toarray()); die;
+        // dd($data['recommendAds']->toArray());
         return view('front.index', $data);
     }
 
@@ -147,6 +177,9 @@ class FrontController extends Controller
         $query = Ad::with('AdImage')
             ->where('delete_status', '0')
             ->where('status', 'Published')
+            ->where(function ($q) {
+                $q->whereNull('expire_at')->orWhere('expire_at', '>=', now());
+            })
             ->type($type)
             ->search($min, $max);
 
@@ -181,7 +214,7 @@ class FrontController extends Controller
         return view('front.subcategories', $data);
     }
 
-    public function adDetail($category_name,$slug)
+    public function adDetail($category_name, $slug)
     {
         $ad = Ad::where('slug', $slug)->first();
         // dd($ad);

@@ -37,9 +37,13 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URL'),
     ],
 
-   'recaptcha' => [
+    'recaptcha' => [
         'key' => env('RECAPTCHA_SITE_KEY'),
         'secret' => env('RECAPTCHA_SITE_SECRET'),
     ]
-
+    ,
+    'razorpay' => [
+        'key' => env('RAZORPAY_KEY'),
+        'secret' => env('RAZORPAY_SECRET'),
+    ],
 ];

@@ -112,28 +112,35 @@ class AdminController extends Controller
             'invoice_prefix' => 'nullable|string|max:255',
             'invoice_number' => 'nullable|string|max:255',
             'term_and_condition' => 'nullable|string',
+            'invoice_email' => 'nullable|email|max:255',
+            'invoice_mobile' => 'nullable|string|max:20',
         ]);
 
-        // Find or create the InvoiceTax model instance
+        // Find or create the InvoiceSetting model instance
         $invoiceTax = InvoiceSetting::firstOrNew([]);
 
-        // Update the model with validated data
+        // Fill validated data
         $invoiceTax->fill($validatedData);
 
-        // Handle file uploads if any
+        // Handle file uploads
         if ($request->hasFile('header_logo')) {
             $invoiceTax->header_logo = $request->file('header_logo')->store('logos', 'public');
         }
+
         if ($request->hasFile('logo')) {
             $invoiceTax->logo = $request->file('logo')->store('logos', 'public');
         }
 
-        // Save the updated or new record
+        if ($request->hasFile('invoice_logo')) {
+            $invoiceTax->invoice_logo = $request->file('invoice_logo')->store('logos', 'public');
+        }
+
+        // Save the record
         $invoiceTax->save();
 
-        // Redirect back with success message or handle response as needed
         return redirect()->back()->with('success', 'Invoice settings updated successfully!');
     }
+
 
     public function updateOtherSetting(Request $request)
     {

@@ -25,5 +25,9 @@ class InvoiceSetting extends Model
         'invoice_prefix',
         'invoice_number',
         'term_and_condition',
+        'invoice_logo',
+        'invoice_email',
+        'invoice_mobile',
     ];
+
 }

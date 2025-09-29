@@ -144,7 +144,7 @@
                                     <div class="form-group col-md-6">
                                         <label for="status">Status</label>
                                         @php
-                                        $statusArr = array('Pending','Published','Rejected','Expired');
+                                        $statusArr = array('Pending','Pending Edit','Published','Rejected','Expired');
                                         @endphp
                                         <select name="status" class="form-control" id="status">
                                             @foreach($statusArr as $status)

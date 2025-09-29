@@ -25,6 +25,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\Constraint\Count;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\InvoiceSetting;
 
 class UserController extends Controller
 {
@@ -39,7 +41,7 @@ class UserController extends Controller
     {
         //
         $data['users'] = Member::all();
-        return view('users.index',$data);
+        return view('users.index', $data);
     }
 
     /**
@@ -65,12 +67,12 @@ class UserController extends Controller
     {
         //
         try {
-            $user = Member::with('ads', 'cityname', 'statename', 'countryname','activeSubscription')->where('id', $id)->first();
+            $user = Member::with('ads', 'cityname', 'statename', 'countryname', 'activeSubscription')->where('id', $id)->first();
             return response()->json([
                 "msgCode" => "200",
-                "html" => view('users.preview-user')->with('user',$user)->render(),
+                "html" => view('users.preview-user')->with('user', $user)->render(),
             ]);
-        } catch(\Exception $ex) {
+        } catch (\Exception $ex) {
             return response()->json([
                 'msgCode' => '400',
                 'msgText' => $ex->getMessage(),
@@ -84,15 +86,14 @@ class UserController extends Controller
     public function edit(string $id)
     {
         $user = Member::with('ads')->where('id', $id)->first();
-        $data['states']=State::where('country_id',1)->get();
-        if($user->state !='')
-        {
-            $data['cities']=City::where('state_id',$user->state)->get();
+        $data['states'] = State::where('country_id', 1)->get();
+        if ($user->state != '') {
+            $data['cities'] = City::where('state_id', $user->state)->get();
         }
         //
-        
+
         $data['user'] = $user;
-        return view('users.edit',$data);
+        return view('users.edit', $data);
     }
 
     /**
@@ -103,23 +104,21 @@ class UserController extends Controller
         //
         $user = Member::findOrFail($id);
         $validator = Validator::make($request->all(), [
-            'full_name'=>'required',
-            'email' => 'required|email|unique:members,email,'.$id,
-            'mobile' => 'required|unique:members,mobile,'.$id,
-            'status'=>'required',
+            'full_name' => 'required',
+            'email' => 'required|email|unique:members,email,' . $id,
+            'mobile' => 'required|unique:members,mobile,' . $id,
+            'status' => 'required',
         ]);
-        if($validator->fails()){
+        if ($validator->fails()) {
             return redirect()->route('manage-users.edit', $id)
-            ->with('error', $validator->errors());
-        }
-        else{
-            
-             if ($request->has('password')) {
-                 if($request->password !='')
-                 {
-                     $user->password = Hash::make($request->password);
-                 }
-             }
+                ->with('error', $validator->errors());
+        } else {
+
+            if ($request->has('password')) {
+                if ($request->password != '') {
+                    $user->password = Hash::make($request->password);
+                }
+            }
             if ($request->hasFile('profile_pic')) {
                 if ($user->profile_pic) {
                     Storage::delete($user->profile_pic);
@@ -129,23 +128,23 @@ class UserController extends Controller
                 $path = $request->file('profile_pic')->store('members', 'public');
                 $user->profile_pic = $path;
             }
-            
-            
+
+
 
             $user->full_name = $request->full_name;
             $user->email = $request->email;
             $user->mobile = $request->mobile;
-            $user->status=$request->status;
-            $user->address=$request->address;
-            $user->state=$request->state;
-            $user->city=$request->city;
-            $user->zipcode=$request->zipcode;
-            $user->remark=$request->remark;
+            $user->status = $request->status;
+            $user->address = $request->address;
+            $user->state = $request->state;
+            $user->city = $request->city;
+            $user->zipcode = $request->zipcode;
+            $user->remark = $request->remark;
             $user->country = 1;
             $user->save();
             return redirect()->route('manage-users.index')
                 ->with('success', 'User Updated successfully');
-            
+
         }
     }
 
@@ -157,15 +156,13 @@ class UserController extends Controller
         //
         $user = Member::findOrFail($id);
         $ads = Ad::where('user_id', $id)->get();
-        if(isset($ads) && count($ads)>0)
-        {
-            foreach($ads as $ad)
-            {
-                AdFeature::where('ad_id',$ad->id)->delete();
-                AdImage::where('ad_id',$ad->id)->delete();
-                Enquiry::where('ad_id',$ad->id)->delete();
-                Review::where('ad_id',$ad->id)->delete();
-                AdSpecification::where('ad_id',$ad->id)->delete();
+        if (isset($ads) && count($ads) > 0) {
+            foreach ($ads as $ad) {
+                AdFeature::where('ad_id', $ad->id)->delete();
+                AdImage::where('ad_id', $ad->id)->delete();
+                Enquiry::where('ad_id', $ad->id)->delete();
+                Review::where('ad_id', $ad->id)->delete();
+                AdSpecification::where('ad_id', $ad->id)->delete();
             }
             $ads->each->delete();
         }
@@ -174,32 +171,73 @@ class UserController extends Controller
         $user->delete();
         return redirect()->route('manage-users.index')->with('success', 'User deleted successfully!');
     }
-    
+
     public function userSubscriptions()
     {
         //
-        $data['usersubscriptions'] = SubscriptionHistory::with('customers', 'subscriptions')->orderBy('created_at','DESC')->get();
-        return view('users.manage-user-subscriptions',$data);
+        $data['usersubscriptions'] = SubscriptionHistory::with('customers', 'subscriptions')->orderBy('created_at', 'DESC')->get();
+        return view('users.manage-user-subscriptions', $data);
     }
-    
+
     public function orderDetails(string $id)
     {
         //
         $subscription = SubscriptionHistory::with('subscriptions')->where('id', $id)->first();
-        if(isset($subscription) && !empty($subscription))
-        {
+        if (isset($subscription) && !empty($subscription)) {
             $orderId = $subscription->order_number;
             $totalAds = Ad::where('plan_id', $orderId)->count();
-            $pendingAds = Ad::where('plan_id', $orderId)->where('status','Pending')->count();
-            $publishedAds = Ad::where('plan_id', $orderId)->where('status','Published')->count();
-            
+            $pendingAds = Ad::where('plan_id', $orderId)->where('status', 'Pending')->count();
+            $publishedAds = Ad::where('plan_id', $orderId)->where('status', 'Published')->count();
+
             $data['totalAds'] = $totalAds;
-            
+
             $data['publishedAds'] = $publishedAds;
             $data['pendingAds'] = $pendingAds;
         }
-        
+
         $data['subscription'] = $subscription;
-        return view('users.order-details',$data);
+        return view('users.order-details', $data);
     }
+
+
+    public function downloadInvoice($id)
+    {
+        // Fetch the subscription history
+        $subscription = SubscriptionHistory::with(['customers', 'subscriptions'])
+            ->findOrFail($id);
+
+        // Fetch admin invoice settings (only for prefix and starting number)
+        $invoiceSetting = InvoiceSetting::first();
+        $startingNumber = (int) ($invoiceSetting->invoice_number ?? 1001);
+        $prefix = $invoiceSetting->invoice_prefix ?? 'INV-';
+
+        // Generate invoice number if not already set
+        if ($subscription->invoice_number) {
+            $invoiceNumber = $subscription->invoice_number;
+        } else {
+            // Option 1: Simple calculation using subscription ID
+            $invoiceNumber = $prefix . ($startingNumber + $subscription->id - 1);
+            // Save the invoice number in subscription history
+            $subscription->invoice_number = $invoiceNumber;
+            $subscription->save();
+        }
+
+        // Prepare data for PDF
+        $data = [
+            'order' => $subscription,      // Matches your Blade variable
+            'type' => 'subscription',
+            'invoice_number' => $invoiceNumber,
+            'invoiceSetting' => $invoiceSetting, // pass to view
+        ];
+
+        // Load the Blade view
+        $pdf = PDF::loadView('users.invoice', $data);
+
+        // Return PDF download
+        $fileName = 'Invoice_' . $invoiceNumber . '.pdf';
+        return $pdf->download($fileName);
+    }
+
+
+
 }
