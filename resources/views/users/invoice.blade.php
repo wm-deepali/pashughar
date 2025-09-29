@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Invoice - {{ $invoice_number ?? '#INV-1001' }}</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -140,7 +139,7 @@
                     <p style="margin-bottom:6px; font-weight:600;">{{ $order->customers->full_name ?? '' }} </p>
                     <p style="margin-bottom:6px;">{{ $order->customers->full_address ?? '' }}</p>
                     <p style="margin-bottom:4px;">{{ $order->customers->mobile ?? '' }}</p>
-                    <p style="margin-bottom:6px; color:blue;">{{ $order->customcustomerser->email ?? '' }}</p>
+                    <p style="margin-bottom:6px; color:blue;">{{ $order->customers->email ?? '' }}</p>
                 </td>
 
                 <!-- From -->
@@ -179,23 +178,31 @@
                 <tr>
                     <th>Description</th>
                     <th>Qty</th>
-                    <th>Rate (<i class="fa-solid fa-indian-rupee-sign"></i>)</th>
-                    <th>Total (<i class="fa-solid fa-indian-rupee-sign"></i>)</th>
+                    <th>Rate (INR)</th>
+                    <th>Total (INR)</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>{{ $order->subscriptions->name }}</td>
+                    <td>
+                        {{ $order->subscriptions->name ?? '' }}
+                        @if(!empty($order->subscriptions->detail))
+                            <br>
+                            <small style="color:#555;">
+                                {{ $order->subscriptions->detail }}
+                            </small>
+                        @endif
+                    </td>
                     <td>1</td>
-                    <td>{{ number_format($order->mrp, 2) }}</td>decimals:
+                    <td>{{ number_format($order->mrp, 2) }}</td>
                     <td>{{ number_format($order->mrp, 2) }}</td>
                 </tr>
             </tbody>
         </table>
 
         {{-- Totals --}}
-        <div style="margin-top: 20px; display: flex; justify-content:flex-end;">
-            <div style="width: 40%;">
+        <div style="margin-top: 20px; display: flex; justify-content: flex-end; width: 100%;">
+            <div style="max-width: 300px; margin-left: auto;">
                 @php
                     $subscriptionCost = $order->mrp ?? 0;
                     $subTotal = $order->offered_price;
@@ -203,34 +210,35 @@
                     $gstAmount = $order->gst_amount ?? 0;
                     $total = $subTotal + $gstAmount;
                 @endphp
-                <table class="totals-table">
+                <table class="totals-table" style="width: 100%;">
                     <tr>
                         <th>Subscription Cost:</th>
-                        <td><i class="fa-solid fa-indian-rupee-sign"></i> {{ number_format($subscriptionCost, 2) }}</td>
+                        <td>INR {{ number_format($subscriptionCost, 2) }}</td>
                     </tr>
                     @if($discount > 0)
                         <tr>
                             <th>Discount:</th>
-                            <td><i class="fa-solid fa-indian-rupee-sign"></i> {{ number_format($discount, 2) }}</td>
+                            <td>INR {{ number_format($discount, 2) }}</td>
                         </tr>
                     @endif
                     <tr>
                         <th>Sub Total:</th>
-                        <td><i class="fa-solid fa-indian-rupee-sign"></i> {{ number_format($subTotal, 2) }}</td>
+                        <td>INR {{ number_format($subTotal, 2) }}</td>
                     </tr>
                     @if($order->gst_amount > 0)
                         <tr>
                             <th>{{ $order->gst_type ?? 'GST' }}:</th>
-                            <td><i class="fa-solid fa-indian-rupee-sign"></i> {{ number_format($gstAmount, 2) }}</td>
+                            <td>INR {{ number_format($gstAmount, 2) }}</td>
                         </tr>
                     @endif
                     <tr class="total-row">
                         <th>Total:</th>
-                        <td><i class="fa-solid fa-indian-rupee-sign"></i> {{ number_format($total, 2) }}</td>
+                        <td>INR {{ number_format($total, 2) }}</td>
                     </tr>
                 </table>
             </div>
         </div>
+
 
 
     </div>

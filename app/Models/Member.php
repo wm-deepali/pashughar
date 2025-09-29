@@ -91,4 +91,23 @@ class Member extends Authenticatable
         return implode(', ', $parts);
     }
 
+    public function freeSubscriptionHistory()
+    {
+        return $this->hasOne(SubscriptionHistory::class, 'user_id', 'id') // <foreign_key, local_key>
+            ->whereHas('subscriptions', function ($q) {
+                $q->where('offer_price', 0);
+            })
+            ->latest();
+    }
+
+
+    public function hasFreeAdsLeft()
+    {
+        $freeSub = $this->freeSubscriptionHistory;
+        if (!$freeSub)
+            return false;
+        return $freeSub->remaining_ads > 0;
+    }
+
 }
+

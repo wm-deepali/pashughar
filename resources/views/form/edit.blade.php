@@ -103,10 +103,17 @@
             dataType: 'json',
             success: function(result) {
                 if (result.success) {
-                    $('#subcategory_id').append(result.html);
-                } else {
-                    //toastr.error('error encountered ' + result.msgText);
-                }
+                   // Make jQuery object from returned HTML
+                    let $options = $(result.html);
+
+                    // Filter out already used subcategories
+                    $options = $options.filter(function() {
+                        return !usedSubcategories.includes(parseInt(this.value));
+                    });
+
+                    // Append remaining
+                    $('#subcategory_id').append($options);
+                } 
             },
         });
     });

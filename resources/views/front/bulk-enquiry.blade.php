@@ -269,7 +269,6 @@
                             <div class="form-group">
                                 <input type="text" class="form-control" name="code" value="{{old('code')}}" id="code"
                                     placeholder="Enter Zip Code" required>
-                                <button class="form-icon"><i class="eye fas fa-eye"></i></button>
                             </div>
                         </div>
 

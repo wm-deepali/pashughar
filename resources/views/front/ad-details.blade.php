@@ -16,8 +16,6 @@
 @push('after-styles')
 <link rel="stylesheet" href="{{asset('front/css/custom/ad-details.css')}}">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet"/>
-
-  <script src="https://www.google.com/recaptcha/api.js?render={{ env('RECAPTCHA_SITE_KEY') }}"></script>
 @endpush
 
 @section('content')
@@ -183,157 +181,15 @@
                     
                 </div>
                 </div>
-                <!--<div class="common-card price">-->
-                <!--    <h3 class="d-flex"><span style="font-size:20px;padding-top:8px">₹</span>&nbsp;{{$ad->price}}<span style="font-size:18px;padding-top:5px; padding-left:10px">({{$ad->price_type}})</span></h3>-->
-                <!--    <i class="fas fa-tag"></i>-->
-                <!--</div>-->
-                <!--<strong><h5 class="mb-4 cname"> Category:</strong> {{($ad->category != '' && isset($ad->category->name)) ? $ad->category->name : ''}}{{($ad->subcategory != '' && isset($ad->subcategory->name)) ? '/'.$ad->subcategory->name : ''}}</h5>-->
-                <!--<div class="common-card">-->
-                <!--    <div class="card-header">-->
-                <!--        <h5 class="card-title">Other Informations</h5>-->
-                <!--    </div>-->
-                <!--    <div class="ad-details-author">-->
-                       
-                <!--        <div class="author-meta mt-3 text-left mb-0">-->
-                            
-                <!--            @if(App\Http\Controllers\FrontController::getfeature($ad->id, 'brand') !='')-->
-                <!--            <strong><h5><i class="fas fa-calendar"></i> Brand:</strong> {{ App\Http\Controllers\FrontController::getfeature($ad->id, 'brand') }}</h5>-->
-                <!--            @endif-->
-                            
-                <!--            @if(App\Http\Controllers\FrontController::getfeature($ad->id, 'age_in_year') !='')-->
-                <!--            <strong><h5><i class="fas fa-calendar"></i> Age:</strong> {{ App\Http\Controllers\FrontController::getfeature($ad->id, 'age_in_year') }}</h5>-->
-                <!--            @endif-->
-                            
-                <!--            @if(App\Http\Controllers\FrontController::getfeature($ad->id, 'available_quantity') !='')-->
-                <!--            <strong><h5><i class="fas fa-calendar"></i> Available Quantity:</strong>  {{ App\Http\Controllers\FrontController::getfeature($ad->id, 'available_quantity') }}</h5>-->
-                <!--            @endif-->
-                            
-                <!--            @if(App\Http\Controllers\FrontController::getfeature($ad->id, 'weight') !='')-->
-                <!--            <strong><h5><i class="fas fa-calendar"></i> Weight:</strong> {{ App\Http\Controllers\FrontController::getfeature($ad->id, 'weight') }}</h5>-->
-                <!--            @endif-->
-                            
-                <!--            @if(App\Http\Controllers\FrontController::getfeature($ad->id, 'average_weight') !='')-->
-                <!--            <strong><h5><i class="fas fa-calendar"></i> Average Weight:</strong> {{ App\Http\Controllers\FrontController::getfeature($ad->id, 'average_weight') }}</h5>-->
-                <!--            @endif-->
-                            
-                           
-                <!--            <strong><h5><i class="fas fa-calendar"></i> Location:</strong> {{$ad->location}}</h5>-->
-                            
-                <!--             @if(App\Http\Controllers\FrontController::getfeature($ad->id, 'minimum_order_quanitity') !='')-->
-                <!--            <strong><h5><i class="fas fa-calendar"></i> Minimum Order Quantity:</strong> {{ App\Http\Controllers\FrontController::getfeature($ad->id, 'minimum_order_quanitity') }}</h5>-->
-                <!--            @endif-->
-                            
-                            
-                <!--             <div class="ad-details-meta mt-3 border-top border-bottom pt-3 pb-3 mb-2" style="display:flex;justify-content:space-between; ">-->
-                <!--        <a class="view">-->
-                <!--            <i class="fas fa-eye"></i>-->
-                <!--            <span><strong>({{$ad->views}})</strong>preview</span>-->
-                <!--        </a>-->
-                        <!--<a class="click">-->
-                        <!--    <i class="fas fa-mouse"></i>-->
-                        <!--    <span><strong>({{$ad->total_enquiry}})</strong>Enquiry</span>-->
-                        <!--</a>-->
-                <!--        <a href="#review" class="rating">-->
-                <!--            <i class="fas fa-star"></i>-->
-                <!--            <span><strong>({{$ad->total_review}})</strong>review</span>-->
-                <!--        </a>-->
-                        
-                <!--    </div>-->
-                <!--                                <strong><h5 class="text-center m-0 mb-0">Published On: </strong> {{date('F d, Y',strtotime($ad->published_date))}}</h5>-->
-                            
-                <!--        </div>-->
-                       
-                <!--    </div>-->
-                <!--</div>-->
-                <!-- NUMBER CARD -->
+             
                             <div class="price-btn mb-4">
                             <button type="button" data-toggle="modal" data-target="#number"  class="btn " style="height:70px;font-size:22px; font-weight:700;width:100%;text-align:center;">
                                
                                 <span>Buy or Book Now <i class="fas fa-sign-in-alt"></i></span>
                             </button>
                             </div>
-                <!-- <button type="button" class="common-card number" data-toggle="modal" data-target="#number">-->
-                <!--    <h3>{{$ad->author_mobile}}<span>Click to show</span></h3>-->
-                <!--    <i class="fas fa-phone"></i>-->
-                <!--</button>-->
-                <!-- <div class="common-card">-->
-                <!--    <div class="card-header">-->
-                <!--        <h5 class="card-title">Link Share</h5>-->
-                <!--    </div>-->
-                <!--    <div class="ad-details-author">-->
-                        
-                <!--         <ul class="footer-social1">-->
-                <!--            <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>-->
-                <!--            <li><a href="#"><i class="fab fa-twitter"></i></a></li>-->
-                <!--            <li><a href="#"><i class="fab fa-linkedin-in"></i></a></li>-->
-                <!--            <li><a href="#"><i class="fab fa-google-plus-g"></i></a></li>-->
-                <!--            <li><a href="#"><i class="fab fa-youtube"></i></a></li>-->
-                <!--            <li><a href="https://www.instagram.com/avhclicks_official/profilecard/?igsh=MXR3OXZqcDI1c3JlMw%3D%3D"><i class="fab fa-instagram"></i></a></li>-->
-                <!--        </ul>-->
-                       
-                <!--    </div>-->
-                <!--</div>                -->
-                               <!-- AUTHOR CARD -->
-                <!--<div class="common-card">-->
-                <!--    <div class="card-header">-->
-                <!--        <h5 class="card-title">author info</h5>-->
-                <!--    </div>-->
-                <!--    <div class="ad-details-author">-->
-                <!--        <a href="#" class="author-img active mt-2">-->
-                <!--            @if($ad->user->profile_pic !='')-->
-                <!--                @if (strpos($ad->user->profile_pic,'https') !== false) -->
-                <!--                <img src="{{$ad->user->profile_pic}}">-->
-                <!--                @else-->
-                <!--                <img src="{{asset('storage').'/'.$ad->user->profile_pic}}">-->
-                <!--                @endif-->
-                <!--            @else-->
-                <!--                <img src="{{asset('front/images/avatar/user.png')}}" alt="avatar">-->
-                <!--            @endif-->
-                        
-                <!--        </a>-->
-                <!--        <div class="author-meta">-->
-                <!--            <h4> {{$ad->author_name}}</h4>-->
-                <!--            <strong><h5><i class="fas fa-calendar"></i> Member Since:</strong> {{date('F d, Y', strtotime($ad->user->created_at))}}</h5>-->
-                            <!--<strong><h5><i class="fas fa-envelope"></i> Email: </strong>{{$ad->author_email}}</h5>-->
-                <!--            <strong><h5>Products / Logistics: </strong>{{$adCount}}</h5>-->
-                <!--            <strong><h5><i class="fas fa-map"></i> Address: </strong>{{$ad->author_address}}</h5>-->
-                <!--        </div>-->
-                       
-                <!--    </div>-->
-                <!--</div>-->
-
-                <!--@if((Auth::guard('member')->user() =='') || Auth::guard('member')->user()->id !=  $ad->user_id)-->
-                <!-- AUTHOR CARD -->
-                <!--<div class="common-card">-->
-                <!--    <div class="card-header">-->
-                <!--        <h5 class="card-title">Ad Enquiry</h5>-->
-                <!--    </div>-->
-                <!--    <div class="ad-details-author">-->
-                <!--    <form class="review-form" action="{{ route('save-ad-enquiry') }}" method="post" enctype="multipart/form-data">-->
-                <!--        @csrf-->
-                        
-                            
-                <!--            <div class="form-group">-->
-                <!--            <input type="hidden" class="form-control" name="en_ad_id" value="{{$ad->id}}" required>-->
-                <!--                <input type="text" class="form-control" name="e_name" placeholder="Name" required>-->
-                <!--            </div>-->
-                <!--            <div class="form-group">-->
-                <!--                <input type="email" class="form-control" name="e_email" placeholder="Email" required>-->
-                <!--            </div>-->
-                                
-                            
-                <!--            <div class="form-group">-->
-                <!--                <textarea class="form-control" name="message" placeholder="Describe" required></textarea>-->
-                <!--            </div>-->
-                <!--            <button type="submit" class="btn btn-inline review-submit">-->
-                <!--                <i class="fas fa-tint"></i>-->
-                <!--                <span>post your enquiry</span>-->
-                <!--            </button>-->
-                <!--        </form>-->
-                       
-                <!--    </div>-->
-                <!--</div>-->
-                <!--@endif-->
+              
+                             
                 @if((Auth::guard('member')->user() =='') || Auth::guard('member')->user()->id !=  $ad->user_id)
                 <!-- AUTHOR CARD -->
                 <div class="common-card">
@@ -418,29 +274,7 @@
                        <button class="btn " style="background:#48a571; color:#fff;"><i class="fa-solid fa-copy"></i> Copy Link</button>
                         <button class="btn btn-primery" style="background:blue; color:#fff;"><i class="fa-solid fa-share-nodes"></i> Share</button>
                    </div>
-                    <!--<div class="ad-details-slider-group">-->
-                    <!--    <div class="ad-details-slider slider-arrow">-->
-                    <!--        @if(isset($ad->adImage) && count($ad->adImage)>0)-->
-                    <!--        @foreach($ad->adImage as  $images)-->
-                    <!--        <div class="slideimg"><img src="{{ asset('storage').'/'.$images->image}}" alt="details"></div>-->
-                    <!--        @endforeach-->
-                    <!--        @else-->
-                    <!--        <div><img src="{{asset('front/images/no-image.jpeg')}}" alt="product"></div>-->
-                    <!--        @endif-->
-                            
-                    <!--    </div>-->
-                        
-                    <!--</div>-->
-                    
-                    <!--<div class="ad-thumb-slider">-->
-                    <!--        @if(isset($ad->adImage) && count($ad->adImage)>0)-->
-                    <!--        @foreach($ad->adImage as  $images)-->
-                    <!--        <div class="slidethumbimg"><img src="{{ asset('storage').'/'.$images->image}}" alt="details"></div>-->
-                    <!--        @endforeach-->
-                    <!--        @else-->
-                    <!--        <div><img src="{{asset('front/images/no-image.jpeg')}}" alt="product"></div>-->
-                    <!--        @endif-->
-                    <!--</div>-->
+                  
                     <div class="col-12 d-flex gap-3 mt-4">
                      
                         <h5 class="col-3 card-title" style="color:green;">Specification</h5>
@@ -545,48 +379,7 @@
                     </div>
                        @endif
                 </div>
-                <!-- DESCRIPTION CARD -->
-                <!--<div class="common-card">-->
-                <!--    <div class="card-header">-->
-                <!--        <h5 class="card-title">description</h5>-->
-                <!--    </div>-->
-                <!--    <p class="ad-details-desc mt-4">{{$ad->description}}</p>-->
-                <!--</div>-->
-                
-                <!-- General Info CARD -->
-                <!--@if(App\Http\Controllers\FrontController::getfeature($ad->id, 'general_information') !='')-->
-                <!--<div class="common-card">-->
-                <!--    <div class="card-header">-->
-                <!--        <h5 class="card-title">General Information</h5>-->
-                <!--    </div>-->
-                <!--    <p class="ad-details-desc mt-4">{{App\Http\Controllers\FrontController::getfeature($ad->id, 'general_information')}}</p>-->
-                <!--</div>-->
-                <!--@endif-->
-                
-                <!-- Other Info CARD -->
-                <!--@if(App\Http\Controllers\FrontController::getfeature($ad->id, 'other_information') !='')-->
-                <!--<div class="common-card">-->
-                <!--    <div class="card-header">-->
-                <!--        <h5 class="card-title">Other Information</h5>-->
-                <!--    </div>-->
-                <!--    <p class="ad-details-desc mt-4">{{App\Http\Controllers\FrontController::getfeature($ad->id, 'other_information')}}</p>-->
-                <!--</div>-->
-                <!--@endif-->
-                
-                <!--@if(isset($ad->adSpecification) && count($ad->adSpecification) >0)-->
-                <!--<div class="common-card">-->
-                <!--    <div class="card-header">-->
-                <!--        <h5 class="card-title">Specification</h5>-->
-                <!--    </div>-->
-                <!--    @foreach($ad->adSpecification as $speciality )-->
-                <!--    <p class="ad-details-desc mt-4"><i class="fa fa-arrow-right"></i> &nbsp;{{$speciality->specification}}</p>-->
-                <!--    @endforeach-->
-                <!--</div>-->
-                <!-- @endif-->
-                        
-
-
-
+            
 
                 <!-- REVIEWS CARD -->
                 <div class="common-card" id="review">
@@ -699,6 +492,9 @@
 
                                         @endif
                             </div>
+                            <div class="form-group">
+                            <div class="g-recaptcha mb-2" data-sitekey={{ config('services.recaptcha.key') }}></div>
+                        </div>
                             <div class="price-btn">
                             <button type="submit" class="btn btn-inline ad-review-submit">
                                 <i class="fas fa-tint"></i>
@@ -824,7 +620,10 @@
 @endsection
 @push('after-script')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
-
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <script src="
+    https://cdn.jsdelivr.net/npm/sweetalert2@11.11.0/dist/sweetalert2.all.min.js
+    "></script>
 <script>
 function isNumber(evt) {
                 evt = (evt) ? evt : window.event;
@@ -959,26 +758,108 @@ $('.select2[multiple]').select2({
 
 </script>
 <script type="text/javascript">
-
-    $('.ad-review-form').submit(function(event) {
-
-        event.preventDefault();
-
     
+$('.ad-review-form').submit(function(event) {
+    event.preventDefault(); // prevent default form
 
-        grecaptcha.ready(function() {
-
-            grecaptcha.execute("{{ env('RECAPTCHA_SITE_KEY') }}", {action: 'subscribe_newsletter'}).then(function(token) {
-
-                $('.ad-review-form').prepend('<input type="hidden" name="g-recaptcha-response" value="' + token + '">');
-
-                $('.ad-review-form').unbind('submit').submit();
-
-            });;
-
+    var recaptchaResponse = grecaptcha.getResponse();
+    if (recaptchaResponse.length === 0) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Captcha Required',
+            text: 'Please complete the reCAPTCHA before submitting the form.'
         });
+        return false;
+    }
 
+    var formData = $(this).serialize();
+
+    $.ajax({
+        url: $(this).attr('action'),
+        type: 'POST',
+        data: formData,
+        success: function(data) {
+            if(data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: data.message,
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(() => {
+                    location.reload(); // reload page to show review
+                });
+            } else {
+                if(data.redirect) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Login Required',
+                        text: data.message,
+                        confirmButtonText: 'Login'
+                    }).then(() => {
+                        window.location.href = data.redirect; // redirect to login
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message,
+                    });
+                }
+            }
+        },
+        error: function(xhr) {
+            let errors = xhr.responseJSON.errors;
+            let errMsg = Object.values(errors).flat().join("\n");
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                html: errMsg.replace(/\n/g, '<br>'),
+            });
+        }
     });
+});
+
+
+$(document).on('click', '.btn:contains("Copy Link")', function() {
+    const dummy = document.createElement('input');
+    const url = window.location.href;
+    document.body.appendChild(dummy);
+    dummy.value = url;
+    dummy.select();
+    document.execCommand('copy');
+    document.body.removeChild(dummy);
+
+    Swal.fire({
+        icon: 'success',
+        title: 'Copied!',
+        text: 'Page link copied to clipboard.',
+        timer: 1500,
+        showConfirmButton: false
+    });
+});
+
+
+$(document).on('click', '.btn:contains("Share")', function() {
+    const url = window.location.href;
+    const title = document.title;
+
+    if (navigator.share) {
+        navigator.share({
+            title: title,
+            url: url
+        }).then(() => {
+            console.log('Thanks for sharing!');
+        }).catch(console.error);
+    } else {
+        Swal.fire({
+            icon: 'info',
+            title: 'Share Link',
+            html: `<input type="text" value="${url}" style="width:100%" readonly>`,
+            confirmButtonText: 'OK'
+        });
+    }
+});
 
 </script>
 @endpush

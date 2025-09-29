@@ -167,9 +167,11 @@ class MemberAuthController extends Controller
                         'token' => $token
                     ]);
                     $mailData = ['token' => $token];
-                    $mailContent = Mail::to($request->email)->send(new EmailVerificationEmail($mailData));
+                    Mail::to($request->email)->send(new EmailVerificationEmail($mailData));
+
                     return redirect()->route('user.login')
-                        ->withErrors('Your email has not been verified yet, Verification Email sent, Please check your email in inbox, spam and junk folder.');
+                        ->with('error', 'Your email has not been verified yet. Verification email sent. Please check your inbox, spam, or junk folder. Sometimes it may take up to 2-3 minutes.')
+                        ->with('resend_email', $request->email); // pass email for modal
                 } else if ($member->status != 'Active') {
                     return redirect()->route('user.login')
                         ->withErrors('Your account has been blocked please contact to Admin.');
@@ -202,6 +204,27 @@ class MemberAuthController extends Controller
 
     }
 
+
+    public function resendVerification(Request $request)
+    {
+        $request->validate(['email' => 'required|email|exists:members,email']);
+
+        $member = Member::where('email', $request->email)->first();
+
+        if ($member->email_verified_at) {
+            return back()->with('success', 'Your email is already verified.');
+        }
+
+        $token = Str::random(64);
+        MemberVerify::create([
+            'member_id' => $member->id,
+            'token' => $token
+        ]);
+
+        Mail::to($request->email)->send(new EmailVerificationEmail(['token' => $token]));
+
+        return back()->with('success', 'Verification link has been resent! Please check your email.');
+    }
 
     public function register(Request $request)
     {
@@ -1508,7 +1531,16 @@ class MemberAuthController extends Controller
     public function buySubscription()
     {
         if (Auth::guard('member')->check()) {
+            $user = Auth::guard('member')->user();
+
             $data['subscriptions'] = Subscription::where('status', 1)->orderBy('offer_price', 'asc')->get();
+
+            foreach ($data['subscriptions'] as $subscription) {
+                if ($subscription->offer_price == 0) {
+                    $subscription->is_free_available = $user->hasFreeAdsLeft();
+                }
+            }
+            // dd($data['subscriptions']->toArray());
             return view('front.buy-subscription', $data);
         } else {
             return redirect()->route('user.login')

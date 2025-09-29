@@ -382,7 +382,7 @@ Welcome to Afar Logistic & Trade Marketing | Afar Region | Ethiopia
                             <p>({{isset($pcategory->ads) && $pcategory->ads !='' ? $pcategory->ads->where('status', 'Published')->count() : 0}})</p>
                         </a>
                     </div>
-                    <ul class="category-list">
+                    <!-- <ul class="category-list">
                         @if(isset($pcategory->subcategory) && count($pcategory->subcategory)>0)
                         @foreach($pcategory->subcategory as $subcat)
                         @php
@@ -391,7 +391,7 @@ Welcome to Afar Logistic & Trade Marketing | Afar Region | Ethiopia
                         <li><a href="{{route('sub-details', ['subcategoryname'=>$slugName, 'id'=>base64_encode($subcat->id)])}}"><h6>{{$subcat->name}}</h6><p>({{isset($subcat->ads) && $subcat->ads !='' ? $subcat->ads->where('status', 'Published')->count() : 0}})</p></a></li>
                         @endforeach
                         @endif
-                    </ul>
+                    </ul> -->
                 </div>
             </div>
             @endforeach

@@ -89,30 +89,33 @@
 @endsection
 @push('after-script')
 <script>
+    // Laravel will dump PHP array into JS array
+    let usedSubcategories = @json($usedSubcategories);
+
     $(document).on('change', '#category_id', function(event) {
         $('#subcategory_id').html("");
         let category_id = $(this).val();
+
         $.ajax({
-            url: `{{ URL::to('fetch-subcategory-options/${category_id}') }}`,
+            url: `{{ url('fetch-subcategory-options') }}/${category_id}`,
             type: 'GET',
             dataType: 'json',
             success: function(result) {
                 if (result.success) {
-                    $('#subcategory_id').append(result.html);
-                    
-                    if(result.brands==1){
-                        $('#branddetail').show();
-                        $('#brands').val('brands');
-                    }
-                    else{
-                        $('#branddetail').hide();
-                        $('#brands').val('');
-                    }
-                } else {
-                    //toastr.error('error encountered ' + result.msgText);
+                    // Make jQuery object from returned HTML
+                    let $options = $(result.html);
+
+                    // Filter out already used subcategories
+                    $options = $options.filter(function() {
+                        return !usedSubcategories.includes(parseInt(this.value));
+                    });
+
+                    // Append remaining
+                    $('#subcategory_id').append($options);
                 }
-            },
+            }
         });
     });
 </script>
+
 @endpush

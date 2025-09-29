@@ -100,6 +100,16 @@ class FrontController extends Controller
                 $query->where('approve', 1); // Fetch comments where status is 1
             }
         ])->where('slug', $slug)->first();
+        // Previous blog (created before current blog)
+        $data['previous'] = Blogs::where('id', '<', $data['blog']->id)
+            ->orderBy('id', 'desc')
+            ->first();
+
+        // Next blog (created after current blog)
+        $data['next'] = Blogs::where('id', '>', $data['blog']->id)
+            ->orderBy('id', 'asc')
+            ->first();
+            
         $data['blogs'] = Blogs::where('slug', '!=', $slug)->get();
         // print_r($data['blog']->toarray()); die;
         return view('front.blog-details', $data);
@@ -337,69 +347,63 @@ class FrontController extends Controller
         $data['ads'] = Ad::with('AdImage')->where('delete_status', '0')->where('status', 'Published')->type($type)->search($min, $max)->SearchData($search)->paginate($perPage)->withQueryString();
         return redirect()->route('list-all-ads', ['search' => $search]);
     }
+
     public function saveadRreview(Request $request)
     {
+        $request->validate([
+            're_name' => 'required',
+            're_email' => 'required|email',
+            're_mobile' => 'required|digits:10|numeric',
+            'quote.*' => 'required',
+            'ratings' => 'required',
+            'review' => 'required',
+            'g-recaptcha-response' => 'required'
+        ], [
+            're_name.required' => 'Name field is required!',
+            're_email.required' => 'Email field is required!',
+            're_mobile.required' => 'The mobile field is required!',
+            're_mobile.digits' => 'The mobile field must be 10 digits',
+            're_mobile.numeric' => 'The mobile field must be a number!',
+            'quote.required' => 'The rate for field is required!',
+        ]);
 
-        $request->validate(
-            [
-
-                're_name' => 'required',
-                're_email' => 'required|email',
-                're_mobile' => 'required|digits:10|numeric',
-                'quote.*' => 'required',
-                'ratings' => 'required',
-                'review' => 'required',
-                'g-recaptcha-response' => ['required', new ReCaptcha]
-
-            ],
-            [
-                're_name.required' => 'Name field is required!',
-                're_email.required' => 'Email field is required!',
-                're_mobile.required' => 'The mobile field is required!',
-                're_mobile.digits' => 'The mobile field must be 10 digits',
-                're_mobile.numeric' => 'The mobile field must be a number!',
-                'quote.required' => 'The rate for field is required!',
-
-            ]
-        );
         if (Auth::guard('member')->check()) {
             $member_id = Auth::guard('member')->user()->id;
 
-            $existReview = Review::where('member_id', $member_id)->where('ad_id', $request->ad_id)->first();
-            $ad = Ad::findOrFail($request->ad_id);
-            if (!isset($existReview) && empty($existReview)) {
-                if (!empty($ad)) {
-                    $ad->total_review = $ad->total_review + 1;
-                    $ad->save();
-                    $review = new Review();
-                    $review->member_id = $member_id;
-                    $review->ad_id = $request->ad_id;
-                    $review->name = $request->re_name;
-                    $review->email = $request->re_email;
-                    $review->mobile = $request->re_mobile;
-                    $review->quote = implode(",", $request->quote) ?? "";
-                    $review->rating = $request->ratings;
-                    $review->review = $request->review;
-                    $review->save();
+            $existReview = Review::where('member_id', $member_id)
+                ->where('ad_id', $request->ad_id)->first();
 
-                    $tempReview = DB::table('ad_reviews_temp')->where('ad_id', $request->ad_id)->where('email', $request->re_email)->first();
+            $ad = Ad::find($request->ad_id);
 
-                    if (isset($tempReview) && !empty($tempReview)) {
-                        DB::table('ad_reviews_temp')->where('ad_id', $request->ad_id)->where('email', $request->re_email)->delete();
-                    }
-
-                    return redirect()->route('ad-details', [base64_encode($ad->id), $ad->slug])
-                        ->withSuccess('Review save successfully.');
-                } else {
-                    return redirect()->route('list-all-ads')
-                        ->withErrors('Ad not found');
-                }
-            } else {
-                return redirect()->route('ad-details', [base64_encode($ad->id), $ad->slug])
-                    ->withErrors('Review already exists ');
+            if (!$ad) {
+                return response()->json(['success' => false, 'message' => 'Ad not found']);
             }
-        } else {
 
+            if ($existReview) {
+                return response()->json(['success' => false, 'message' => 'Review already exists']);
+            }
+
+            // Save review
+            $ad->increment('total_review');
+
+            $review = new Review();
+            $review->member_id = $member_id;
+            $review->ad_id = $request->ad_id;
+            $review->name = $request->re_name;
+            $review->email = $request->re_email;
+            $review->mobile = $request->re_mobile;
+            $review->quote = implode(",", $request->quote) ?? "";
+            $review->rating = $request->ratings;
+            $review->review = $request->review;
+            $review->save();
+
+            DB::table('ad_reviews_temp')
+                ->where('ad_id', $request->ad_id)
+                ->where('email', $request->re_email)
+                ->delete();
+
+            return response()->json(['success' => true, 'message' => 'Review saved successfully']);
+        } else {
             DB::table('ad_reviews_temp')->insert([
                 'ad_id' => $request->ad_id,
                 'name' => $request->re_name,
@@ -409,11 +413,15 @@ class FrontController extends Controller
                 'rating' => $request->ratings,
                 'review' => $request->review,
             ]);
-            return redirect()->route('user.login')
-                ->withErrors(' Register user only can Rate & Review, please signup/login to continue');
 
+            return response()->json([
+                'success' => false,
+                'redirect' => route('user.login'),
+                'message' => 'Register user only can Rate & Review, please signup/login to continue'
+            ]);
         }
     }
+
     public function saveadEnquiry(Request $request)
     {
 

@@ -35,16 +35,12 @@
                                     <thead>
                                         <tr>
                                             <th>Date & Time</th>
-                                            <th>User Name </th>
-                                            <th>Email Id</th>
-                                            <th>Mobile Number</th>
+                                            <th>User Info </th>
                                             <th>Subscription Name</th>
                                             <th>Expiry Date</th>
                                             <th>Payment Method</th>
-                                            <th>Paid Amount(ETB)</th>
-                                            <th>Total Ads</th>
-                                            <th>Used Ads</th>
-                                            <th>Unused</th>
+                                            <th>Paid Amount(INR)</th>
+                                            <th>Ads Info</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -53,10 +49,32 @@
                                         @foreach($usersubscriptions as $key => $subscription)
                                             @if(isset($subscription->customers) && !empty($subscription->customers))
                                                 <tr>
-                                                    <th scope="row">{{ $subscription->created_at }}</th>
-                                                    <td>{{$subscription->customers->full_name ?? ''}}</td>
-                                                    <td>{{$subscription->customers->email ?? ''}}</td>
-                                                    <td>{{$subscription->customers->mobile ?? ''}}</td>
+                                                    <th scope="row">
+                                                        {{ $subscription->created_at->format('Y-m-d') }}<br>
+                                                        {{ $subscription->created_at->format('H:i:s') }}
+                                                    </th>
+
+                                                    <td>
+                                                        {{ $subscription->customers->full_name ?? '' }}<br>
+
+                                                        {{-- Email --}}
+                                                        {{ $subscription->customers->email ?? '' }}
+                                                        @if(!empty($subscription->customers->email_verified_at))
+                                                            <span class="text-success">✔</span>
+                                                        @else
+                                                            <span class="text-danger">✘</span>
+                                                        @endif
+                                                        <br>
+
+                                                        {{-- Mobile --}}
+                                                        {{ $subscription->customers->mobile ?? '' }}
+                                                        @if(!empty($subscription->customers->mobile_verified_at))
+                                                            <span class="text-success">✔</span>
+                                                        @else
+                                                            <span class="text-danger">✘</span>
+                                                        @endif
+                                                    </td>
+
 
                                                     <td>{{$subscription->subscriptions->name ?? ''}}</td>
                                                     <td>{{$subscription->subscription_expiry ?? ''}}</td>
@@ -64,9 +82,11 @@
                                                     <td>{{$subscription->payment_method ?? ''}}</td>
                                                     <td>{{$subscription->paid_amount ?? ''}}</td>
 
-                                                    <td>{{$subscription->subscriptions->no_of_ads ?? ''}}</td>
-                                                    <td>{{$subscription->used_ads ?? ''}}</td>
-                                                    <td>{{$subscription->remaining_ads ?? ''}}</td>
+                                                    <td>
+                                                        <span>Total: </span>{{$subscription->subscriptions->no_of_ads ?? ''}}<br>
+                                                        <span>Used: </span>{{$subscription->used_ads ?? ''}}<br>
+                                                        <span>Unused: </span>{{$subscription->remaining_ads ?? ''}}
+                                                    </td>
                                                     <td>
                                                         @if($subscription->payment_status == 'Completed')
                                                             <span class="badge badge-success">Approved</span>

@@ -139,7 +139,7 @@ Route::controller(MemberAuthController::class)->group(function () {
     Route::post('reset-password', 'submitResetPasswordForm')->name('reset.password.post');
     Route::post('user/send-otp', 'sendUSerOtp')->name('senduserotp');
     Route::post('user/verify-otp', 'verifyUsermobilenumber')->name('verifyusermobilenumber');
-
+    Route::post('/resend-verification', 'resendVerification')->name('verification.resend');
 
     Route::get('user/my-wallet', 'myWallet')->name('user.my-wallet');
     Route::get('user/thankyou', 'myWallet')->name('thankyou');

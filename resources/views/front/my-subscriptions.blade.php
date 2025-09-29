@@ -72,13 +72,13 @@
                                     <th>Package</th>
                                     <th>Order</th>
                                     <th>Payment Status</th>
-                                    <th>Paid Amount(ETB)</th>
+                                    <th>Paid Amount(INR)</th>
                                     <th>Transaction Id</th>
-                                    <th>MRP(ETB)</th>
-                                    <th>Discount(ETB)</th>
-                                    <th>Offer Price(ETB)</th>
-                                    <th>GST Amount(ETB)</th>
-                                    <th>Wallet Used Amount(ETB)</th>
+                                    <th>MRP(INR)</th>
+                                    <th>Discount(INR)</th>
+                                    <th>Offer Price(INR)</th>
+                                    <th>GST Amount(INR)</th>
+                                    <th>Wallet Used Amount(INR)</th>
                                     <th>Used Ads</th>
                                     <th>Remaining Ads</th>
                                     <th>Subscription Expiry</th>

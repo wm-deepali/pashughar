@@ -45,7 +45,7 @@ else{
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" value="{{$categ->id}}"  id="flexCheckDefault" name="subcatid[]">
                                 <label class="form-check-label" for="flexCheckDefault">
-                                    {{$categ->name}}
+                                    {{$categ->name}}<span> ({{isset($categ->ads) && $categ->ads != '' ? $categ->ads->where('status', 'Published')->count() : 0}})</span>
                                 </label>
                             </div>
                             @endforeach

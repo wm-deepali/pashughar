@@ -108,6 +108,17 @@
                                                                 </div>
 
                                                                 <div class="form-group">
+                                                                    <label for="tags_{{$blog->id}}">Tags</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="tags_{{$blog->id}}" name="tags"
+                                                                        placeholder="Enter tags separated by comma"
+                                                                        value="{{ $blog->tags }}">
+                                                                    <small class="form-text text-muted">Enter multiple tags
+                                                                        separated by commas</small>
+                                                                </div>
+
+
+                                                                <div class="form-group">
                                                                     <label for="short_description">Short Description</label>
                                                                     <input type="text" class="form-control"
                                                                         id="short_description" name="short_description"
@@ -236,6 +247,13 @@
                                 value="{{ old('slug') }}" required>
                             <small class="form-text text-muted">This will be used in the URL (e.g. /my-blog-title)</small>
                         </div>
+                        <div class="form-group">
+                            <label for="tags">Tags</label>
+                            <input type="text" class="form-control" id="tags" name="tags"
+                                placeholder="Enter tags separated by comma" value="{{ old('tags') }}">
+                            <small class="form-text text-muted">Enter multiple tags separated by commas (e.g. Cattle,
+                                Livestock, Trade)</small>
+                        </div>
 
                         <div class="form-group">
                             <label for="short_description">Short Description</label>
@@ -344,7 +362,7 @@
                 }
             @endforeach
 
-            });
+                    });
     </script>
 
     <script>

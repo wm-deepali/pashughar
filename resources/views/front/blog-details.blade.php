@@ -20,8 +20,8 @@
     @include('front.layouts.includes.single-banner-price')
 
     <!--=====================================
-                Price PART START
-    =======================================-->
+                            Price PART START
+                =======================================-->
     <section class="blog-details-part">
         <div class="container">
             <div class="row">
@@ -82,20 +82,32 @@
                             <li>
                                 <h4>Tags:</h4>
                             </li>
-                            <li><a href="#">Afar Logistics</a></li>
-                            <li><a href="#">Live Cattle Stocks</a></li>
-                            <li><a href="#">Free Listing</a></li>
+                            @if($blog->tags)
+                                @foreach(explode(',', $blog->tags) as $tag)
+                                    <li><a href="#">{{ $tag }}</a></li>
+                                @endforeach
+                            @endif
                         </ul>
+
+                        @php
+                            $currentUrl = urlencode(request()->fullUrl());
+                            $title = urlencode($blog->title);
+                        @endphp
+
                         <ul class="share-list">
                             <li>
                                 <h4>Share:</h4>
                             </li>
-                            <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-                            <li><a href="#"><i class="fab fa-twitter"></i></a></li>
-                            <li><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
-                            <li><a href="#"><i class="fab fa-behance"></i></a></li>
-                            <li><a href="#"><i class="fab fa-pinterest-p"></i></a></li>
+                            <li><a href="https://www.facebook.com/sharer/sharer.php?u={{ $currentUrl }}" target="_blank"><i
+                                        class="fab fa-facebook-f"></i></a></li>
+                            <li><a href="https://twitter.com/intent/tweet?url={{ $currentUrl }}&text={{ $title }}"
+                                    target="_blank"><i class="fab fa-twitter"></i></a></li>
+                            <li><a href="https://www.linkedin.com/shareArticle?mini=true&url={{ $currentUrl }}&title={{ $title }}"
+                                    target="_blank"><i class="fab fa-linkedin-in"></i></a></li>
+                            <li><a href="https://www.pinterest.com/pin/create/button/?url={{ $currentUrl }}&description={{ $title }}"
+                                    target="_blank"><i class="fab fa-pinterest-p"></i></a></li>
                         </ul>
+
                     </div>
                     <div class="blog-details-author">
                         <div class="author-intro">
@@ -154,14 +166,19 @@
                         @endforeach
                         <div class="col-lg-12">
                             <div class="blog-details-navigate">
-                                <a href="#">
-                                    <i class="fas fa-long-arrow-alt-left"></i>
-                                    <span>Previous Post</span>
-                                </a>
-                                <a href="#">
-                                    <span>Next Post</span>
-                                    <i class="fas fa-long-arrow-alt-right"></i>
-                                </a>
+                                @if($previous)
+                                    <a href="{{ route('blogs.show', $previous->slug) }}">
+                                        <i class="fas fa-long-arrow-alt-left"></i>
+                                        <span>Previous Post</span>
+                                    </a>
+                                @endif
+
+                                @if($next)
+                                    <a href="{{ route('blogs.show', $next->slug) }}">
+                                        <span>Next Post</span>
+                                        <i class="fas fa-long-arrow-alt-right"></i>
+                                    </a>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -170,49 +187,6 @@
                             <h3>Comments ({{count($blog->comments)}})</h3>
                         </div>
                         <ul class="comment-list">
-                            {{-- <li>
-                                <div class="comment">
-                                    <div class="comment-author">
-                                        <a href="#"><img src="{{asset('front/images/afarlogo.png')}}" alt="comment"></a>
-                                        <button class="btn btn-inline">
-                                            <i class="fas fa-reply-all"></i>
-                                            <span>reply</span>
-                                        </button>
-                                    </div>
-                                    <div class="comment-content">
-                                        <h4>
-                                            <a href="#">MironMahmud</a>
-                                            <span>02 February 2020</span>
-                                        </h4>
-                                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero ab aperiam corrupti
-                                            maiores animi nisi ratione maxime quae in doloremque corporis tempore earum ut
-                                            voluptas exercitationem.</p>
-                                    </div>
-                                </div>
-                                <ul>
-                                    <li>
-                                        <div class="comment">
-                                            <div class="comment-author">
-                                                <a href="#"><img src="{{asset('front/images/afarlogo.png')}}"
-                                                        alt="comment"></a>
-                                                <button class="btn btn-inline">
-                                                    <i class="fas fa-reply-all"></i>
-                                                    <span>reply</span>
-                                                </button>
-                                            </div>
-                                            <div class="comment-content">
-                                                <h4>
-                                                    <a href="#">LabonnoKhan</a>
-                                                    <span>02 February 2020</span>
-                                                </h4>
-                                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero ab aperiam
-                                                    corrupti maiores animi nisi ratione maxime quae in doloremque corporis
-                                                    tempore earum ut voluptas exercitationem.</p>
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </li> --}}
 
                             @foreach($blog->comments as $key => $comment)
                                 <li class="comment-item" style="{{ $key >= 5 ? 'display: none;' : '' }}">
@@ -286,8 +260,8 @@
     </section>
 
     <!--=====================================
-                    PRICE PART END
-    =======================================-->
+                                PRICE PART END
+                =======================================-->
 @endsection
 @push('after-script')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/10.10.4/sweetalert2.min.css">

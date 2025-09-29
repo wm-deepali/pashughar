@@ -55,8 +55,8 @@
         }
     </style>
     <!--=====================================
-                    ADPOST PART START
-        =======================================-->
+                                ADPOST PART START
+                    =======================================-->
     <section class="adpost-part">
         <div class="container">
             <div class="row">
@@ -252,8 +252,8 @@
         </div>
     </section>
     <!--=====================================
-                    ADPOST PART END
-        =======================================-->
+                                ADPOST PART END
+                    =======================================-->
 @endsection
 @push('after-script')
     <script>
@@ -341,18 +341,11 @@
                 dataType: 'json',
                 success: function (result) {
                     if (result.success) {
-                        if (result.subcategories && result.subcategories.length > 0) {
-                            // Populate options
-                            let options = '<option value="">Select Subcategory</option>';
-                            $.each(result.subcategories, function (index, subcat) {
-                                options += `<option value="${subcat.id}">${subcat.name}</option>`;
-                            });
-                            $('#subcategory_id').html(options);
-
-                            // Show wrapper
+                        if (result.html && result.html.length > 0) {
+                            $('#subcategory_id').html('<option value="">-- Select --</option>' + result.html);
                             $('#subcategory_wrapper').show();
                         } else {
-                            // Hide if no subcategories
+                            $('#subcategory_id').html('<option value="">-- Select --</option>');
                             $('#subcategory_wrapper').hide();
                         }
 

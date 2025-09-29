@@ -182,7 +182,7 @@ class UserController extends Controller
     public function orderDetails(string $id)
     {
         //
-        $subscription = SubscriptionHistory::with('subscriptions')->where('id', $id)->first();
+        $subscription = SubscriptionHistory::with('subscriptions', 'customers')->where('id', $id)->first();
         if (isset($subscription) && !empty($subscription)) {
             $orderId = $subscription->order_number;
             $totalAds = Ad::where('plan_id', $orderId)->count();

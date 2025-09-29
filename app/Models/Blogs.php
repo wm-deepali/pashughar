@@ -24,7 +24,8 @@ class Blogs extends Model
         'meta_keyword',
         'meta_description',
         'canonical',
-        'status'
+        'status',
+        'tags'
     ];
 
 

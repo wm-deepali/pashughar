@@ -51,6 +51,7 @@ class BlogController extends Controller
             'title' => 'required|string|max:255',
             'short_description' => 'required',
             'detail_content' => 'required',
+            'tags' => 'nullable|string',
         ]);
 
 
@@ -69,6 +70,7 @@ class BlogController extends Controller
         $blogs = new Blogs();
         $blogs->title = $request->title;
         $blogs->slug = $request->slug ?: \Str::slug($request->title); // generate slug if not provided
+        $blogs->tags = $request->tags; // save tags
         $blogs->short_description = $request->short_description;
         $blogs->detail_content = $request->detail_content;
         $blogs->thumb_image = $thumbImage;
@@ -111,6 +113,7 @@ class BlogController extends Controller
             'short_description' => 'required',
             'detail_content' => 'required',
             'slug' => 'required|string|max:255|unique:blogs,slug,' . $id,
+            'tags' => 'nullable|string',
         ]);
 
         $blogs = Blogs::where('id', $id)->first();
@@ -148,6 +151,7 @@ class BlogController extends Controller
         $blogs->title = $request->title;
         $blogs->short_description = $request->short_description;
         $blogs->slug = $request->slug ?: \Str::slug($request->title); // update slug
+        $blogs->tags = $request->tags; // save tags
         $blogs->detail_content = $request->detail_content;
         $blogs->thumb_image = $thumbImage;
         $blogs->thumb_alt = $request->thumb_alt;
