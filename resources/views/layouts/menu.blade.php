@@ -75,9 +75,13 @@ p{
         <li class="nav-item"><a href="{{ route('comments.index') }}" class="nav-link"><i class="nav-icon fas fa-comment" aria-hidden="true"></i><p>Manage Comments</p></a></li>
         <li class="nav-item"><a href="{{ route('faq.index') }}" class="nav-link"><i class="nav-icon fas fa-question-circle" aria-hidden="true"></i><p>Manage FAQ</p></a></li>
         <li class="nav-item"><a href="{{ route('abouts.index') }}" class="nav-link"><i class="nav-icon fas fa-info-circle" aria-hidden="true"></i><p>Manage About Us</p></a></li>
+        
+        <li class="nav-item"><a href="{{ route('contactus-content.index') }}" class="nav-link"><i class="nav-icon fas fa-info-circle" aria-hidden="true"></i><p>Manage Contact Us Content</p></a></li>
+        
         <li class="nav-item"><a href="{{ route('enquirys.index') }}" class="nav-link"><i class="nav-icon fas fa-question-circle" aria-hidden="true"></i><p>Manage Enquiry</p></a></li>
         <li class="nav-item"><a href="{{ route('teams.index') }}" class="nav-link"><i class="nav-icon fas fa-users" aria-hidden="true"></i><p>Manage Team</p></a></li>
         <li class="nav-item"><a href="{{ route('manage-seo.index') }}" class="nav-link"><i class="nav-icon fas fa-users" aria-hidden="true"></i><p>Manage SEO</p></a></li>
+         <li class="nav-item"><a href="{{ route('sliders.index') }}" class="nav-link"><i class="nav-icon fas fa-users" aria-hidden="true"></i><p>Manage Sliders</p></a></li>
     </ul>
 </li>
 
@@ -202,7 +206,12 @@ p{
         <p>Seller Ads Enquiries</p>
     </a>
 </li>
-
+<li class="nav-item">
+    <a href="{{ route('manage-customer-inquiry') }}" class="nav-link {{ Request::is('manage-customer-inquiry') ? 'active' : '' }}">
+        <i class="fas fa-chart-bar"></i>
+        <p>Customer Enquiries</p>
+    </a>
+</li>
 <li class="nav-item">
     <a href="{{ route('ad-reviews') }}" class="nav-link {{ Request::is('ad-reviews') ? 'active' : '' }}">
         <i class="nav-icon fas fa-users"></i>

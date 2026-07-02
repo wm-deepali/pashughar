@@ -14,6 +14,7 @@ class Faqs extends Model
     protected $fillable = [
        'qustion',
        'answer',
-       'status'
+       'status',
+       'is_show_home'
     ];
 }

@@ -41,6 +41,7 @@
                                         <th>Answer</th>
                                         <th>Create Date</th>
                                         <th>Status</th>
+                                        <th>Is Show On Home Page</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -58,6 +59,9 @@
                                                     <span class="badge badge-danger">In-Active</span>
                                                 @endif
                                             </td>
+                                            
+                                            <td>{{ucfirst($faq->is_show_home)}}</td>
+                                            
                                             <td>
                                                 <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#editFaqModal-{{$faq->id}}"><i class="fas fa-edit"></i></a>
                                                 <form id="delete-country-{{ $faq->id }}" action="{{ route('faq.destroy', $faq->id) }}" method="POST" style="display: none;">
@@ -96,6 +100,14 @@
                                                                 <div class="custom-control custom-switch">
                                                                     <input type="checkbox" class="custom-control-input" id="edit_country_status{{$faq->id}}" name="status" value="1"  {{ $faq->status == 1 ? 'checked' : '' }}>
                                                                     <label class="custom-control-label" for="edit_country_status{{$faq->id}}">Active</label>
+                                                                </div>
+                                                            </div>
+                                                            
+                                        <div class="form-group">
+                                                                <label>Is Show Home Page</label>
+                                                                <div class="custom-control custom-switch">
+                                                                    <input type="checkbox" class="custom-control-input"  id="is_show_home{{$faq->id}}" name="is_show_home" value="yes"  {{ $faq->is_show_home == "yes" ? 'checked' : '' }}>
+                                                                    <label class="custom-control-label" for="is_show_home{{$faq->id}}">Yes</label>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -140,12 +152,18 @@
                         <label for="answer">Answer</label>
                         <textarea name="answer" placeholder="Write post here..." class="w-full border border-gray-400 p-1 bg-white rounded focus:outline-none summernote">{{old('answer')}}</textarea>
                     </div>
-
                     <div class="form-group">
                         <label>Status</label>
                         <div class="custom-control custom-switch">
                             <input type="checkbox" class="custom-control-input" id="status" name="status" value="1" checked>
                             <label class="custom-control-label" for="status">Active</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Is Show Home Page</label>
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="is_show_home" name="is_show_home" value="yes" checked>
+                            <label class="custom-control-label" for="is_show_home">Yes</label>
                         </div>
                     </div>
                 </div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\ContactUs;
 use App\Models\Subscriber;
+use App\Models\CustomerInquiry;
 use Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -31,6 +32,13 @@ class ContactUsController extends Controller
         //
         $data['subscribers'] = Subscriber::all();
         return view('subscriber.index',$data);
+    }
+    
+    public function manageCustomerInquiry()
+    {
+        //
+        $data['enquiries'] = CustomerInquiry::all();
+        return view('contactus.enquiry',$data);
     }
 
 
@@ -90,5 +98,12 @@ class ContactUsController extends Controller
         $user = Subscriber::findOrFail($id);
         $user->delete();
         return redirect()->route('manage-subscribers')->with('success', 'Subscriber deleted successfully!');
+    }
+    public function deleteCustomerInquiry(string $id)
+    {
+        //
+        $user = CustomerInquiry::findOrFail($id);
+        $user->delete();
+        return redirect()->route('manage-customer-inquiry')->with('success', 'Enquiry deleted successfully!');
     }
 }

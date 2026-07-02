@@ -12,7 +12,7 @@
     <meta name="author" content="Welcome to Afar Logistic & Trade Marketing | Afar Region | Ethiopia">
 
     <title>
-        Welcome to Pashugha.com | Livestock Market | India
+        Welcome to Pashughar.com | Livestock Market | India
     </title>
     {!! getCommomPageMetaTag('submit-bulk-stock-request') !!}
 
@@ -117,6 +117,14 @@
         text-decoration: none;
         outline: none !important;
     }
+    
+    @media (max-width: 600px) {
+  .user-form-part{
+      margin-top: 110px;
+  }
+}
+    
+    
 </style>
 
 <body>
@@ -126,7 +134,7 @@
     <section class="user-form-part">
         <div class="user-form-banner">
             <div class="user-form-content">
-                <a href="{{URL::to('/')}}"><img src="{{asset('front/images/afarlogo.png')}}" alt="logo"
+                <a href="{{URL::to('/')}}"><img src="{{asset('front/images/pashugharlogo.png')}}" alt="logo"
                         style="border-radius:3px;"></a>
                 <h1>List your assets <span>Buy what are you needs.</span></h1>
                 <p>Biggest Online Livestock Marketplace in India.</p>
@@ -135,7 +143,7 @@
 
         <div class="user-form-category">
             <div class="user-form-header">
-                <a href="#"><img src="{{asset('front/images/afarlogo.png')}}" alt="logo"></a>
+                <a href="#"><img src="{{asset('front/images/pashugharlogo.png')}}" alt="logo"></a>
                 <a href="{{URL::to('/')}}"><i class="fas fa-arrow-left"></i></a>
             </div>
             <!--<div class="user-form-category-btn">-->

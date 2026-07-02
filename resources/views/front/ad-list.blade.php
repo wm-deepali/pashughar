@@ -38,6 +38,58 @@ else{
     $type ='all';
 }
 @endphp
+
+<style>
+    .custom-select-box {
+    width: 100%;
+    position: relative;
+    margin-bottom:10px;
+}
+
+/* Main Select Box */
+.custom-select-box select {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+/* Custom dropdown arrow */
+.custom-select-box::after {
+    content: "\f078";   /* FontAwesome down arrow */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #555;
+    font-size: 12px;
+}
+
+/* Ensure dropdown list stays inside box */
+.custom-select-box select option {
+    font-size: 14px;
+    padding: 10px;
+    background: #fff;
+    color: #333;
+    word-break: break-word;
+    white-space: normal;  /* Auto wrap text */
+}
+
+
+
+</style>
 <!--=====================================
             AD LIST PART START
 =======================================-->
@@ -51,9 +103,24 @@ else{
                             <h6 class="product-widget-title">Filter by Price</h6>
                             <form action="">
                                 <div class="product-widget-group">
-                                    <input type="text" name="min" placeholder="min - 00" required>
-                                    <input type="text" name="max" placeholder="max - 1B" required>
+                                    <input type="text" name="min" placeholder="min - 00" value="{{ request('min') ?? '' }}" required>
+                                    <input type="text" name="max" value="{{ request('max') ?? '' }}" placeholder="max - 1B" required>
                                 </div>
+<div class="custom-select-box">
+    <select name="category" required>
+        <option value="">Select Category</option>
+        @if(!empty($categories) && count($categories) > 0)
+            @foreach($categories as $category)
+                <option value="{{ $category->name }}" {{ request('category') == $category->name ? 'selected' : '' }}>
+                    {{ $category->name }}
+                </option>
+            @endforeach
+        @else
+            <option value="">No categories found</option>
+        @endif
+    </select>
+</div>
+
                                 <button type="submit" class="product-widget-btn">
                                     <i class="fas fa-search"></i>
                                     <span>search</span>

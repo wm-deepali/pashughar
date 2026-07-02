@@ -144,17 +144,17 @@
                         allowClear: true
                     });
                 });
-                $('#categoriesTable').DataTable({
-                    autoWidth: false,
-                    order: [0, "ASC"],
-                    processing: true,
-                    serverSide: false,
-                    searchDelay: 2000,
-                    paging: true,
-                   "initComplete": function(settings, json){
-                        $('#categoriesTable').wrap('<div class="table-responsive"></div>');
-                    }
-                });
+               $('#categoriesTable').DataTable({
+    autoWidth: false,
+    // order: [0, "DESC"],
+    processing: true,
+    serverSide: false,
+    searchDelay: 2000,
+    paging: true,
+    initComplete: function(settings, json){
+        $('#categoriesTable').wrap('<div class="table-responsive"></div>');
+    }
+});
             } );
         </script>
 

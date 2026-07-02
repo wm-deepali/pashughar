@@ -21,7 +21,8 @@ use App\Http\Controllers\EnquiryController;
 use App\Http\Controllers\ManageEnquiryController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\SeoController;
-
+use App\Http\Controllers\SliderController;
+use App\Http\Controllers\ContactusContentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,11 +50,12 @@ Route::post('save-purchase-enquiry', [FrontController::class, 'savePurchaseEnqui
 
 Route::post('save-ad-review', [FrontController::class, 'saveadRreview'])->name('save-ad-review');
 Route::post('save-ad-enquiry', [FrontController::class, 'saveadEnquiry'])->name('save-ad-enquiry');
-Route::get('contact-us', function () {
-    return view('front.contact');
-})->name('contact-us');
 
 
+
+Route::get('contact-us', [FrontController::class, 'contactuspage'])->name('contact-us');
+
+Route::post('homepage-enquiry-submit', [FrontController::class, 'submithomepageEnquiry'])->name('homepage-enquiry-submit');
 
 Route::get('/linkstorage', function () {
     Artisan::call('storage:link');
@@ -94,7 +96,7 @@ Route::get('submit-bulk-stock-request', [EnquiryController::class, 'bulkEnquiry'
 Route::post('get-cites', [EnquiryController::class, 'getCites'])->name('get-cites');
 Route::post('Add-Enquiry', [EnquiryController::class, 'addEnquiry'])->name('enquiry.add');
 
-Route::get('faqs', [FrontController::class, 'faq'])->name('faqs');
+Route::get('faqs', [FrontController::class, 'faqs'])->name('faqs');
 Route::get('about-us', [FrontController::class, 'about'])->name('about-us');
 Route::post('getAdsBySearch', [FrontController::class, 'getAdsBySearch'])->name('getAdsBySearch');
 
@@ -125,6 +127,9 @@ Route::controller(MemberAuthController::class)->group(function () {
     Route::get("getusername/{id}", 'getusername');
     Route::post('/check-email', 'checkEmail')->name('check-email');
     Route::post('sendOtp', 'sendMobileOTP')->name('mobileVerify');
+
+    Route::post('send-otp-customer', 'sendMobileOTPCustomer')->name('send-otp-customer');
+
     Route::post('verifyOTP', 'verifyOTP')->name('verifyOTP');
     Route::get('account/verify/{token}', 'verifyAccount')->name('user.verify');
     Route::post('user/register', 'register')->name('user.register');
@@ -164,7 +169,7 @@ Route::controller(MemberAuthController::class)->group(function () {
     Route::get('user/my-subscriptions', 'mySubscription')->name('user.my-subscriptions');
     Route::post('free-subscription', 'free_subscription')->name('free-subscription');
     Route::get('user/my-enquiries', 'allPurchaseEnquiry')->name('user.my-enquiries');
-
+    Route::get('/subscription/{id}/subscription-invoice', 'downloadInvoice')->name('subscription-invoice');
     Route::get('user/logout', 'logout')->name('user.logout');
 });
 
@@ -345,6 +350,7 @@ Route::get('/subscription/{id}/invoice', [App\Http\Controllers\UserController::c
 Route::post('transactions/approve-payment/{id}', [App\Http\Controllers\SubscriptionController::class, 'approvepaymentStatus'])->name('transactions.approve-payment');
 Route::post('transactions/reject-payment/{id}', [App\Http\Controllers\SubscriptionController::class, 'rejectpaymentStatus'])->name('transactions.reject-payment');
 Route::resource('manage-ads', 'App\Http\Controllers\AdController');
+Route::post('manage-ads/{id}/extend-expiry', [App\Http\Controllers\AdController::class, 'extendExpiryDate'])->name('manage-ads.extend-expiry');
 Route::get('seller-ads-enquiries/{id?}', [App\Http\Controllers\AdController::class, 'selleradsEnquiries'])->name('seller-ads-enquiries');
 
 Route::get('show-enquiry/{id}', [App\Http\Controllers\AdController::class, 'showEnquiry'])->name('show-enquiry');
@@ -372,6 +378,11 @@ Route::get('manage-subscribers', [App\Http\Controllers\ContactUsController::clas
 
 Route::delete('delete-subscriber/{id}', [App\Http\Controllers\ContactUsController::class, 'deleteSubscriber'])->name('delete-subscriber');
 
+
+Route::get('manage-customer-inquiry', [App\Http\Controllers\ContactUsController::class, 'manageCustomerInquiry'])->name('manage-customer-inquiry');
+
+Route::delete('delete-customer-inquiry/{id}', [App\Http\Controllers\ContactUsController::class, 'deleteCustomerInquiry'])->name('delete-customer-inquiry');
+
 // chandan
 Route::resource('pages', PagesController::class);
 Route::resource('blogs', BlogController::class);
@@ -382,9 +393,11 @@ Route::post('Delete-Image', [PagesController::class, 'deleteEditorImage'])->name
 Route::resource('comments', CommentController::class);
 Route::resource('faq', FaqController::class);
 Route::resource('abouts', AboutController::class);
+Route::resource('contactus-content', ContactusContentController::class);
 Route::resource('enquirys', ManageEnquiryController::class);
 Route::resource('teams', TeamController::class);
 Route::resource('manage-seo', SeoController::class);
+Route::resource('sliders', SliderController::class);
 //
 
 Auth::routes();

@@ -172,12 +172,12 @@ class RazorpayPaymentController extends Controller
 					$user->user_type ='Paid';
 					$user->expiry_date = $subscription_expiry;
 					$user->active_subscription_id=$request->id;
-					$user->wallet_points =$user->wallet_points - ((($offered_price + $total_gst) - ($payment->amount/100))*$adminsetting->point_value);
-					$user->used_wallet_points =$user->used_wallet_points + ((($offered_price + $total_gst) - ($payment->amount/100))*$adminsetting->point_value);
+					$user->wallet_points =$user->wallet_points - ((($offered_price + $total_gst) - ($payment->amount/100))*($adminSetting->point_value > 0 ? $adminSetting->point_value : 1));
+					$user->used_wallet_points =$user->used_wallet_points + ((($offered_price + $total_gst) - ($payment->amount/100))*($adminSetting->point_value > 0 ? $adminSetting->point_value : 1));
 					$user->save();
 					
 					$user = Member::findOrFail($user_id);
-					$wAmount = (($offered_price + $total_gst) - ($payment->amount/100))*$adminsetting->point_value;
+					$wAmount = (($offered_price + $total_gst) - ($payment->amount/100))*($adminSetting->point_value > 0 ? $adminSetting->point_value : 1);
 					if($wAmount > 0)
 					{
 						$WalletAmount = new WalletAmount();

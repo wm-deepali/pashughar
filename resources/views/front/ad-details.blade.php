@@ -134,7 +134,7 @@
     @include('front.layouts.includes.messages')
         <div class="row content-reverse mobile-view-details-card">
             <div class="col-lg-4">
-                 <div class="ad-details-slider-group">
+                 <div class="ad-details-slider-group desktop-img-card">
                         <div class="ad-details-slider slider-arrow">
                             @if(isset($ad->adImage) && count($ad->adImage)>0)
                             @foreach($ad->adImage as  $images)

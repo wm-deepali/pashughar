@@ -55,6 +55,7 @@ class FaqController extends Controller
         $faq->qustion = $request->qustion;
         $faq->answer = $request->answer;
         $faq->status = $request->status ?? 0;
+        $faq->is_show_home = $request->is_show_home ?? "no";
         $faq->save();
 
         return redirect()->route('faq.index')->with('success', 'Faq Added successfully!');
@@ -90,6 +91,7 @@ class FaqController extends Controller
         $faq->qustion = $request->qustion;
         $faq->answer = $request->answer;
         $faq->status = $request->status ?? 0;
+        $faq->is_show_home = $request->is_show_home ?? "no";
         $faq->save();
 
         return redirect()->route('faq.index')->with('success', 'Faq Updated successfully!');
