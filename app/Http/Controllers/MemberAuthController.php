@@ -10,7 +10,6 @@ use App\Models\PurchaseEnquiry;
 use App\Models\BrandCategory;
 use App\Models\CategorySubscription;
 use App\Models\Subscription;
-use App\Models\SubscriptionFeature;
 use App\Models\Category;
 use App\Models\AdImage;
 use App\Models\AdSpecification;
@@ -32,10 +31,7 @@ use App\Models\Ad;
 use App\Models\OTP;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Laravel\Socialite\Facades\Socialite;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Storage;
-use PHPUnit\Framework\Constraint\Count;
 use Session;
 use Validator;
 use Illuminate\Support\Str;
@@ -44,7 +40,7 @@ use Mail;
 use App\Mail\EmailVerificationEmail;
 use App\Mail\MailForgotPassword;
 use Carbon\Carbon;
-
+use App\Models\WhatsappClick;
 
 
 class MemberAuthController extends Controller
@@ -259,6 +255,7 @@ class MemberAuthController extends Controller
         $member->full_name = ucfirst($request->full_name);
         $member->email = $request->email;
         $member->mobile = $request->mobile;
+        $member->whatsapp_number = $request->whatsapp_number;
         $member->referralto = $request->referralto;
         $member->member_id = 'PGHAR' . date('Y') . rand(1000, 9999);
         $member->referral_code = $user_id;
@@ -1465,6 +1462,19 @@ class MemberAuthController extends Controller
                 ->withErrors('Please login to access the dashboard.');
         }
     }
+
+    public function whatsappClick(Request $request)
+    {
+        $request->validate(['ad_id' => 'required|exists:ads,id']);
+
+        $click = new WhatsappClick();
+        $click->ad_id = $request->ad_id;
+        $click->user_id = Auth::guard('member')->id(); // optional
+        $click->ip_address = $request->ip();
+        $click->save();
+
+        return response()->json(['success' => true]);
+    }
     public function myAds()
     {
         if (Auth::guard('member')->check()) {
@@ -1559,6 +1569,7 @@ class MemberAuthController extends Controller
                 'state' => 'required',
                 'country' => 'required',
                 'zipcode' => 'required',
+                'whatsapp_number' => 'nullable|string|max:20',
             ]);
 
             if ($validator->fails()) {
@@ -1575,6 +1586,7 @@ class MemberAuthController extends Controller
             $user->state = $request->state;
             $user->country = 1;
             $user->zipcode = $request->zipcode;
+            $user->whatsapp_number = $request->whatsapp_number ?? null; // Save WhatsApp number
 
             if ($request->hasFile('profile_pic')) {
                 $path = $request->file('profile_pic')->store('members', 'public');// Example storage locatio

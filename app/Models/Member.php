@@ -15,6 +15,7 @@ class Member extends Authenticatable
         'password',
         'otp',
         'mobile',
+        'whatsapp_number',
         'mobile_verified_at',
         'email_verified_at',
         'google_id',

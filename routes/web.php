@@ -177,6 +177,11 @@ Route::controller(ContentController::class)->group(function () {
 });
 
 Route::post('login/admin', [ForgetPasswordController::class, 'loginAdmin'])->name('admin.login');
+
+Route::get('whatsapp-analytics', [\App\Http\Controllers\WhatsappAnalyticsController::class, 'index'])->name('whatsapp-analytics.index');
+Route::get('whatsapp-analytics/history/{adId}/{month}', [\App\Http\Controllers\WhatsappAnalyticsController::class, 'history'])->name('whatsapp-analytics.history');
+Route::get('whatsapp-analytics/day-wise/{adId}/{date}', [\App\Http\Controllers\WhatsappAnalyticsController::class, 'dayWise'])->name('whatsapp-analytics.daywise');
+
 Route::get('admin-settings', [AdminController::class, 'adminSettings'])->name('admin.settings');
 Route::get('master/categories', [AdminController::class, 'categoriesIndex'])->name('master.category.index');
 Route::get('master/categories/add', [AdminController::class, 'categoriesAdd'])->name('master.category.add');
@@ -385,3 +390,4 @@ Route::resource('manage-seo', SeoController::class);
 Auth::routes();
 
 Route::get('/{category_name}/{slug}', [FrontController::class, 'adDetail'])->name('ad-details');
+Route::post('/whatsapp-click', [MemberAuthController::class, 'whatsappClick'])->name('whatsapp.click');

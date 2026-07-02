@@ -287,6 +287,22 @@
                         </div>
 
                         <div class="col-12">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">+91</span>
+                                    </div>
+                                    <input type="tel" onkeypress="return isNumber(event)" autocomplete="off"
+                                        class="form-control" name="whatsapp_number" minlength="10" maxlength="10"
+                                        placeholder="WhatsApp number" id="whatsapp_number">
+                                </div>
+                                <small class="form-alert">Please enter 10-digit Indian WhatsApp number</small>
+                                <span id="whatsapp-feedback" style="color:red; display:none;"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="col-12">
                             <!--input type="tel" name="mobile" id="mob_in" class="form-control" style="display:none;"/-->
                             <!--input type="text" name="isValid" id="is_valid_number" value="1" class="form-control" style="display:none;"/-->
                             <!--div class="form-group mb-2" id="otp_field" style="display: none;">
@@ -356,29 +372,31 @@
         </div>
     </section>
 
-    <div class="modal fade" id="resendVerificationModal" tabindex="-1" aria-labelledby="resendVerificationLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <form method="POST" action="{{ route('verification.resend') }}">
-            @csrf
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="resendVerificationLabel">Resend Verification Email</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+    <div class="modal fade" id="resendVerificationModal" tabindex="-1" aria-labelledby="resendVerificationLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="POST" action="{{ route('verification.resend') }}">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="resendVerificationLabel">Resend Verification Email</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Enter your registered email to resend the verification link:</p>
+                        <input type="email" class="form-control" name="email" value="{{ session('resend_email') }}"
+                            required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Send Link</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    <p>Enter your registered email to resend the verification link:</p>
-                    <input type="email" class="form-control" name="email" value="{{ session('resend_email') }}" required>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Send Link</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
 
 
     <!-- Modal -->
@@ -502,6 +520,18 @@
                         return false;
                     }
 
+                    let whatsapp = $('#whatsapp_number').val();
+                    let whatsappFeedback = $('#whatsapp-feedback');
+
+                    if (whatsapp) { // Only validate if entered
+                        let whatsappPattern = /^[6-9]\d{9}$/;
+                        if (!whatsappPattern.test(whatsapp)) {
+                            event.preventDefault();
+                            whatsappFeedback.text('Invalid Indian WhatsApp number').show();
+                        } else {
+                            whatsappFeedback.hide();
+                        }
+                    }
                 });
 
 

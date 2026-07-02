@@ -183,11 +183,35 @@
                 </div>
              
                             <div class="price-btn mb-4">
-                            <button type="button" data-toggle="modal" data-target="#number"  class="btn " style="height:70px;font-size:22px; font-weight:700;width:100%;text-align:center;">
-                               
-                                <span>Buy or Book Now <i class="fas fa-sign-in-alt"></i></span>
-                            </button>
-                            </div>
+    <button type="button" data-toggle="modal" data-target="#number"  class="btn " style="height:70px;font-size:22px; font-weight:700;width:100%;text-align:center;">
+        <span>Buy or Book Now <i class="fas fa-sign-in-alt"></i></span>
+    </button>
+</div>
+
+@php
+    $adOwner = $ad->user; // Ad owner
+@endphp
+
+@if($adOwner->whatsapp_number ?? false)
+    @if(Auth::guard('member')->check())
+        <div class="price-btn mb-4">
+            <a href="javascript:void(0)" 
+               class="btn whatsapp-contact" 
+               data-whatsapp="{{ $adOwner->whatsapp_number }}" 
+               data-adid="{{ $ad->id }}" 
+               style="...">
+                <i class="fab fa-whatsapp"></i> Contact via WhatsApp
+            </a>
+        </div>
+    @else
+        <div class="price-btn mb-4">
+            <a href="{{ route('user.login') }}" class="btn" style="...">
+                <i class="fab fa-whatsapp"></i> Login to Contact via WhatsApp
+            </a>
+        </div>
+    @endif
+@endif
+
               
                              
                 @if((Auth::guard('member')->user() =='') || Auth::guard('member')->user()->id !=  $ad->user_id)
@@ -860,6 +884,33 @@ $(document).on('click', '.btn:contains("Share")', function() {
         });
     }
 });
+
+$(document).on('click', '.whatsapp-contact', function(e) {
+    e.preventDefault();
+
+    var ad_id = $(this).data('adid');
+    var number = $(this).data('whatsapp');
+    var url = 'https://wa.me/' + number;
+
+    // Save click via AJAX
+    $.ajax({
+        url: '{{ route("whatsapp.click") }}',
+        type: 'POST',
+        data: {
+            _token: '{{ csrf_token() }}',
+            ad_id: ad_id
+        },
+        success: function(res){
+            console.log('WhatsApp click recorded');
+            window.open(url, '_blank'); // then open WhatsApp
+        },
+        error: function(err){
+            console.log(err);
+            window.open(url, '_blank'); // fallback
+        }
+    });
+});
+
 
 </script>
 @endpush

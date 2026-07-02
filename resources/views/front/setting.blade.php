@@ -3,9 +3,11 @@
 @section('title')
 Setting
 @endsection
+
 @push('after-styles')
 <link rel="stylesheet" href="{{asset('front/css/custom/setting.css')}}">
 @endpush
+
 @section('content')
 
 <!--=====================================
@@ -17,7 +19,7 @@ Setting
             <div class="col-lg-12">
                 <div class="account-card alert fade show">
                     <div class="account-title">
-                        <h3>Edit Profile(First complete your profile before purchase subscription)</h3>
+                        <h3>Edit Profile (First complete your profile before purchase subscription)</h3>
                         <!--<button data-dismiss="alert">close</button>-->
                     </div>
                     <form class="setting-form" action="{{ route('save.settings') }}" method="post" enctype="multipart/form-data">
@@ -35,12 +37,21 @@ Setting
                                     <input type="email" class="form-control" name="email" value="{{Auth::guard('member')->user()->email}}" readonly>
                                 </div>
                             </div>
-                            <div class="col-lg-12">
+                            <div class="col-lg-6">
                                 <div class="form-group">
                                     <label class="form-label">Mobile</label>
                                     <input type="text" class="form-control" name="mobile" value="{{Auth::guard('member')->user()->mobile}}" readonly>
                                 </div>
                             </div>
+
+                            <!-- WhatsApp Field Added -->
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="form-label">WhatsApp Number</label>
+                                    <input type="text" class="form-control" name="whatsapp_number" value="{{Auth::guard('member')->user()->whatsapp_number ?? ''}}">
+                                </div>
+                            </div>
+
                             <div class="col-lg-12">
                                 <div class="form-group">
                                     <label class="form-label">Address</label>
@@ -51,11 +62,11 @@ Setting
                                 <div class="form-group">
                                     <label class="form-label">State</label>
                                     <select class="form-control custom-select" name="state" id="state_id" required>
-                                    <option value="">Select State</option>
-                                    @foreach($states as $state)
-                                    <option value="{{$state->id}}" {{Auth::guard('member')->user()->state !='' && Auth::guard('member')->user()->state ==$state->id ? 'selected':'' }}>{{$state->name}}</option>
-                                    @endforeach
-                                </select>
+                                        <option value="">Select State</option>
+                                        @foreach($states as $state)
+                                        <option value="{{$state->id}}" {{Auth::guard('member')->user()->state !='' && Auth::guard('member')->user()->state ==$state->id ? 'selected':'' }}>{{$state->name}}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                             
@@ -98,10 +109,10 @@ Setting
                             </div>
                             <div class="col-lg-12">
                                 <div class="price-btn">
-                                <button type="submit" class="btn btn-inline">
-                                    <i class="fas fa-user-check"></i>
-                                    <span>update profile</span>
-                                </button>
+                                    <button type="submit" class="btn btn-inline">
+                                        <i class="fas fa-user-check"></i>
+                                        <span>update profile</span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -112,22 +123,22 @@ Setting
     </div>
 </div>
 @endsection
+
 @push('after-script')
 <script>
     $(document).on("change", "#state_id", function() {
         $("#city").html("");
-       let state_id = $(this).val();  
-       $.ajax({
-           url: `{{ URL::to('cities-by-state') }}`,
-           type: "post",
-           dataType: "json",
-           data:{"state_id":state_id, "_token": "{{ csrf_token() }}",},
-           success: function(result) {
-               console.log(result);
-               $("#city").html(result);
-              
-           }
-       });
-   });
+        let state_id = $(this).val();  
+        $.ajax({
+            url: `{{ URL::to('cities-by-state') }}`,
+            type: "post",
+            dataType: "json",
+            data:{"state_id":state_id, "_token": "{{ csrf_token() }}",},
+            success: function(result) {
+                console.log(result);
+                $("#city").html(result);
+            }
+        });
+    });
 </script>
 @endpush

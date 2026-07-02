@@ -216,6 +216,13 @@ p{
     </a>
 </li>
 <li class="nav-item">
+    <a href="{{ route('whatsapp-analytics.index') }}" class="nav-link {{ Request::is('whatsapp-analytics*') ? 'active' : '' }}">
+        <i class="nav-icon fas fa-comment-dots"></i>
+        <p>WhatsApp Analytics</p>
+    </a>
+</li>
+
+<li class="nav-item">
     <a href="#" class="nav-link {{ Request::is('transactions*') ? 'active' : '' }}" data-toggle="collapse" data-target="#adminsettings">
         <i class="nav-icon fa-solid fa-gear"></i>
         <!--<i class="nav-icon fas fa-laptop-code"></i>-->
