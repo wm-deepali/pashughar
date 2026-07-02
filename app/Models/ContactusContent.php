@@ -5,16 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Faqs extends Model
+class ContactusContent extends Model
 {
     use HasFactory;
 
-    protected $table = 'faqs';
-
     protected $fillable = [
-       'qustion',
-       'answer',
-       'status',
-       'is_show_home'
+        'mobile',
+        'email',
+        'address_line1',
+        'address_line2',
     ];
 }

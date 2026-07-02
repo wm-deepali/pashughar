@@ -38,8 +38,9 @@ class AdController extends Controller
      */
     public function index()
     {
-        //
+        
         $data['ads'] = Ad::with('AdImage', 'brandCategory', 'category', 'subcategory', 'brand', 'user', 'adFeature')->orderBy('created_at','DESC')->get();
+    
         return view('ads.index',$data);
     }
 

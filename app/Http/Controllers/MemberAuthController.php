@@ -35,6 +35,7 @@ use Illuminate\Support\Facades\Storage;
 use Session;
 use Validator;
 use Illuminate\Support\Str;
+use Barryvdh\DomPDF\Facade\Pdf;
 use DB;
 use Mail;
 use App\Mail\EmailVerificationEmail;
@@ -84,7 +85,8 @@ class MemberAuthController extends Controller
         }
         $otp = rand(100000, 999999);
         $mobile_number = $request->mobile;
-
+        
+        OTP::where('mobile', $mobile_number)->delete();
 
         // Assuming you have a model named OTP for managing OTPs
         OTP::create([
@@ -127,6 +129,66 @@ class MemberAuthController extends Controller
             dd($e->getMessage());
         }
     }
+    
+    public function sendMobileOTPCustomer(Request $request)
+    {
+        // Generate a six-digit OTP
+        $validator = Validator::make($request->all(), [
+            'mobile' => 'required|max:10|min:10',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'error' => $validator->errors()->first('mobile')
+            ], 422);
+        }
+        $otp = rand(100000, 999999);
+        $mobile_number = $request->mobile;
+        
+        OTP::where('mobile', $mobile_number)->delete();
+
+        // Assuming you have a model named OTP for managing OTPs
+        OTP::create([
+            'mobile' => $mobile_number,
+            'otp' => $otp,
+            'expiry' => now()->addMinutes(10),
+        ]);
+
+        $message = "$otp is the One Time Password(OTP) to verify your MOB number at Web Mingo, This OTP is Usable only once and is valid for 10 min,PLS DO NOT SHARE THE OTP WITH ANYONE";
+        $dlt_id = '1307161465983326774';
+        $request_parameter = array(
+            'authkey' => '133780AZGqc6gKWfh63da1812P1',
+            'mobiles' => $mobile_number,
+            'message' => urlencode($message),
+            'sender' => 'WMINGO',
+            'route' => '4',
+            'country' => '91',
+            'unicode' => '1',
+        );
+        $url = "http://sms.webmingo.in/api/sendhttp.php?";
+        foreach ($request_parameter as $key => $val) {
+            $url .= $key . '=' . $val . '&';
+        }
+        $url = $url . 'DLT_TE_ID=' . $dlt_id;
+        $url = rtrim($url, "&");
+        try {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            //get response
+            $output = curl_exec($ch);
+            curl_close($ch);
+            return response()->json([
+                'success' => true,
+                'message' => 'Otp Successfully Send on Your mobile number!',
+            ]);
+            // return true;
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+        }
+    }
+    
     public function verifyOTP(Request $request)
     {
         $mobile = $request->mobile;
@@ -780,7 +842,10 @@ class MemberAuthController extends Controller
                 $data['total_gst'] = $data['subscription']->offer_price * ($adminsetting2->igst) / 100;
             }
             $totalAmount = $data['subscription']->offer_price + $data['total_gst'];
-            $data['wallet'] = $user->wallet_points / $adminsetting->point_value;
+            $data['wallet'] = ($adminsetting->point_value > 0)
+                    ? $user->wallet_points / $adminsetting->point_value
+                    : $user->wallet_points;
+            
             $data['admin_wallet_limit'] = $adminsetting->wallet_limit;
             $data['usable_wallet_amount'] = $data['subscription']->offer_price * ($data['admin_wallet_limit']) / 100;
             $data['remainingWalletBalance'] = max(0, $data['wallet'] - $data['usable_wallet_amount']);
@@ -969,7 +1034,7 @@ class MemberAuthController extends Controller
         $user->expiry_date = $subscription_expiry;
 
         // Wallet points adjustments
-        $walletPointsDeducted = $wallet_used * $adminSetting->point_value;
+        $walletPointsDeducted = $wallet_used * ($adminSetting->point_value > 0 ? $adminSetting->point_value : 1);
         $user->wallet_points -= $walletPointsDeducted;
         $user->used_wallet_points += $walletPointsDeducted;
         $user->save();
@@ -1370,19 +1435,20 @@ class MemberAuthController extends Controller
                 ->where('delete_status', '0')->first();
 
             if (!empty($ad)) {
-                $validator = Validator::make($request->all(), [
-                    'title' => 'required',
-                    'category_id' => 'required',
-                    'price' => 'required',
-                    'description' => 'required',
-                    'meta_title' => 'required|string|max:255',
-                    'meta_keyword' => 'required|string|max:255',
-                    'meta_description' => 'required|string',
-                ]);
-                if ($validator->fails()) {
-                    return redirect()->route('user.edit-ad-post', base64_encode($id))
-                        ->withErrors('All fields are required!');
-                }
+               $validator = Validator::make($request->all(), [
+    'title' => 'required|string|max:255',
+    'category_id' => 'required|exists:categories,id',
+    'price' => 'required|numeric|min:1',
+    'description' => 'required|string',
+    'meta_title' => 'required|string|max:255',
+    'meta_keyword' => 'required|string|max:255',
+    'meta_description' => 'required|string',
+]);
+               if ($validator->fails()) {
+    return redirect()->route('user.edit-ad-post', base64_encode($id))
+        ->withErrors($validator)
+        ->withInput();
+}
 
                 $slug = Str::slug($request->title);
                 $ad->title = $request->title;
@@ -1806,5 +1872,48 @@ class MemberAuthController extends Controller
                 ->withErrors('Please login to access the dashboard.');
         }
 
+    }
+    
+    public function downloadInvoice($id)
+    {
+        if (Auth::guard('member')->check()) {
+        // Fetch the subscription history
+        $subscription = SubscriptionHistory::with(['customers', 'subscriptions'])
+            ->findOrFail($id);
+
+        // Fetch admin invoice settings (only for prefix and starting number)
+        $invoiceSetting = InvoiceSetting::first();
+        $startingNumber = (int) ($invoiceSetting->invoice_number ?? 1001);
+        $prefix = $invoiceSetting->invoice_prefix ?? 'INV-';
+
+        // Generate invoice number if not already set
+        if ($subscription->invoice_number) {
+            $invoiceNumber = $subscription->invoice_number;
+        } else {
+            // Option 1: Simple calculation using subscription ID
+            $invoiceNumber = $prefix . ($startingNumber + $subscription->id - 1);
+            // Save the invoice number in subscription history
+            $subscription->invoice_number = $invoiceNumber;
+            $subscription->save();
+        }
+
+        // Prepare data for PDF
+        $data = [
+            'order' => $subscription,      // Matches your Blade variable
+            'type' => 'subscription',
+            'invoice_number' => $invoiceNumber,
+            'invoiceSetting' => $invoiceSetting, // pass to view
+        ];
+
+        // Load the Blade view
+        $pdf = PDF::loadView('users.invoice', $data);
+
+        // Return PDF download
+        $fileName = 'Invoice_' . $invoiceNumber . '.pdf';
+        return $pdf->download($fileName);
+        } else {
+            return redirect()->route('user.login')
+                ->withErrors('Please login to access the dashboard.');
+        }
     }
 }

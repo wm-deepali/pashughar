@@ -23,6 +23,7 @@ Ad Post
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
+              
            
                 <form class="adpost-form" action="{{ route('user.update-ad-post', base64_encode($ad->id)) }}" method="post" enctype="multipart/form-data">
                 @csrf
@@ -35,6 +36,9 @@ Ad Post
                                 <div class="form-group">
                                     <label class="form-label">Ad Title</label>
                                     <input type="text" class="form-control" name="title" value="{{$ad->title}}" placeholder="Type your product title here" required>
+                                    @error('title')
+<span class="text-danger">{{ $message }}</span>
+@enderror
                                 </div>
                             </div>
                             
@@ -47,6 +51,9 @@ Ad Post
                                         <option value="{{$category->id}}" {{$ad->category_id == $category->id ? 'selected': ''}}>{{$category->name}}</option>
                                         @endforeach
                                     </select>
+                                    @error('category_id')
+<span class="text-danger">{{ $message }}</span>
+@enderror
                                 </div>
                             </div>
                             <div class="col-lg-6 subcategory_div">
@@ -64,6 +71,9 @@ Ad Post
                                 <div class="form-group">
                                     <label class="form-label">Price</label>
                                     <input type="number" class="form-control" name="price" value="{{$ad->price}}" placeholder="Enter your pricing amount" required>
+                                    @error('price')
+<span class="text-danger">{{ $message }}</span>
+@enderror
                                 </div>
                             </div>
                             <div class="col-lg-6">
@@ -73,6 +83,9 @@ Ad Post
                                         <option value="Fixed" {{$ad->price_type == 'Fixed' ? 'selected': ''}}>Fixed</option>
                                         <option value="Negotiable"{{$ad->price_type == 'Negotiable' ? 'selected': ''}}>Negotiable</option>
                                     </select>
+                                    @error('price_type')
+<span class="text-danger">{{ $message }}</span>
+@enderror
                                 </div>
                                 
                             </div>
@@ -80,12 +93,18 @@ Ad Post
                                 <div class="form-group">
                                     <label class="form-label">ad description</label>
                                     <textarea class="form-control" name="description" placeholder="Describe your message" required>{{$ad->description}}</textarea>
+                                    @error('description')
+<span class="text-danger">{{ $message }}</span>
+@enderror
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <label class="form-label">Location</label>
                                     <input type="text" class="form-control" name="location" id="location" value="{{$ad->location}}" required>
+                                    @error('location')
+<span class="text-danger">{{ $message }}</span>
+@enderror
                                 </div>
                             </div>
                             
@@ -161,18 +180,27 @@ Ad Post
                                 <div class="form-group">
                                     <label class="form-label">Meta Title</label>
                                     <input type="text" class="form-control" id="meta_title" name="meta_title" value="{{ $ad->meta_title }}" placeholder="Enter Meta Title" required>
+                                    @error('meta_title')
+<span class="text-danger">{{ $message }}</span>
+@enderror
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <label class="form-label">Meta Keywords</label>
                                     <input type="text" class="form-control" id="meta_keyword" name="meta_keyword" value="{{ $ad->meta_keyword }}" placeholder="Meta keywords here" required>
+                                    @error('meta_keyword')
+<span class="text-danger">{{ $message }}</span>
+@enderror
                                 </div>
                             </div>
                             <div class="col-lg-12">
                                 <div class="form-group">
                                     <label class="form-label">Meta Description </label>
                                     <textarea class="form-control" name="meta_description" placeholder="Meta Description" required>{{$ad->meta_description}}</textarea>
+                                    @error('meta_description')
+<span class="text-danger">{{ $message }}</span>
+@enderror
                                     
                                 </div>
                             </div>
@@ -189,24 +217,36 @@ Ad Post
                                 <div class="form-group">
                                     <label class="form-label">Name</label>
                                     <input type="text" class="form-control" name="author_name" value="{{$ad->author_name ?? ''}}" placeholder="Your Name" required>
+                                    @error('author_name')
+<span class="text-danger">{{ $message }}</span>
+@enderror
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <label class="form-label">Email</label>
                                     <input type="email" class="form-control" name="author_email" value="{{$ad->author_email ?? ''}}" placeholder="Your Email" required>
+@error('author_email')
+<span class="text-danger">{{ $message }}</span>
+@enderror
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <label class="form-label">Number</label>
                                     <input type="number" class="form-control" name="author_mobile" value="{{$ad->author_mobile ?? ''}}" placeholder="Your Number" required>
+@error('author_mobile')
+<span class="text-danger">{{ $message }}</span>
+@enderror
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <label class="form-label">Address</label>
                                     <input type="text" class="form-control" name="author_address" value="{{$ad->author_address ?? ''}}" placeholder="Your Address" required>
+@error('author_address')
+<span class="text-danger">{{ $message }}</span>
+@enderror
                                 </div>
                             </div>
                             <div class="form-group text-right">

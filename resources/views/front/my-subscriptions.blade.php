@@ -104,7 +104,7 @@
                                             <td>{{$res->remaining_ads}}</td>
                                             <td>{{$res->subscription_expiry}}</td>
                                             <td> 
-                                                <a href="{{ route('subscription.invoice', $res->id) }}"
+                                                <a href="{{ route('subscription-invoice', $res->id) }}"
                                                     class="btn btn-warning" target="_blank" title="Download Invoice">
                                                     <i class="fas fa-download"></i>
                                                 </a>

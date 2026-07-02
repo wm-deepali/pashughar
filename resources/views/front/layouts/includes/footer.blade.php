@@ -5,6 +5,76 @@
 <!--=====================================
                     FOOTER PART PART
         =======================================-->
+        <style>
+    .mobile-sticky-menu {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-top: 1px solid #ddd;
+    z-index: 9999;
+    display: none;
+}
+
+.mobile-sticky-menu ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    justify-content: space-around;
+}
+
+.mobile-sticky-menu li {
+    text-align: center;
+    flex: 1;
+}
+
+.mobile-sticky-menu a {
+    display: flex;
+    flex-direction: column;
+    padding: 8px 0;
+    font-size: 12px;
+    color: #444;
+    text-decoration: none;
+}
+
+.mobile-sticky-menu i {
+    font-size: 20px;
+    margin-bottom: 2px;
+}
+
+/* Center Floating Button */
+.center-btn {
+    position: relative;
+    top: -30px;
+}
+
+.center-btn .center-icon {
+    width: 50px;
+    height: 50px;
+    background: #397839;
+    border-radius: 50%;
+    margin: 0 auto 3px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 3px 10px rgba(0,0,0,0.25);
+}
+
+.center-btn .center-icon i {
+    font-size: 22px;
+    color: #fff;
+}
+
+/* Mobile Only */
+@media (max-width: 768px) {
+    .mobile-sticky-menu {
+        display: block;
+    }
+}
+
+        </style>
 <footer class="footer-part">
     <div class="container">
         <div class="row newsletter " style="padding-bottom:40px; border-bottom:1px solid gray;">
@@ -37,21 +107,19 @@
                         </li>
                         <li>
                             <i class="fas fa-envelope"></i>
-                            <p class="m-0">admin@pashughar.com </p>
+                            <p class="m-0">support@pashughar.com </p>
                         </li>
                         <li>
                             <i class="fas fa-phone-alt"></i>
-                            <p class="m-0">+91-8755718642</p>
+                            <p class="m-0">+91-9625455691</p>
                         </li>
                         <ul class="footer-social">
-                            <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-                            <li><a href="#"><i class="fab fa-twitter"></i></a></li>
-                            <li><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
-                            <li><a href="#"><i class="fab fa-google-plus-g"></i></a></li>
-                            <li><a href="#"><i class="fab fa-youtube"></i></a></li>
-                            <li><a
-                                    href="https://www.instagram.com/avhclicks_official/profilecard/?igsh=MXR3OXZqcDI1c3JlMw%3D%3D"><i
-                                        class="fab fa-instagram"></i></a></li>
+                            <li><a href="https://www.facebook.com/pashughar/"><i class="fab fa-facebook-f"></i></a></li>
+                            <li><a href="https://www.instagram.com/pashughar/"><i class="fab fa-instagram"></i></a></li>
+                           <!-- <li><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
+                            <li><a href="#"><i class="fab fa-google-plus-g"></i></a></li> -->
+                            <li><a href="https://www.youtube.com/@PashuGhar"><i class="fab fa-youtube"></i></a></li>
+                            
                         </ul>
 
                     </ul>
@@ -74,7 +142,7 @@
                         <li><a href="{{route('subscription-plan')}}">Pricing Plan</a></li>
                         <li><a href="{{route('list-categories')}}">Show All Categories</a></li>
                         <li><a href="{{route('user.login')}}">Become Seller</a></li>
-                        <li><a href="{{route('submit-bulk-stock-request')}}">Bulk Enquiry</a></li>
+                        <li><a href="{{route('submit-bulk-stock-request')}}">Bulk Order</a></li>
 
 
                     </ul>
@@ -154,7 +222,7 @@
         <div class="container">
             <div class="footer-end-content  d-flex justify-content-between">
                 <p class="m-0 footer-end-content-tt">All Copyrights Reserved © 2024 Pashughar</p>
-                <p class="m-0 footer-end-content-mobile">All Copyrights Reserved © 2024 <br /><strong>Pashughar</strong>
+                <p class="m-0 footer-end-content-mobile">All Copyrights Reserved © 2025 <br /><strong>PashuGhar Livestock Trade & Marketing</strong>
                 </p>
                 <p> Designed & Developed by <a href="https://www.webmingo.com">Web Mingo</a></p>
 
@@ -163,6 +231,102 @@
         </div>
     </div>
 </footer>
+<!-- MOBILE STICKY MENU -->
+<div class="mobile-sticky-menu">
+    <ul>
+
+        @if(Auth::guard('member')->check())
+            <!-- ============= LOGGED-IN MENU ============= -->
+
+            <!-- 1. Home -->
+            <li>
+                <a href="{{ url('/') }}">
+                    <i class="fa fa-home"></i>
+                    <span>Home</span>
+                </a>
+            </li>
+
+            <!-- 2. Buy Now -->
+            <li>
+                <a href="{{ route('list-categories') }}">
+                    <i class="fa fa-shopping-cart"></i>
+                    <span>Buy Now</span>
+                </a>
+            </li>
+
+            <!-- 3. Center Floating (My Dashboard) -->
+            <li class="center-btn">
+                <a href="{{ route('user.dashboard') }}">
+                    <div class="center-icon"><i class="fa fa-user"></i></div>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+
+            <!-- 4. Start Selling -->
+            <li>
+                <a href="{{ route('user.post-your-ad') }}">
+                    <i class="fa fa-store"></i>
+                    <span>Start Selling</span>
+                </a>
+            </li>
+
+            <!-- 5. My Ads -->
+            <li>
+                <a href="{{ route('user.my-ads') }}">
+                    <i class="fa fa-bullhorn"></i>
+                    <span>My Ads</span>
+                </a>
+            </li>
+
+        @else
+            <!-- ============= NOT LOGGED-IN MENU ============= -->
+
+            <!-- 1. Home -->
+            <li>
+                <a href="{{ url('/') }}">
+                    <i class="fa fa-home"></i>
+                    <span>Home</span>
+                </a>
+            </li>
+
+            <!-- 2. Buyers -->
+            <li>
+                <a href="{{ route('user.login') }}">
+                    <i class="fa fa-users"></i>
+                    <span>Buyers</span>
+                </a>
+            </li>
+
+            <!-- 3. Center Floating (Browse Categories) -->
+            <li class="center-btn">
+                <a href="{{ route('list-categories') }}">
+                    <div class="center-icon"><i class="fa fa-th-large"></i></div>
+                    <span>Categories</span>
+                </a>
+            </li>
+
+            <!-- 4. Sellers -->
+            <li>
+                <a href="{{ route('user.login') }}">
+                    <i class="fa fa-handshake"></i>
+                    <span>Sellers</span>
+                </a>
+            </li>
+
+            <!-- 5. Help & Support -->
+            <li>
+                <a href="{{ route('contact-us') }}">
+                    <i class="fa fa-headset"></i>
+                    <span>Support</span>
+                </a>
+            </li>
+
+        @endif
+
+    </ul>
+</div>
+
+
 <!--=====================================
                     FOOTER PART END
         =======================================-->

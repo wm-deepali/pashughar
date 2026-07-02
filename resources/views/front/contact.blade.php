@@ -29,21 +29,23 @@
                     <div class="contact-info">
                         <i class="fas fa-map-marker-alt"></i>
                         <h3>Find us</h3>
-                        <p>Address: Kalindikunj, Near Okhla Bird Sanctuary, Delhi, India</p>
+                        <p>Address: {!! $contact->address_line1 !!}</p>
+                        <br/>
+                        {!! $contact->address_line2 ?? "" !!}
                     </div>
                 </div>
                 <div class="col-lg-4">
                     <div class="contact-info">
                         <i class="fas fa-phone-alt"></i>
                         <h3>Make a Call</h3>
-                        <p>+91-8755718642</p>
+                        <p>{{$contact->mobile}}</p>
                     </div>
                 </div>
                 <div class="col-lg-4">
                     <div class="contact-info">
                         <i class="fas fa-envelope"></i>
                         <h3>Send Mail</h3>
-                        <p>admin@pashughar.com</p>
+                        <p>{{$contact->email}}</p>
                     </div>
                 </div>
             </div>

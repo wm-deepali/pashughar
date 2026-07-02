@@ -312,7 +312,7 @@
         }
     </script>
 
-    <script src="https://checkout.razorpay.com/v2/checkout.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
         /**
          * Helper: parse a currency/number string robustly

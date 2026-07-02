@@ -125,16 +125,16 @@
     <section class="user-form-part">
         <div class="user-form-banner">
             <div class="user-form-content">
-                <a href="{{URL::to('/')}}"><img src="{{asset('front/images/afarlogo.png')}}" alt="logo"
+                <a href="{{URL::to('/')}}"><img src="{{asset('front/images/pashugharlogo.png')}}" alt="logo"
                         style="border-radius:3px;"></a>
                 <h1>Post your Logistics, Cattles, and Products <span>Buy what you need.</span></h1>
-                <p>Biggest Online Marketplace to Sell & Buy Cattle, and Dairy Product in the Afar Region.</p>
+                <p>Biggest Online Marketplace to Sell & Buy Cattle, Livestocks & Dairy Product Globally.</p>
             </div>
         </div>
 
         <div class="user-form-category">
             <div class="user-form-header">
-                <a href="#"><img src="{{asset('front/images/afarlogo.png')}}" alt="logo"></a>
+                <a href="#"><img src="{{asset('front/images/pashugharlogo.png')}}" alt="logo"></a>
                 <a href="{{URL::to('/')}}"><i class="fas fa-arrow-left"></i></a>
             </div>
             <div class="user-form-category-btn">

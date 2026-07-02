@@ -12,6 +12,7 @@ use App\Models\Review;
 use App\Models\Enquiry;
 use App\Models\PurchaseEnquiry;
 use App\Models\ContactUs;
+use App\Models\ContactusContent;
 use App\Models\AdFeature;
 use App\Models\Feature;
 use App\Models\ProfileSetting;
@@ -28,10 +29,11 @@ use App\Models\State;
 use App\Models\City;
 use App\Mail\EnquiryEmail;
 use App\Mail\SubscriberEmail;
-
+use App\Mail\CustomerInquiryEmail;
 use App\Models\Pages;
 use App\Models\Blogs;
 use App\Models\Comments;
+use App\Models\CustomerInquiry;
 use App\Models\Faqs;
 use App\Models\Abouts;
 use App\Models\Teams;
@@ -76,6 +78,7 @@ class FrontController extends Controller
             ->type('trending')
             ->take(6)
             ->get();
+            $data['faqs'] = Faqs::where('status', 1)->where('is_show_home', "yes")->get();
         // print_r($data['pageCategories']->toarray()); die;
         // dd($data['recommendAds']->toArray());
         return view('front.index', $data);
@@ -85,6 +88,12 @@ class FrontController extends Controller
     {
         $data['page'] = Pages::where('slug', $slug)->first();
         return view('front.page-detail', $data);
+    }
+    
+    public function contactuspage()
+    {
+        $data['contact'] = ContactusContent::first();
+        return view('front.contact', $data);
     }
 
     public function blog()
@@ -323,7 +332,9 @@ class FrontController extends Controller
             $max = $request->query('max');
         if ($request->has('search'))
             $search = $request->query('search');
-        $data['ads'] = Ad::with('AdImage')->where('delete_status', '0')->where('status', 'Published')->type($type)->search($min, $max)->SearchData($search)->paginate($perPage)->withQueryString();
+        $data['ads'] = Ad::whereHas('category')->with('AdImage', 'category')->where('delete_status', '0')->where('status', 'Published')->type($type)->search($min, $max)->SearchData($search)->paginate($perPage)->withQueryString();
+        
+        $data['categories'] = Category::get();
         return view('front.ad-list', $data);
     }
     public function search(Request $request)
@@ -590,6 +601,38 @@ class FrontController extends Controller
                 'message' => 'Something went wrong!',
             ]);
         }
+    }
+    
+    public function submithomepageEnquiry(Request $request)
+    {
+        $validatedData = $request->validate([
+            'full_name' => 'required|string|max:255',
+            'email_address' => 'required|email|max:255',
+            'country_code' => 'required|string|max:5',
+            'mobile' => ['required', 'regex:/^[6-9]\d{9}$/'],
+            'isValid' => ['required', 'integer', 'in:1'],
+            'message' => 'nullable|string|max:50',
+        ],[
+        'isValid.required' => 'Mobile number is not verified',
+        'isValid.integer'  => 'Mobile number is not verified',
+        'isValid.in'       => 'Please verify your mobile number before submitting.',
+        ]
+        );
+    //dd($validatedData);
+         $enquiry = new CustomerInquiry();
+        $enquiry->full_name = $validatedData['full_name'];
+        $enquiry->email_address = $validatedData['email_address'];
+        $enquiry->country_code = $validatedData['country_code'];
+        $enquiry->mobile_number = $validatedData['mobile'];
+        $enquiry->message = $validatedData['message'] ?? null; // handle optional message
+        $enquiry->save();
+        
+         $adminsetting = ProfileSetting::first();
+        $mailContent = Mail::to($adminsetting->email)->send(new CustomerInquiryEmail($enquiry));
+        
+        return response()->json([
+            'message' => 'Thank you for your enquiry. We will get back to you soon.'
+        ]);
     }
 
 

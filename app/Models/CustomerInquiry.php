@@ -5,16 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Faqs extends Model
+class CustomerInquiry extends Model
 {
     use HasFactory;
 
-    protected $table = 'faqs';
-
     protected $fillable = [
-       'qustion',
-       'answer',
-       'status',
-       'is_show_home'
+        'full_name',
+        'email_address',
+        'country_code',
+        'mobile_number',
+        'message',
     ];
 }

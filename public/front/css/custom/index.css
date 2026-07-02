@@ -88,9 +88,10 @@
             SUGGEST PART STYLE
 ======================================*/
 .suggest-part {
-  position: relative;
+    position: relative;
   margin-top: 35px;
   z-index: 2;
+  margin-bottom: 35px;
 }
 
 .suggest-slider .slick-slide img {

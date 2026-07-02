@@ -14,6 +14,58 @@ $suggestCategories = App\Models\Category::all();
     .dashmenu li a i{
         padding-right:7px;
     }
+    .search-popup {
+    position: fixed;
+    top: 151px;
+    left: 0;
+    width: 100%;
+    padding: 0 20px;          /* equal left-right space */
+    z-index: 9999;
+    display: none;
+}
+
+.search-box {
+    width:100%;
+    background: #ffffff;
+       padding: 3px 3px 3px 15px ;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.18);
+    animation: fadeSlideDown 0.3s ease;
+}
+
+.search-icon {
+    font-size: 18px;
+    color: #777;
+}
+
+.search-box input {
+    width: 100%;
+    border: none;
+    outline: none;
+    padding: 10px;
+    font-size: 15px;
+    background: #f7f7f7;
+    border-radius: 10px;
+}
+
+.search-btn {
+    background: #0A773F;
+    border: none;
+    color: #fff;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    font-size: 18px;
+}
+
+@keyframes fadeSlideDown {
+    from { opacity: 0; transform: translateY(-15px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
 </style>
 
 <!--=====================================
@@ -21,7 +73,7 @@ $suggestCategories = App\Models\Category::all();
         =======================================-->
                     <div class="top_header_list">
             <div class="top_email">
-                <p><i class="fas fa-envelope"></i> &nbsp;&nbsp;admin@pashughar.com</p>
+                <p><i class="fas fa-envelope"></i> &nbsp;&nbsp;support@pashughar.com</p>
                 <div class="top_vender">
                                            <p data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample"><span>                            <img src="{{asset('front/images/category.png')}}" alt="logo" style="width:20px;margin-top:-4px"></span>&nbsp;&nbsp;All Categories</p>
                     <div class="line"></div>
@@ -52,13 +104,20 @@ $suggestCategories = App\Models\Category::all();
     <button class="search-toggle-btn" type="button" title="Search">
         <i class="fas fa-search"></i>&nbsp;&nbsp;Search
     </button>
-    <form class="header-search-form" action="{{route('search')}}" style="display: none;">
-        <div style="background:#fff; padding:10px;    display: flex
-; gap:10px;">
-        <input type="text" placeholder="Search, Whatever you need..." name="search">
-        <button type="submit" title="Search Submit"><i class="fas fa-search"></i></button>
-        </div>
-    </form>
+     <form class="header-search-form search-popup" action="{{route('search')}}">
+    <div class="search-box">
+        <i class="fas fa-search search-icon"></i>
+
+        <input type="text"
+               placeholder="Search, Whatever you needs..."
+               name="search"
+               class="searchByAds">
+
+        <button type="submit" class="search-btn">
+            <i class="fas fa-arrow-right"></i>
+        </button>
+    </div>
+</form>
 </div>
 
                         <p><a href="{{route('submit-bulk-stock-request')}} " style="color:#fff;text-decoration:none;"><i class="fas fa-mail-bulk"></i>&nbsp;&nbsp; Bulk Enquiry</a></p>
@@ -77,7 +136,7 @@ $suggestCategories = App\Models\Category::all();
                             <i class="fas fa-align-left"></i>
                         </button> -->
                         <a class='header-logo' href="{{URL::to('/')}}">
-                            <img src="{{asset('front/images/afarlogo.png')}}" alt="logo">
+                            <img src="{{asset('front/images/pashugharlogo.png')}}" alt="logo">
                         </a>
                         <!-- <a class='header-widget header-user' href='user-form.html'>
                             <img src="images/user.png" alt="user">
@@ -189,29 +248,30 @@ $suggestCategories = App\Models\Category::all();
                                     <li><a class="{{ Route::is('user.my-subscriptions') ? 'active' : '' }}" href="{{route('user.my-subscriptions')}}" style="color:#000; text-decoration:none;"><i class="fa-solid fa-money-bill-1"></i> My Subscriptions</a></li>
                                     <li><a href="{{route('user.logout')}}" style="color:#000; text-decoration:none;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
                                 </ul>
-                             <ul class="footer-address border-top pt-2" style="color:#000;">
-                                <li style="color:#000">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    <p class="m-0" style="color:#000">  Samara University Samara, Afar Regional State FDR Ethiopia</p>
-                                </li>
-                                <li>
-                                    <i class="fas fa-envelope"></i>
-                                    <p class="m-0">admin@afaraltmart.com </p>
-                                </li>
-                                <li>
-                                    <i class="fas fa-phone-alt"></i>
-                                    <p class="m-0">+251908180786</p>
-                                </li>
-                                <ul class="footer-social" style="color:#000">
-                            <li><a href="#" style="color:#000"><i class="fab fa-facebook-f" style="color:#000"></i></a></li>
-                            <li><a href="#" style="color:#000"><i class="fab fa-twitter" style="color:#000"></i></a></li>
-                            <li><a href="#" style="color:#000"><i class="fab fa-linkedin-in" style="color:#000"></i></a></li>
-                            <li><a href="#" style="color:#000"><i class="fab fa-google-plus-g" style="color:#000"></i></a></li>
-                            <li><a href="#" style="color:#000"><i class="fab fa-youtube" style="color:#000"></i></a></li>
-                            <li><a style="color:#000" href="https://www.instagram.com/avhclicks_official/profilecard/?igsh=MXR3OXZqcDI1c3JlMw%3D%3D"><i class="fab fa-instagram" style="color:#000"></i></a></li>
-                        </ul>
-                                
-                            </ul>
+ <ul class="footer-address border-top pt-2" style="color:#000;">
+        <li style="color:#000">
+            <i class="fas fa-map-marker-alt"></i>
+            <p class="m-0" style="color:#000"> Kalindikunj, Near Okhla Bird Sanctuary, Delhi, India</p>
+        </li>
+
+        <li>
+            <i class="fas fa-envelope"></i>
+            <p class="m-0">support@pashughar.com </p>
+        </li>
+
+        <li>
+            <i class="fas fa-phone-alt"></i>
+            <p class="m-0">+91-9625455691</p>
+        </li>
+
+        <ul class="footer-social" style="color:#000; border-top:1px solid #0000001a;">
+             <li><a href="https://www.facebook.com/pashughar/"><i class="fab fa-facebook-f" style="color:#000"></i></a></li>
+                            <li><a href="https://www.instagram.com/pashughar/"><i class="fab fa-instagram" style="color:#000"></i></a></li>
+                           
+                            <li><a href="https://www.youtube.com/@PashuGhar"><i class="fab fa-youtube" style="color:#000"></i></a></li>
+        </ul>
+
+    </ul>
   </div>
 </div>
 

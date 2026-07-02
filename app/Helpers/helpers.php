@@ -28,6 +28,7 @@ use App\Models\State;
 use App\Models\SubCategory;
 use App\Models\Transmission;
 use App\Models\VehicleType;
+use App\Models\Slider;
 
 use App\Models\Seo;
 
@@ -465,4 +466,40 @@ function getDetailsPageMetaTag($metaTitle, $metaDescription, $metaKeword, $canon
     <link rel="canonical" href="' . $canonical_url . '">';
 
     return $tags;
+}
+
+
+
+function gethomepageSlider()
+{
+    $sliders = Slider::latest()->get();
+
+    $desktop_sliders = [];
+    $mobile_sliders = [];
+
+    foreach ($sliders as $slider) {
+
+        // Desktop Image
+        $desktop_sliders[] = [
+            'id' => $slider->id,
+            'title' => $slider->title ?? '',
+            'image' => !empty($slider->desktop_image) 
+                        ? asset('storage/'.$slider->desktop_image) 
+                        : asset('front/images/pashughar-sellers.png'),
+        ];
+
+        // Mobile Image
+        $mobile_sliders[] = [
+            'id' => $slider->id,
+            'title' => $slider->title ?? '',
+            'image' => !empty($slider->mobile_image) 
+                        ? asset('storage/'.$slider->mobile_image)
+                        : asset('front/images/pashughar-banner1.png'),
+        ];
+    }
+
+    return [
+        'desktop_sliders' => $desktop_sliders,
+        'mobile_sliders' => $mobile_sliders,
+    ];
 }
