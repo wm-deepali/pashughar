@@ -1,15 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-    
+
 <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+
 <head>
-        
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-
     <meta name="author" content="AVH Click">
-    
     <title>
         @if (trim($__env->yieldContent('title')))
         @yield('title') | {{ config('app.name', 'Laravel') }}
@@ -20,462 +17,393 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @stack('before-styles')
     @stack('after-styles')
-    <link
-     rel="stylesheet"
-     href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"
-   />
-   
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
 
-    <!--=====================================
-                CSS LINK PART START
-    =======================================-->
-    <!-- FAVICON -->
     <link rel="icon" href="{{asset('front/images/favicon.png')}}">
-
-    <!-- FONTS -->
     <link rel="stylesheet" href="{{asset('front/fonts/font-awesome/fontawesome.css')}}">
+    <link rel="stylesheet" href="{{asset('front/css/vendor/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{asset('front/css/custom/main.css')}}">
+    <link rel="stylesheet" href="{{asset('front/css/custom/user-form.css')}}">
+</head>
 
-        <!-- FOR BOOTSTRAP -->
-        <link rel="stylesheet" href="{{asset('front/css/vendor/bootstrap.min.css')}}">
+<style>
+    :root{
+        --accent: #1f4b3f;
+        --accent-light: #2c6b57;
+        --bg-soft: #f7f7f6;
+        --radius: 50px;
+    }
+    body{ background: var(--bg-soft); }
+    .auth-shell{ max-width: 460px; margin: 60px auto; padding: 0 20px; }
+    .auth-logo{ text-align:center; margin-bottom: 18px; }
+    .auth-logo img{ max-height: 46px; }
+    .auth-card{
+        background:#fff;
+        border:1px solid #e7e5e2;
+        border-radius: 18px;
+        padding: 32px 28px;
+        box-shadow: 0 10px 30px rgba(0,0,0,.05);
+    }
+    .auth-title{ text-align:center; font-size:22px; font-weight:700; margin-bottom:4px; }
+    .auth-subtitle{ text-align:center; color:#8a8a8a; font-size:14px; margin-bottom:26px; }
 
-        <!-- FOR COMMON STYLE -->
-        <link rel="stylesheet" href="{{asset('front/css/custom/main.css')}}">
+    .pill-input{
+        width:100%; height:56px;
+        border-radius: var(--radius);
+        border:1px solid #e2e0dc;
+        background: var(--bg-soft);
+        padding: 0 22px; font-size:15px; outline:none;
+        transition: border-color .2s ease;
+    }
+    .pill-input:focus{ border-color: var(--accent-light); background:#fff; }
+    .pill-input[readonly]{ color:#888; }
 
-        <!-- FOR USER FORM PAGE STYLE -->
-        <link rel="stylesheet" href="{{asset('front/css/custom/user-form.css')}}">
-        <!--=====================================
-                    CSS LINK PART END
-        =======================================-->
-    </head>
-   <style>
-    .overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.4); /* Semi-transparent white */
-        backdrop-filter: blur(5px); /* Frosted glass effect */
-        z-index: 9998; /* Below the form card */
-        pointer-events: all; /* Block clicks */
-    }
-    #scrollToTopBtn {
-        display: none; /* Hidden by default */
-        position: fixed;
-        bottom: 20px;
-        right: 30px;
-        z-index: 9999; /* Ensure it's above other elements */
-        background-color: #007bff; /* Primary color */
-        color: white; /* Text color */
-        border: none; /* Remove borders */
-        border-radius: 50%; /* Rounded corners */
-        padding: 10px; /* Adjust padding for SVG */
-        cursor: pointer; /* Pointer cursor on hover */
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Optional: add shadow */
-        width: 50px; /* Set a fixed width */
-        height: 50px; /* Set a fixed height */
-        display: flex; /* Center the SVG */
-        align-items: center; /* Center the SVG */
-        justify-content: center; /* Center the SVG */
-    }
-    
-    #scrollToTopBtn svg {
-        fill: white; /* Set the fill color of the SVG path */
-        width: 24px; /* Adjust the size of the SVG */
-        height: 24px; /* Adjust the size of the SVG */
-    }
-    
-    #scrollToTopBtn:hover {
-        background-color: #0056b3; /* Darker blue on hover */
+    select.pill-input{
+        appearance:none; -webkit-appearance:none;
+        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+        background-repeat:no-repeat; background-position: right 20px center;
     }
 
-    /* Ensure the form card is above the overlay */
-    .log {
-        position: relative;
-        z-index: 9999; /* Above the overlay */
+    .pill-btn{
+        width:100%; height:54px;
+        border-radius: var(--radius);
+        border:none; background: var(--accent); color:#fff;
+        font-size:16px; font-weight:600; cursor:pointer;
+        transition: background .2s ease, opacity .2s ease;
     }
-    .swal2-container{
-        z-index: 10000;
+    .pill-btn:hover{ background: var(--accent-light); }
+    .pill-btn:disabled{ opacity:.6; cursor:not-allowed; }
+
+    .field-group{ margin-bottom:16px; }
+    .field-error{ color:#c0392b; font-size:12px; margin-top:4px; display:block; }
+
+    .mobile-input-group{ display:flex; align-items:center; border:1px solid #e2e0dc; border-radius: var(--radius); background: var(--bg-soft); overflow:hidden; }
+    .mobile-prefix{ padding: 0 14px; color:#666; font-size:15px; border-right:1px solid #e2e0dc; height:56px; display:flex; align-items:center; }
+    .mobile-input-group input{ border:none; background:transparent; height:56px; padding:0 18px; flex:1; font-size:15px; outline:none; }
+
+    .otp-row{ display:flex; gap:10px; justify-content:center; margin: 18px 0 8px; }
+    .otp-box{ width:44px; height:54px; text-align:center; font-size:20px; border-radius:12px; border:1px solid #e2e0dc; background: var(--bg-soft); }
+    .otp-box:focus{ border-color: var(--accent-light); background:#fff; outline:none; }
+
+    .resend-row{ text-align:center; font-size:13px; color:#888; margin-bottom:18px; }
+    .resend-row a{ color: var(--accent); font-weight:600; cursor:pointer; }
+    .resend-row a.disabled{ color:#bbb; pointer-events:none; }
+
+    .step-hidden{ display:none; }
+    .back-link{ font-size:13px; color:#888; cursor:pointer; display:inline-flex; align-items:center; gap:6px; margin-bottom:14px; }
+    .back-link:hover{ color: var(--accent); }
+
+    #scrollToTopBtn{
+        display:none; position:fixed; bottom:20px; right:30px; z-index:9999;
+        background-color:#1f4b3f; color:#fff; border:none; border-radius:50%;
+        padding:10px; cursor:pointer; box-shadow:0 4px 8px rgba(0,0,0,.2);
+        width:50px; height:50px; align-items:center; justify-content:center;
     }
-    .get-start {
-        margin-top: 30px;
-        font-size: 22px;
-        font-weight: 600;
-    }
-    .continue-w {
-        padding-top: 10px;
-    }
-    .form-login-reg.comment-form.modal-l {
-        margin-top: 20px;
-    }
-    /* .inner-frm 
-    {
-        text-align: center;
-    } */
-    .form-login-reg.comment-form {
-        padding: 20px;
-        border: 1px solid #c6c3c3;
-        border-radius: 8px;
-    }
-    .comment-form .form-group input[type="text"], .comment-form .form-group input[type="password"], .comment-form .form-group input[type="tel"], .comment-form .form-group input[type="email"], .comment-form .form-group input[type="date"], .comment-form .form-group input[type="file"], .comment-form .form-group select, .comment-form .form-group .ui-selectmenu-button.ui-button {
-        position: relative;
-        display: block;
-        width: 100%;
-        line-height: 28px;
-        padding: 10px 25px;
-        height: 60px;
-        border-radius: 0px;
-        -webkit-transition: all 300ms ease;
-        -ms-transition: all 300ms ease;
-        -o-transition: all 300ms ease;
-        -moz-transition: all 300ms ease;
-        transition: all 300ms ease;
-        background-color: rgb(247, 247, 246);        ;
-        border: 1px solid rgba(0,0,0, 0.06);
-    }
-    .user-form-category
-    {
-        z-index: 9999;
-    }
-    #hiddenInput {
-        margin-bottom: 30px;
-    }
-    .otp-input {
-        width: 50px;
-        margin-right: 20px;
-    }
-    .cus-btn-osd {
-        text-align: center;
-        background: linear-gradient(136deg, #307cf5 2%, #3b8ee5 64%);
-        color: #fff;
-        border-radius: 3px;
-        font-size: 16px;
-        height: 50px;
-        align-content: center;
-    }
-    a:visited {
-        text-decoration: none;
-        outline: none !important;
-    }
-    </style>
-    <body>
-        <!--=====================================
-                    USER-FORM PART START
-        =======================================-->
-        <section class="user-form-part">
-            <div class="user-form-banner">
-                <div class="user-form-content">
-                    <a href="{{URL::to('/')}}"><img src="{{asset('front/images/logo.png')}}" alt="logo"></a>
-                    <h1>Advertise your assets <span>Buy what are you needs.</span></h1>
-                    <p>Biggest Online Advertising Marketplace in the World.</p>
+    #scrollToTopBtn svg{ fill:#fff; width:24px; height:24px; }
+    .swal2-container{ z-index: 10000; }
+</style>
+
+<body>
+
+<section class="auth-shell">
+    <div class="auth-logo">
+        <a href="{{URL::to('/')}}"><img src="{{asset('front/images/logo.png')}}" alt="logo"></a>
+    </div>
+
+    @if (session('success'))
+        <h5 class="alert alert-success text-center">{{ Session::get('success') }}</h5>
+        <?php Session::forget('success'); ?>
+    @endif
+    @if (session('error'))
+        <h5 class="alert alert-danger text-center">{{ Session::get('error') }}</h5>
+        <?php Session::forget('error'); ?>
+    @endif
+    @if($errors->any())
+        <h5 class="alert alert-danger text-center">{{ implode('', $errors->all(':message')) }}</h5>
+    @endif
+
+    <div class="auth-card">
+        <div class="auth-title">Almost there!</div>
+        <div class="auth-subtitle">Just a few more details to finish setting up</div>
+
+        {{-- Step 1: mobile --}}
+        <div id="mobileStep">
+            <div class="field-group">
+                <div class="mobile-input-group">
+                    <span class="mobile-prefix">+91</span>
+                    <input type="text" id="mobileInput" maxlength="10" inputmode="numeric" placeholder="Enter Mobile Number" value="{{ old('mobile') }}">
                 </div>
+                <span class="field-error" id="mobileInput-err"></span>
             </div>
+            <button type="button" class="pill-btn" id="sendOtpBtn">Send OTP</button>
+        </div>
 
-            <div class="user-form-category">
-                
-                
-                @if (session('success'))
-                  <h5 class="alert alert-success text-center">{{ Session::get('success') }}</h5><br>
-                  <?php Session::forget('success');?>
-                @endif
-                @if (session('error'))
-                  <h5 class="alert alert-danger text-center">{{ Session::get('error') }}</h5><br>
-                  <?php Session::forget('error');?>
-                @endif
-                @if($errors->any())
-                  <h5 class="alert alert-danger text-center">  {{ implode('', $errors->all(':message')) }} </h5><br>
-                @endif 
-                
+        {{-- Step 2: OTP (6 digit, same as register flow) --}}
+        <div id="otpStep" class="step-hidden">
+            <span class="back-link" onclick="backToMobile()"><i class="fas fa-arrow-left"></i> Back</span>
+            <div class="auth-subtitle" style="margin-bottom:6px;">Enter the 6-digit code sent to <b id="otpMobileLabel"></b></div>
+            <div class="otp-row">
+                <input type="text" class="otp-box detail-otp-box" maxlength="1" inputmode="numeric">
+                <input type="text" class="otp-box detail-otp-box" maxlength="1" inputmode="numeric">
+                <input type="text" class="otp-box detail-otp-box" maxlength="1" inputmode="numeric">
+                <input type="text" class="otp-box detail-otp-box" maxlength="1" inputmode="numeric">
+                <input type="text" class="otp-box detail-otp-box" maxlength="1" inputmode="numeric">
+                <input type="text" class="otp-box detail-otp-box" maxlength="1" inputmode="numeric">
+            </div>
+            <span class="field-error" id="detailOtp-err" style="display:block; text-align:center; margin-bottom:10px;"></span>
+            <div class="resend-row">
+                Didn't receive code? <a id="detailResendLink" class="disabled">Resend in <span id="detailResendTimer">30</span>s</a>
+            </div>
+            <button type="button" class="pill-btn" id="verifyOtpBtn">Verify</button>
+        </div>
 
-                <div class="tab-pane active" id="register-tab">
-                    <div class="user-form-title">
-                        <h2>Register</h2>
-                        <p>Setup a new account in a minute.</p>
+        {{-- Step 3: rest of the form --}}
+        <div id="detailsStep" class="step-hidden">
+            <form id="registerForm" method="post" action="{{ route('first.details.store') }}" enctype="multipart/form-data">
+                @csrf
+                <input type="hidden" name="mobile" id="mobileHidden">
+
+                <div class="field-group">
+                    <input type="text" class="pill-input" name="full_name" value="{{$user->full_name}}" placeholder="Full Name" required>
+                </div>
+                <div class="field-group">
+                    <input type="text" class="pill-input" value="{{$user->email}}" placeholder="Email" readonly>
+                </div>
+                <div class="field-group">
+                    <select name="state" id="detailState" class="pill-input">
+                        <option value="">Select State</option>
+                        @isset($states)
+                            @foreach($states as $state)
+                                <option value="{{ $state->id }}">{{ $state->name }}</option>
+                            @endforeach
+                        @endisset
+                    </select>
+                </div>
+                <div class="field-group">
+                    <select name="city" id="detailCity" class="pill-input">
+                        <option value="">Select City</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <input type="password" class="pill-input" name="password" placeholder="Password"
+                        pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                        title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
+                        required>
+                </div>
+
+                @php $adminsetting = \App\Models\OtherSetting::first(); @endphp
+                @if($adminsetting->is_referral_enable == "1")
+                    <div class="field-group">
+                        <input type="text" class="pill-input referralCode" name="referralto" placeholder="Enter Referral Code (optional)">
+                        <span id="errors" style="color:brown; font-size:12px;"></span>
+                        <input type="text" name="isRef" id="is_valid_refer" value="0" style="display:none;">
                     </div>
-                    <form id="registerForm" method="post" action="{{ route('first.details.store') }}" enctype="multipart/form-data">
-                    @csrf
-                   
-                    
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" name="full_name" value="{{$user->full_name}}" placeholder="Full Name"  required>
-                                    <small class="form-alert">example - John Deo</small>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" autocomplete="off" value="{{$user->email}}" name="email" id="email_id_register" placeholder="Email"  required>
-                                    <small class="form-alert">Please follow this example - abc@example.com</small>
-                                    <span id="email_feedback" style="display:none; color:red;">Email already exists</span>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <input type="tel" onkeypress="return isNumber(event)" autocomplete="off" class="form-control" name="mobile"  minlength="10" maxlength="10" placeholder="Moblie number" id="mobile_number" required>
-                                    <small class="form-alert">Please follow this example - 01XXXXXXXXX</small>
-                                    <!--p id="verified_badge" style="color:green;display:none;">Verified</p-->
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <input type="tel" name="mobile" id="mob_in" class="form-control" style="display:none;"/>
-                                <input type="text" name="isValid" id="is_valid_number" value="1" class="form-control" style="display:none;"/>
-                                <!--div class="form-group mb-2" id="otp_field" style="display: none;">
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        id="otp"
-                                        name="otp"
-                                        placeholder="Enter OTP"
-                                        maxlength="6"
-                                    />
-                                </div>
-                                <button type="button" class="btn btn-primary mb-2" id="send-otp-bt" onclick="sendOTP()">Send OTP</button>
-                                <button type="button" class="btn btn-primary mb-2" id="verify-otp-bt" style="display: none;" onclick="verifyOTP()">Verify</button-->
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <input type="password" class="form-control" name="password" id="pass" placeholder="Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" required>
-                                    <button class="form-icon"><i class="eye fas fa-eye"></i></button>
-                                    <small class="form-alert">Password must be 8 characters</small>
-                                </div>
-                            </div>
-                            @php $adminsetting = \App\Models\OtherSetting::first();  @endphp
-                            @if($adminsetting->is_referral_enable == "1")
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <input type="text" class="form-control referralCode" name="referralto" placeholder="Enter Referral Code" >
-                                    <span id="errors" style="color:brown"></span>
-                                    <input type="text" name="isRef" id="is_valid_refer" value="0" class="form-control" style="display:none;"/>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Enter Referral Name" id="names" value="" readonly>
-                                    
-                                </div>
-                            </div>
-                            
-                            @endif
-                            
-                           
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-inline">
-                                        <i class="fas fa-user-check"></i>
-                                        <span>Create new account</span>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                        </div>
-                    </form>
-                    
-                </div>
-            </div>
-        </section>
+                    <div class="field-group">
+                        <input type="text" class="pill-input" placeholder="Referred by" id="names" value="" readonly>
+                    </div>
+                @endif
 
-    <!-- VENDOR -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-    <script src="
-    https://cdn.jsdelivr.net/npm/sweetalert2@11.11.0/dist/sweetalert2.all.min.js
-    "></script>
-    <link href="
-    https://cdn.jsdelivr.net/npm/sweetalert2@11.11.0/dist/sweetalert2.min.css
-    " rel="stylesheet">
-    <script src="{{asset('front/js/vendor/popper.min.js')}}"></script>
-    <script src="{{asset('front/js/vendor/bootstrap.min.js')}}"></script>
-    <script src="{{asset('front/js/custom/main.js')}}"></script>
-        <!--=====================================
-                    JS LINK PART END
-        =======================================-->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Function to show the overlay
-        function showOverlay() {
-            const overlay = document.createElement('div');
-            overlay.className = 'overlay';
-            document.body.appendChild(overlay);
-        }
-    
-        // Function to hide the overlay
-        function hideOverlay() {
-            const overlay = document.querySelector('.overlay');
-            if (overlay) {
-                overlay.remove();
-            }
-        }
-    
-        // Assuming you want to show the overlay when the page loads or a specific action occurs
-        showOverlay();
-    
-        // Optional: Add logic to hide the overlay based on some condition or event
-        // hideOverlay();
-    });
-    window.onscroll = function() {scrollFunction()};
+                <button type="submit" class="pill-btn">Create new account</button>
+            </form>
+        </div>
+    </div>
+</section>
 
-    function scrollFunction() {
-        const scrollToTopBtn = document.getElementById("scrollToTopBtn");
-        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-            scrollToTopBtn.style.display = "block";
-        } else {
-            scrollToTopBtn.style.display = "none";
-        }
-    }
-    
-    // When the user clicks on the button, scroll to the top of the document
-    function scrollToTop() {
-        window.scrollTo({top: 200, behavior: 'smooth'});
-    }
-</script>
-
-<script src="
-https://cdn.jsdelivr.net/npm/sweetalert2@11.11.0/dist/sweetalert2.all.min.js
-"></script>
-<link href="
-https://cdn.jsdelivr.net/npm/sweetalert2@11.11.0/dist/sweetalert2.min.css
-" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.11.0/dist/sweetalert2.all.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.11.0/dist/sweetalert2.min.css" rel="stylesheet">
+<script src="{{asset('front/js/vendor/popper.min.js')}}"></script>
+<script src="{{asset('front/js/vendor/bootstrap.min.js')}}"></script>
+<script src="{{asset('front/js/custom/main.js')}}"></script>
 
 <script>
-     let referral = '{{ session('referralCode') }}';
-    let referralCodeElement = $(".referralCode");
-    referralCodeElement.val(referral);
-    if (referral) {
-        setTimeout(function() {
-            referralCodeElement.trigger('keyup'); // Trigger the keyup event
-            console.log(referral);
-        }, 100);
-    }
-    $(".referralCode").keyup(function() {
-        let referralValue = $(this).val();
-        if (referralValue !== "") {
-            $.ajax({
-                type: "GET",
-                url: "{{ url('getusername') }}/" + referralValue,
-                success: function(data) {
-                    if (data.status == 1) {
-                        document.getElementById('is_valid_refer').value = '1';
-                        $("#names").val(data.name);
-                        $("#errors").html("");
-                    } else if (data.status == 3) {
-                        document.getElementById('is_valid_refer').value = '1';
-                        $("#names").val("");
-                        $(".referralCode").val("");
-                        $("#errors").html("This referral code(" + referralValue + ") does not fulfill the Active Paid Subscription criteria.");
-                    } else {
-                        document.getElementById('is_valid_refer').value = '0';
-                        $("#names").val("");
-                        $("#errors").html("Not Found");
-                    }
-                }
-            });
-        } else {
-            document.getElementById('is_valid_refer').value = '0';
-            $("#names").val("");
-            $("#errors").html("");
-        }
-    });
-    
-  /*  function sendOTP() {
-        var mobileNumber = document.getElementById('mobile_number').value;
-        document.getElementById('mob_in').value = mobileNumber;
-        var token = '{{ csrf_token() }}';
-        $.post('{{ route("mobileVerify") }}', { _token: token,mobile: mobileNumber }, function(data) {
-            // Show OTP field if OTP is sent successfully
-            if (data.success) {
-                document.getElementById('otp_field').style.display = 'block';
-                document.getElementById('send-otp-bt').style.display = 'none';
-                document.getElementById('verify-otp-bt').style.display = 'block';
-                Swal.fire({
-                  title: "OTP Sent!",
-                  text: "OTP sent to the entered mobile number...",
-                  icon: "success"
-                });
-            }else{
-                document.getElementById('otp_field').style.display = 'none';
-                document.getElementById('send-otp-bt').style.display = 'block';
-                document.getElementById('verify-otp-bt').style.display = 'none';
-                Swal.fire({
-                  icon: "error",
-                  title: "Oops...",
-                  text: "Please retry after sometime.."
-                });
-            }
-        }).fail(function(response) {
-            // Handle server-side validation errors
-            Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: response.responseJSON.error
-            });
+const CSRF = '{{ csrf_token() }}';
+
+window.onscroll = function() { scrollFunction() };
+function scrollFunction() {
+    const btn = document.getElementById("scrollToTopBtn");
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) { btn.style.display = "flex"; }
+    else { btn.style.display = "none"; }
+}
+function scrollToTop() { window.scrollTo({top: 0, behavior: 'smooth'}); }
+
+function backToMobile(){
+    $('#otpStep').addClass('step-hidden');
+    $('#mobileStep').removeClass('step-hidden');
+    clearInterval(window.detailResendLink_interval);
+}
+
+/* OTP box auto-advance */
+(function(){
+    const boxes = document.querySelectorAll('.detail-otp-box');
+    boxes.forEach((input, idx) => {
+        input.addEventListener('input', () => {
+            input.value = input.value.replace(/[^0-9]/g,'');
+            if(input.value.length === 1 && idx < boxes.length - 1){ boxes[idx+1].focus(); }
         });
+        input.addEventListener('keydown', (e) => {
+            if(e.key === 'Backspace' && input.value === '' && idx > 0){ boxes[idx-1].focus(); }
+        });
+    });
+})();
+function collectOtp(){
+    let otp = '';
+    document.querySelectorAll('.detail-otp-box').forEach(i => otp += i.value);
+    return otp;
+}
+function startResendTimer(seconds, onResend){
+    let time = seconds;
+    $('#detailResendTimer').text(time);
+    $('#detailResendLink').addClass('disabled').off('click');
+    clearInterval(window.detailResendLink_interval);
+    window.detailResendLink_interval = setInterval(() => {
+        time--;
+        $('#detailResendTimer').text(time);
+        if(time <= 0){
+            clearInterval(window.detailResendLink_interval);
+            $('#detailResendLink').removeClass('disabled').text('Resend OTP').on('click', onResend);
+        }
+    }, 1000);
+}
+
+function isNumber(evt) {
+    evt = evt || window.event;
+    var charCode = evt.which || evt.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) { return false; }
+    return true;
+}
+$('#mobileInput').on('keypress', isNumber);
+
+$('#sendOtpBtn').on('click', function(){
+    const mobile = $('#mobileInput').val().trim();
+    $('#mobileInput-err').text('');
+    if(!/^[6-9]\d{9}$/.test(mobile)){
+        $('#mobileInput-err').text('Enter a valid 10-digit Indian mobile number');
+        return;
     }
-    function verifyOTP() {
-        var otp = $('#otp').val();
-        var mobileNumber = document.getElementById('mobile_number').value;
+    sendOtp(mobile);
+});
+
+function sendOtp(mobile){
+    $('#sendOtpBtn').prop('disabled', true);
+    $.post('{{ route("mobileVerify") }}', { mobile: mobile, _token: CSRF })
+        .done(function(data){
+            $('#sendOtpBtn').prop('disabled', false);
+            if(data.success){
+                $('#otpMobileLabel').text('+91 ' + mobile);
+                $('#mobileStep').addClass('step-hidden');
+                $('#otpStep').removeClass('step-hidden');
+                $('.detail-otp-box').val('');
+                $('.detail-otp-box').first().focus();
+                startResendTimer(30, function(){ sendOtp(mobile); });
+            } else {
+                Swal.fire({icon:'error', title:'Oops...', text:'Please retry after sometime.'});
+            }
+        })
+        .fail(function(response){
+            $('#sendOtpBtn').prop('disabled', false);
+            const msg = response.responseJSON && response.responseJSON.error
+                ? response.responseJSON.error
+                : (response.responseJSON && response.responseJSON.mobile ? response.responseJSON.mobile[0] : 'This mobile number may already be registered.');
+            Swal.fire({icon:'error', title:'Oops...', text: msg});
+        });
+}
+
+$('#verifyOtpBtn').on('click', function(){
+    const mobile = $('#otpMobileLabel').text().replace('+91 ', '');
+    const otp = collectOtp();
+    $('#detailOtp-err').text('');
+    if(otp.length < 6){
+        $('#detailOtp-err').text('Please enter the complete 6-digit OTP');
+        return;
+    }
+    $('#verifyOtpBtn').prop('disabled', true).text('Verifying...');
+    $.ajax({
+        url: '{{ route("verifyOTP") }}',
+        type: 'POST',
+        data: { mobile: mobile, otp: otp, _token: CSRF },
+        dataType: 'json',
+        success: function(data){
+            $('#verifyOtpBtn').prop('disabled', false).text('Verify');
+            if(data.success){
+                $('#mobileHidden').val(mobile);
+                $('#otpStep').addClass('step-hidden');
+                $('#detailsStep').removeClass('step-hidden');
+            } else {
+                $('#detailOtp-err').text('You entered an incorrect OTP.');
+            }
+        },
+        error: function(){
+            $('#verifyOtpBtn').prop('disabled', false).text('Verify');
+            Swal.fire({icon:'error', title:'Oops...', text:'Something went wrong, please try again.'});
+        }
+    });
+});
+
+/* State -> City */
+$('#detailState').on('change', function(){
+    var stateId = $(this).val();
+    var citySelect = $('#detailCity');
+    if(!stateId){
+        citySelect.html('<option value="">Select City</option>');
+        return;
+    }
+    $.post("{{ route('cities-by-state') }}", { state_id: stateId, _token: CSRF }, function(data){
+        citySelect.html(data);
+    });
+});
+
+/* Referral code */
+let referral = '{{ session('referralCode') }}';
+let referralCodeElement = $(".referralCode");
+referralCodeElement.val(referral);
+if (referral) {
+    setTimeout(function() { referralCodeElement.trigger('keyup'); }, 100);
+}
+$(".referralCode").keyup(function() {
+    let referralValue = $(this).val();
+    if (referralValue !== "") {
         $.ajax({
-            url: '{{ route("verifyOTP") }}',
-            type: 'POST',
-            data: {
-                otp: otp,
-                mobile: mobileNumber,
-                _token: '{{ csrf_token() }}'
-            },
+            type: "GET",
+            url: "{{ url('getusername') }}/" + referralValue,
             success: function(data) {
-                if (data.success) {
-                    document.getElementById('is_valid_number').value = '1';
-                    document.getElementById('mobile_number').classList.add('verified');
-                    document.getElementById('otp_field').style.display = 'none';
-                    document.getElementById('send-otp-bt').style.display = 'none';
-                    document.getElementById('verify-otp-bt').style.display = 'none';
-                    document.getElementById('mobile_number').disabled = true;
-                    document.getElementById('verified_badge').style.display = 'block';
-                    Swal.fire({
-                          title: "OTP Verified!",
-                          icon: "success"
-                        });
+                if (data.status == 1) {
+                    $('#is_valid_refer').val('1');
+                    $("#names").val(data.name);
+                    $("#errors").html("");
+                } else if (data.status == 3) {
+                    $('#is_valid_refer').val('1');
+                    $("#names").val("");
+                    $(".referralCode").val("");
+                    $("#errors").html("This referral code(" + referralValue + ") does not fulfill the Active Paid Subscription criteria.");
                 } else {
-                     Swal.fire({
-                      icon: "error",
-                      title: "Oops...",
-                      text: "You entered incorrect otp.."
-                    });
+                    $('#is_valid_refer').val('0');
+                    $("#names").val("");
+                    $("#errors").html("Not Found");
                 }
-            },
-            error: function(xhr, status, error) {
-                console.error(xhr.responseText);
             }
         });
-    }*/
-    function isNumber(evt) {
-        evt = (evt) ? evt : window.event;
-        var charCode = (evt.which) ? evt.which : evt.keyCode;
-        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-            return false;
-        }
-        return true;
+    } else {
+        $('#is_valid_refer').val('0');
+        $("#names").val("");
+        $("#errors").html("");
     }
-    $('#registerForm').submit(function(event) {
-        if (document.getElementById('is_valid_number').value == '0') {
-            event.preventDefault();
-            Swal.fire({
-                icon: 'error',
-                title: 'Phone Number Not Verified',
-                text: 'Please verify your phone number before submitting the form.'
-            });
-        }
-        if($('#is_valid_refer').val()==0 && $('.referralCode').val().trim() !== ''){
-            event.preventDefault();
-            Swal.fire({
-                icon: 'error',
-                title: 'Not a valid referral code!',
-                text: 'Please check the entered referral code'
-            });
-        }
-    });
-</script>
-<button onclick="scrollToTop()" id="scrollToTopBtn" title="Go to top"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2 160 448c0 17.7 14.3 32 32 32s32-14.3 32-32l0-306.7L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"/></svg></button>
-    </body>
+});
 
+$('#registerForm').submit(function(event) {
+    if ($('#is_valid_refer').length && $('#is_valid_refer').val() == 0 && $('.referralCode').val() && $('.referralCode').val().trim() !== '') {
+        event.preventDefault();
+        Swal.fire({
+            icon: 'error',
+            title: 'Not a valid referral code!',
+            text: 'Please check the entered referral code'
+        });
+    }
+});
+</script>
+
+<button onclick="scrollToTop()" id="scrollToTopBtn" title="Go to top">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2 160 448c0 17.7 14.3 32 32 32s32-14.3 32-32l0-306.7L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"/></svg>
+</button>
+
+</body>
 </html>

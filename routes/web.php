@@ -105,9 +105,7 @@ Route::post('save-contact-us', [FrontController::class, 'saveContactUs'])->name(
 
 Route::post('add-save-ad-post', [MemberAuthController::class, 'saveAdPost'])->name('add-save-ad-post');
 
-Route::get('user-login', function () {
-    return view('front.user-login');
-})->name('user.login');
+Route::get('user-login', [MemberAuthController::class, 'loginView'])->name('user.login');
 
 Route::get('signup', function () {
     return redirect()->route('user.login');

@@ -46,6 +46,12 @@ use App\Models\WhatsappClick;
 
 class MemberAuthController extends Controller
 {
+    public function loginView()
+    {
+        $states = State::where('country_id', 1)->get();
+        return view('front.user-login', compact('states'));
+    }
+
     public function checkEmail(Request $request)
     {
         $email = $request->input('email');
@@ -71,6 +77,7 @@ class MemberAuthController extends Controller
             return response()->json(['status' => '2']);
         }
     }
+
     public function sendMobileOTP(Request $request)
     {
         // Generate a six-digit OTP
@@ -85,7 +92,7 @@ class MemberAuthController extends Controller
         }
         $otp = rand(100000, 999999);
         $mobile_number = $request->mobile;
-        
+
         OTP::where('mobile', $mobile_number)->delete();
 
         // Assuming you have a model named OTP for managing OTPs
@@ -95,41 +102,48 @@ class MemberAuthController extends Controller
             'expiry' => now()->addMinutes(10),
         ]);
 
+        $mobiles = is_array($mobile_number) ? implode(',', $mobile_number) : $mobile_number;
         $message = "$otp is the One Time Password(OTP) to verify your MOB number at Web Mingo, This OTP is Usable only once and is valid for 10 min,PLS DO NOT SHARE THE OTP WITH ANYONE";
-        $dlt_id = '1307161465983326774';
-        $request_parameter = array(
-            'authkey' => '133780AZGqc6gKWfh63da1812P1',
-            'mobiles' => $mobile_number,
-            'message' => urlencode($message),
+
+        $params = [
+            'authkey' => '133780AWLy8zZpC690b124aP1',
+            'mobiles' => $mobiles,
             'sender' => 'WMINGO',
+            'message' => urlencode($message),
             'route' => '4',
             'country' => '91',
-            'unicode' => '1',
-        );
-        $url = "http://sms.webmingo.in/api/sendhttp.php?";
-        foreach ($request_parameter as $key => $val) {
-            $url .= $key . '=' . $val . '&';
-        }
-        $url = $url . 'DLT_TE_ID=' . $dlt_id;
-        $url = rtrim($url, "&");
+            'PE_ID' => '1301160576431389865',
+            'DLT_TE_ID' => '1307161465983326774'
+
+        ];
+
+        $url = 'http://sms.webmingo.in/api/sendhttp.php?' . http_build_query($params);
+
         try {
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            //get response
-            $output = curl_exec($ch);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+
+            $response = curl_exec($ch);
+            $curlErr = curl_error($ch);
             curl_close($ch);
-            return response()->json([
+            if ($curlErr) {
+                return ['success' => false, 'response' => $curlErr];
+            }
+
+            return [
                 'success' => true,
                 'message' => 'Otp Successfully Send on Your mobile number!',
-            ]);
-            // return true;
-        } catch (\Exception $e) {
-            dd($e->getMessage());
+            ];
+
+        } catch (\Throwable $e) {
+            return ['success' => false, 'response' => $e->getMessage()];
         }
+
     }
-    
+
     public function sendMobileOTPCustomer(Request $request)
     {
         // Generate a six-digit OTP
@@ -144,7 +158,7 @@ class MemberAuthController extends Controller
         }
         $otp = rand(100000, 999999);
         $mobile_number = $request->mobile;
-        
+
         OTP::where('mobile', $mobile_number)->delete();
 
         // Assuming you have a model named OTP for managing OTPs
@@ -154,41 +168,47 @@ class MemberAuthController extends Controller
             'expiry' => now()->addMinutes(10),
         ]);
 
+        $mobiles = is_array($mobile_number) ? implode(',', $mobile_number) : $mobile_number;
         $message = "$otp is the One Time Password(OTP) to verify your MOB number at Web Mingo, This OTP is Usable only once and is valid for 10 min,PLS DO NOT SHARE THE OTP WITH ANYONE";
-        $dlt_id = '1307161465983326774';
-        $request_parameter = array(
-            'authkey' => '133780AZGqc6gKWfh63da1812P1',
-            'mobiles' => $mobile_number,
-            'message' => urlencode($message),
+
+        $params = [
+            'authkey' => '133780AWLy8zZpC690b124aP1',
+            'mobiles' => $mobiles,
             'sender' => 'WMINGO',
+            'message' => urlencode($message),
             'route' => '4',
             'country' => '91',
-            'unicode' => '1',
-        );
-        $url = "http://sms.webmingo.in/api/sendhttp.php?";
-        foreach ($request_parameter as $key => $val) {
-            $url .= $key . '=' . $val . '&';
-        }
-        $url = $url . 'DLT_TE_ID=' . $dlt_id;
-        $url = rtrim($url, "&");
+            'PE_ID' => '1301160576431389865',
+            'DLT_TE_ID' => '1307161465983326774'
+
+        ];
+
+        $url = 'http://sms.webmingo.in/api/sendhttp.php?' . http_build_query($params);
+
         try {
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            //get response
-            $output = curl_exec($ch);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+
+            $response = curl_exec($ch);
+            $curlErr = curl_error($ch);
             curl_close($ch);
-            return response()->json([
+            if ($curlErr) {
+                return ['success' => false, 'response' => $curlErr];
+            }
+
+            return [
                 'success' => true,
                 'message' => 'Otp Successfully Send on Your mobile number!',
-            ]);
-            // return true;
-        } catch (\Exception $e) {
-            dd($e->getMessage());
+            ];
+
+        } catch (\Throwable $e) {
+            return ['success' => false, 'response' => $e->getMessage()];
         }
     }
-    
+
     public function verifyOTP(Request $request)
     {
         $mobile = $request->mobile;
@@ -203,6 +223,7 @@ class MemberAuthController extends Controller
         }
 
     }
+
     public function authenticate(Request $request)
     {
 
@@ -236,21 +257,20 @@ class MemberAuthController extends Controller
                 } else {
 
                     if (Auth::guard('member')->attempt($credentials)) {
-
                         $revew = DB::table('ad_reviews_temp')->where('email', $request->email)->first();
-
-
-
 
                         if (isset($revew) && !empty($revew)) {
                             $ad = Ad::where('id', $revew->ad_id)->with('category')->first();
                             return redirect()->route('ad-details', [$ad->category->name, $ad->slug])->withErrors('Please complete your review!');
-                        } else {
-                            return redirect()->route('user.dashboard')
-                                ->withSuccess('You have successfully logged in!');
                         }
 
+                        if (session()->has('post_login_redirect')) {
+                            $redirect = session()->pull('post_login_redirect');
+                            return redirect($redirect)->withSuccess('You have successfully logged in!');
+                        }
 
+                        return redirect()->route('user.dashboard')
+                            ->withSuccess('You have successfully logged in!');
                     }
                 }
             } else {
@@ -286,25 +306,23 @@ class MemberAuthController extends Controller
 
     public function register(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             'referralto' => 'nullable|string|max:255',
             'full_name' => 'required|string|max:250',
-            'email' => 'required|email|max:250|unique:members',
+            'email' => 'nullable|email|max:250|unique:members',
             'mobile' => 'required|unique:members',
+            'state' => 'nullable',
+            'city' => 'nullable',
             'password' => 'required|min:8'
         ]);
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
-        /*  if(!$request->isValid){
-              \Session::put('error','First verify your phone number..');
-              return redirect("user.login");
-          } */
+
         $memberm = Member::where('mobile', $request->mobile)->first();
         if ($memberm) {
             \Session::put('error', 'Already Exists Mobile Number');
-            return redirect("user.login");
+            return redirect()->route('user.login');
         }
 
         $adminsetting = OtherSetting::first();
@@ -315,9 +333,11 @@ class MemberAuthController extends Controller
         $user_id = $namePart . $mobilePart;
 
         $member->full_name = ucfirst($request->full_name);
-        $member->email = $request->email;
+        $member->email = $request->filled('email') ? $request->email : null;
         $member->mobile = $request->mobile;
         $member->whatsapp_number = $request->whatsapp_number;
+        $member->state = $request->state;
+        $member->city = $request->city;
         $member->referralto = $request->referralto;
         $member->member_id = 'PGHAR' . date('Y') . rand(1000, 9999);
         $member->referral_code = $user_id;
@@ -327,10 +347,7 @@ class MemberAuthController extends Controller
         $member->no_of_ads = 0;
         $member->membership_expiry_at = date('Y-m-d', strtotime(date('d-m-Y H:i:s') . ' + ' . $adminsetting->user_expiry . ' days'));
         $member->save();
-        $m_id = $member->id;
 
-
-        /****wallet****** */
         if ($adminsetting->welcome_bonus > 0) {
             $walletamount = new WalletAmount();
             $walletamount->points = $adminsetting->welcome_bonus;
@@ -341,24 +358,33 @@ class MemberAuthController extends Controller
             $walletamount->description = $adminsetting->welcome_bonus . " Points Eared from Welcome Bonus";
             $walletamount->save();
         }
-        /*
-                $memberOTP = OTP::where('mobile',$member->mobile)->first();
-                $memberOTP->member_id = $member->id;
-                $memberOTP->save();*/
-        $token = Str::random(64);
-        MemberVerify::create([
-            'member_id' => $member->id,
-            'token' => $token
-        ]);
 
-        $mailData = ['token' => $token];
-        $mailContent = Mail::to($request->email)->send(new EmailVerificationEmail($mailData));
+        if ($request->filled('email')) {
+            $token = Str::random(64);
+            MemberVerify::create(['member_id' => $member->id, 'token' => $token]);
+            Mail::to($request->email)->send(new EmailVerificationEmail(['token' => $token]));
+        }
+
         $this->addFreeSubscription($member->id);
         if (isset($request->referralto) && $request->referralto != '') {
             $this->addReferralPoints($request->referralto, $member->member_id);
         }
+
+        // Post Free Ad se aaya hai — email verified ho ya na ho, seedha form pe
+        if (session()->has('post_login_redirect')) {
+            Auth::guard('member')->login($member);
+            $redirect = session()->pull('post_login_redirect');
+            return redirect($redirect);
+        }
+
+        // Email hi nahi diya — verify karne ko kuch nahi, seedha login
+        if (!$request->filled('email')) {
+            Auth::guard('member')->login($member);
+            return redirect()->route('user.dashboard')->withSuccess('Account created successfully!');
+        }
+
         return redirect()->route('user.login')
-            ->withSuccess('Verification Email sent, Please check your email in inbox, spam and junk folder.');
+            ->withSuccess('Please check your email for the verification link.');
     }
 
     public function verifyAccount($token)
@@ -388,68 +414,55 @@ class MemberAuthController extends Controller
 
     public function addRequiredDetails(Request $request)
     {
-
         $user_id = session()->get('id_tempuser');
         $data['user'] = MemberTemp::findOrFail($user_id);
+        $data['states'] = State::where('country_id', 1)->get();
         return view('front.add-details', $data);
     }
 
     public function storeRequiredDetails(Request $request)
     {
-        // dd($request->all());
         $request->validate([
             'referralto' => 'nullable|string|max:255',
+            'full_name' => 'required|string|max:250',
+            'mobile' => 'required|digits:10|unique:members,mobile',
+            'state' => 'nullable',
+            'city' => 'nullable',
             'password' => 'required|string|min:8'
         ]);
 
-        // Retrieve the customer ID from the session
         $user_id = session()->get('id_tempuser');
-
         $member_temp = MemberTemp::find($user_id);
-        // echo"<pre>";print_r($customer_temp);die();
-        if (!$user_id) {
+        if (!$user_id || !$member_temp) {
             return redirect()->back()->with('error', 'User not found in session.');
         }
-        /* 
-         if(!$request->isValid){
-             \Session::put('error','First verify your mobile number..');
-             return redirect()->back();
-         }
- */
+
         $adminsetting = OtherSetting::first();
         $namePart = substr(ucfirst($request->full_name), 0, 4);
         $mobilePart = rand(1000, 9999);
-        $user_id = $namePart . $mobilePart;
+        $referral_code = $namePart . $mobilePart;
 
         $member = Member::create([
-            'full_name' => $member_temp->full_name,
+            'full_name' => ucfirst($request->full_name),
             'email' => $member_temp->email,
             'google_id' => $member_temp->google_id,
             'profile_pic' => $member_temp->profile_pic,
             'mobile_verified_at' => date('Y-m-d H:i:s'),
-            'email_verified_at' => date('Y-m-d H:i:s'),
-
+            'email_verified_at' => date('Y-m-d H:i:s'), // Google se aaya, verify ki zarurat nahi
         ]);
 
-        $member = Member::find($member->id);
-        if (!$member) {
-            return redirect()->back()->with('error', 'User not found.');
-        }
-
-
         $member->password = Hash::make($request->password);
-
         $member->mobile = $request->mobile;
+        $member->state = $request->state;
+        $member->city = $request->city;
         $member->referralto = $request->referralto;
         $member->member_id = 'PGHAR' . date('Y') . rand(1000, 9999);
-        $member->referral_code = $user_id;
+        $member->referral_code = $referral_code;
         $member->wallet_points = $adminsetting->welcome_bonus;
         $member->no_of_ads = 0;
         $member->membership_expiry_at = date('Y-m-d', strtotime(date('d-m-Y H:i:s') . ' + ' . $adminsetting->user_expiry . ' days'));
         $member->save();
 
-
-        /****wallet****** */
         if ($adminsetting->welcome_bonus > 0) {
             $walletamount = new WalletAmount();
             $walletamount->points = $adminsetting->welcome_bonus;
@@ -464,7 +477,12 @@ class MemberAuthController extends Controller
         if (isset($request->referralto) && $request->referralto != '') {
             $this->addReferralPoints($request->referralto, $member->member_id);
         }
+
         Auth::guard('member')->login($member);
+
+        if (session()->has('post_login_redirect')) {
+            return redirect(session()->pull('post_login_redirect'));
+        }
         return redirect()->route('user.dashboard');
     }
 
@@ -534,44 +552,52 @@ class MemberAuthController extends Controller
                 'errors' => $validator->errors(),
             ]);
         }
-        $mobile_number = $request->mobile_number;
 
+        $mobile_number = $request->mobile_number;
         $otp = substr(str_shuffle("0123456789"), 0, 4);
         Member::where('mobile', $mobile_number)->update(['otp' => $otp]);
+
+        $mobiles = is_array($mobile_number) ? implode(',', $mobile_number) : $mobile_number;
         $message = "$otp is the One Time Password(OTP) to verify your MOB number at Web Mingo, This OTP is Usable only once and is valid for 10 min,PLS DO NOT SHARE THE OTP WITH ANYONE";
-        $dlt_id = '1307161465983326774';
-        $request_parameter = array(
-            'authkey' => '133780AZGqc6gKWfh63da1812P1',
-            'mobiles' => $mobile_number,
-            'message' => urlencode($message),
+
+        $params = [
+            'authkey' => '133780AWLy8zZpC690b124aP1',
+            'mobiles' => $mobiles,
             'sender' => 'WMINGO',
+            'message' => urlencode($message),
             'route' => '4',
             'country' => '91',
-            'unicode' => '1',
-        );
-        $url = "http://sms.webmingo.in/api/sendhttp.php?";
-        foreach ($request_parameter as $key => $val) {
-            $url .= $key . '=' . $val . '&';
-        }
-        $url = $url . 'DLT_TE_ID=' . $dlt_id;
-        $url = rtrim($url, "&");
+            'PE_ID' => '1301160576431389865',
+            'DLT_TE_ID' => '1307161465983326774'
+
+        ];
+
+        $url = 'http://sms.webmingo.in/api/sendhttp.php?' . http_build_query($params);
+
         try {
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            //get response
-            $output = curl_exec($ch);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+
+            $response = curl_exec($ch);
+            $curlErr = curl_error($ch);
             curl_close($ch);
-            return response()->json([
+            if ($curlErr) {
+                return ['success' => false, 'response' => $curlErr];
+            }
+
+            return [
                 'success' => true,
                 'message' => 'Otp Successfully Send on Your mobile number!',
-            ]);
-            // return true;
-        } catch (\Exception $e) {
-            dd($e->getMessage());
+            ];
+
+        } catch (\Throwable $e) {
+            return ['success' => false, 'response' => $e->getMessage()];
         }
     }
+
     public function verifymobilenumber(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -587,24 +613,25 @@ class MemberAuthController extends Controller
                 'errors' => $validator->errors(),
             ]);
         }
+
         $member = Member::where('mobile', $request->mobile_number)->where('otp', $request->otp)->first();
         if ($member) {
             $member->update(['mobile_verified_at' => date('Y-m-d H:i:s')]);
+            Auth::guard('member')->login($member);
 
-            //Auth::guard('member')->login($member);
+            $redirect = session()->pull('post_login_redirect', route('user.dashboard'));
+
             return response()->json([
                 'success' => true,
-                'message' => 'Succesfully Verified Otp, login to continue',
+                'message' => 'Successfully logged in!',
+                'redirect' => $redirect,
             ]);
         } else {
             return response()->json([
-                'profile' => 0,
                 'success' => false,
                 'message' => 'Incorrect Otp',
             ]);
         }
-
-
     }
 
 
@@ -622,44 +649,51 @@ class MemberAuthController extends Controller
             ]);
         }
         $mobile_number = $request->mobile_number;
-        $password = $request->password;
         $user_id = Auth::guard('member')->user()->id;
 
         $otp = substr(str_shuffle("0123456789"), 0, 4);
         Member::where('id', $user_id)->update(['mobile' => $mobile_number, 'password' => Hash::make($request->password), 'otp' => $otp]);
+
+        $mobiles = is_array($mobile_number) ? implode(',', $mobile_number) : $mobile_number;
         $message = "$otp is the One Time Password(OTP) to verify your MOB number at Web Mingo, This OTP is Usable only once and is valid for 10 min,PLS DO NOT SHARE THE OTP WITH ANYONE";
-        $dlt_id = '1307161465983326774';
-        $request_parameter = array(
-            'authkey' => '133780AZGqc6gKWfh63da1812P1',
-            'mobiles' => $mobile_number,
-            'message' => urlencode($message),
+
+        $params = [
+            'authkey' => '133780AWLy8zZpC690b124aP1',
+            'mobiles' => $mobiles,
             'sender' => 'WMINGO',
+            'message' => urlencode($message),
             'route' => '4',
             'country' => '91',
-            'unicode' => '1',
-        );
-        $url = "http://sms.webmingo.in/api/sendhttp.php?";
-        foreach ($request_parameter as $key => $val) {
-            $url .= $key . '=' . $val . '&';
-        }
-        $url = $url . 'DLT_TE_ID=' . $dlt_id;
-        $url = rtrim($url, "&");
+            'PE_ID' => '1301160576431389865',
+            'DLT_TE_ID' => '1307161465983326774'
+
+        ];
+
+        $url = 'http://sms.webmingo.in/api/sendhttp.php?' . http_build_query($params);
+
         try {
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            //get response
-            $output = curl_exec($ch);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+
+            $response = curl_exec($ch);
+            $curlErr = curl_error($ch);
             curl_close($ch);
-            return response()->json([
+            if ($curlErr) {
+                return ['success' => false, 'response' => $curlErr];
+            }
+
+            return [
                 'success' => true,
                 'message' => 'Otp Successfully Send on Your mobile number!',
-            ]);
-            // return true;
-        } catch (\Exception $e) {
-            dd($e->getMessage());
+            ];
+
+        } catch (\Throwable $e) {
+            return ['success' => false, 'response' => $e->getMessage()];
         }
+
     }
     public function verifyUsermobilenumber(Request $request)
     {
@@ -758,10 +792,12 @@ class MemberAuthController extends Controller
                     ->withErrors('You have no ads left. Please purchase a new subscription.');
             }
         } else {
+            session(['post_login_redirect' => route('user.post-your-ad')]);
             return redirect()->route('user.login')
                 ->withErrors('Please log in to access your dashboard and post an ad.');
         }
     }
+
     public function EditAdPost($id)
     {
         if (Auth::guard('member')->check()) {
@@ -843,9 +879,9 @@ class MemberAuthController extends Controller
             }
             $totalAmount = $data['subscription']->offer_price + $data['total_gst'];
             $data['wallet'] = ($adminsetting->point_value > 0)
-                    ? $user->wallet_points / $adminsetting->point_value
-                    : $user->wallet_points;
-            
+                ? $user->wallet_points / $adminsetting->point_value
+                : $user->wallet_points;
+
             $data['admin_wallet_limit'] = $adminsetting->wallet_limit;
             $data['usable_wallet_amount'] = $data['subscription']->offer_price * ($data['admin_wallet_limit']) / 100;
             $data['remainingWalletBalance'] = max(0, $data['wallet'] - $data['usable_wallet_amount']);
@@ -1435,20 +1471,20 @@ class MemberAuthController extends Controller
                 ->where('delete_status', '0')->first();
 
             if (!empty($ad)) {
-               $validator = Validator::make($request->all(), [
-    'title' => 'required|string|max:255',
-    'category_id' => 'required|exists:categories,id',
-    'price' => 'required|numeric|min:1',
-    'description' => 'required|string',
-    'meta_title' => 'required|string|max:255',
-    'meta_keyword' => 'required|string|max:255',
-    'meta_description' => 'required|string',
-]);
-               if ($validator->fails()) {
-    return redirect()->route('user.edit-ad-post', base64_encode($id))
-        ->withErrors($validator)
-        ->withInput();
-}
+                $validator = Validator::make($request->all(), [
+                    'title' => 'required|string|max:255',
+                    'category_id' => 'required|exists:categories,id',
+                    'price' => 'required|numeric|min:1',
+                    'description' => 'required|string',
+                    'meta_title' => 'required|string|max:255',
+                    'meta_keyword' => 'required|string|max:255',
+                    'meta_description' => 'required|string',
+                ]);
+                if ($validator->fails()) {
+                    return redirect()->route('user.edit-ad-post', base64_encode($id))
+                        ->withErrors($validator)
+                        ->withInput();
+                }
 
                 $slug = Str::slug($request->title);
                 $ad->title = $request->title;
@@ -1873,44 +1909,44 @@ class MemberAuthController extends Controller
         }
 
     }
-    
+
     public function downloadInvoice($id)
     {
         if (Auth::guard('member')->check()) {
-        // Fetch the subscription history
-        $subscription = SubscriptionHistory::with(['customers', 'subscriptions'])
-            ->findOrFail($id);
+            // Fetch the subscription history
+            $subscription = SubscriptionHistory::with(['customers', 'subscriptions'])
+                ->findOrFail($id);
 
-        // Fetch admin invoice settings (only for prefix and starting number)
-        $invoiceSetting = InvoiceSetting::first();
-        $startingNumber = (int) ($invoiceSetting->invoice_number ?? 1001);
-        $prefix = $invoiceSetting->invoice_prefix ?? 'INV-';
+            // Fetch admin invoice settings (only for prefix and starting number)
+            $invoiceSetting = InvoiceSetting::first();
+            $startingNumber = (int) ($invoiceSetting->invoice_number ?? 1001);
+            $prefix = $invoiceSetting->invoice_prefix ?? 'INV-';
 
-        // Generate invoice number if not already set
-        if ($subscription->invoice_number) {
-            $invoiceNumber = $subscription->invoice_number;
-        } else {
-            // Option 1: Simple calculation using subscription ID
-            $invoiceNumber = $prefix . ($startingNumber + $subscription->id - 1);
-            // Save the invoice number in subscription history
-            $subscription->invoice_number = $invoiceNumber;
-            $subscription->save();
-        }
+            // Generate invoice number if not already set
+            if ($subscription->invoice_number) {
+                $invoiceNumber = $subscription->invoice_number;
+            } else {
+                // Option 1: Simple calculation using subscription ID
+                $invoiceNumber = $prefix . ($startingNumber + $subscription->id - 1);
+                // Save the invoice number in subscription history
+                $subscription->invoice_number = $invoiceNumber;
+                $subscription->save();
+            }
 
-        // Prepare data for PDF
-        $data = [
-            'order' => $subscription,      // Matches your Blade variable
-            'type' => 'subscription',
-            'invoice_number' => $invoiceNumber,
-            'invoiceSetting' => $invoiceSetting, // pass to view
-        ];
+            // Prepare data for PDF
+            $data = [
+                'order' => $subscription,      // Matches your Blade variable
+                'type' => 'subscription',
+                'invoice_number' => $invoiceNumber,
+                'invoiceSetting' => $invoiceSetting, // pass to view
+            ];
 
-        // Load the Blade view
-        $pdf = PDF::loadView('users.invoice', $data);
+            // Load the Blade view
+            $pdf = PDF::loadView('users.invoice', $data);
 
-        // Return PDF download
-        $fileName = 'Invoice_' . $invoiceNumber . '.pdf';
-        return $pdf->download($fileName);
+            // Return PDF download
+            $fileName = 'Invoice_' . $invoiceNumber . '.pdf';
+            return $pdf->download($fileName);
         } else {
             return redirect()->route('user.login')
                 ->withErrors('Please login to access the dashboard.');
