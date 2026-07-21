@@ -41,6 +41,7 @@ class AdController extends Controller
      */
     public function index(Request $request)
     {
+<<<<<<< HEAD
         // Auto-mark ads as Expired if their expire_at date has passed
         Ad::where('status', 'Published')
             ->whereNotNull('expire_at')
@@ -88,6 +89,12 @@ class AdController extends Controller
         $data['filters'] = $request->only(['category_id', 'subcategory_id', 'date_from', 'date_to']);
 
         return view('ads.index', $data);
+=======
+        
+        $data['ads'] = Ad::with('AdImage', 'brandCategory', 'category', 'subcategory', 'brand', 'user', 'adFeature')->orderBy('created_at','DESC')->get();
+    
+        return view('ads.index',$data);
+>>>>>>> 1850ca7f02123f6f36f3ed52af9f4dfd92dfa874
     }
 
     /**

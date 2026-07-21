@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="{{asset('front/css/vendor/bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{asset('front/css/custom/main.css')}}">
     <link rel="stylesheet" href="{{asset('front/css/custom/user-form.css')}}">
+    
 </head>
 
 <style>
