@@ -338,6 +338,29 @@
             transform: translateY(0);
         }
     }
+    /* Password show/hide */
+    .password-wrap {
+        position: relative;
+    }
+
+    .password-wrap .pill-input {
+        padding-right: 48px;
+    }
+
+    .toggle-password {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #999;
+        cursor: pointer;
+        font-size: 15px;
+        user-select: none;
+    }
+
+    .toggle-password:hover {
+        color: var(--accent);
+    }
 </style>
 
 <body>
@@ -409,12 +432,15 @@
                 <div id="loginPasswordStep" class="step-hidden">
                     <span class="back-link" onclick="backToIdentifier('login')"><i class="fas fa-arrow-left"></i>
                         Back</span>
+                    <div class="auth-subtitle" style="margin-bottom:6px;">Login as <b id="loginPasswordEmailLabel"></b>
+                    </div>
                     <form id="loginForm" method="post" action="{{ route('user.authenticate') }}">
                         @csrf
                         <input type="hidden" name="email" id="loginEmailHidden">
-                        <div class="field-group">
+                        <div class="field-group password-wrap">
                             <input type="password" name="password" id="loginPassword" class="pill-input"
                                 placeholder="Password" required>
+                            <i class="fas fa-eye toggle-password" data-target="loginPassword"></i>
                             <small class="field-error" style="display:none" id="loginPassword-err"></small>
                         </div>
                         <div
@@ -478,14 +504,12 @@
                     </button>
                 </div>
 
-                {{-- Step 2: OTP (6 digit) --}}
+                {{-- Step 2: OTP (4 digit) --}}
                 <div id="regOtpStep" class="step-hidden">
                     <span class="back-link" onclick="backToRegMobile()"><i class="fas fa-arrow-left"></i> Back</span>
-                    <div class="auth-subtitle" style="margin-bottom:6px;">Enter the 6-digit code sent to <b
+                    <div class="auth-subtitle" style="margin-bottom:6px;">Enter the 4-digit code sent to <b
                             id="regOtpMobileLabel"></b></div>
                     <div class="otp-row">
-                        <input type="text" class="otp-box reg-otp-box" maxlength="1" inputmode="numeric">
-                        <input type="text" class="otp-box reg-otp-box" maxlength="1" inputmode="numeric">
                         <input type="text" class="otp-box reg-otp-box" maxlength="1" inputmode="numeric">
                         <input type="text" class="otp-box reg-otp-box" maxlength="1" inputmode="numeric">
                         <input type="text" class="otp-box reg-otp-box" maxlength="1" inputmode="numeric">
@@ -531,11 +555,13 @@
                                 <option value="">Select City</option>
                             </select>
                         </div>
-                        <div class="field-group">
-                            <input type="password" class="pill-input" name="password" placeholder="Password"
+                        <div class="field-group password-wrap">
+                            <input type="password" class="pill-input" name="password" id="regPassword"
+                                placeholder="Password"
                                 pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                                 title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
                                 required>
+                            <i class="fas fa-eye toggle-password" data-target="regPassword"></i>
                         </div>
 
                         @php $adminsetting = \App\Models\OtherSetting::first(); @endphp
@@ -669,6 +695,19 @@
             }, 1000);
         }
 
+        /* ---------- Password show/hide toggle ---------- */
+        $(document).on('click', '.toggle-password', function () {
+            const targetId = $(this).data('target');
+            const input = document.getElementById(targetId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                $(this).removeClass('fa-eye').addClass('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                $(this).removeClass('fa-eye-slash').addClass('fa-eye');
+            }
+        });
+
         /* ============ LOGIN: identifier detection ============ */
         $('#loginContinueBtn').on('click', function () {
             const val = $('#loginIdentifier').val().trim();
@@ -681,6 +720,7 @@
                 sendLoginOtp(val);
             } else if (emailPattern.test(val)) {
                 $('#loginEmailHidden').val(val);
+                $('#loginPasswordEmailLabel').text(val);
                 $('#loginIdentifierStep').addClass('step-hidden');
                 $('#loginPasswordStep').removeClass('step-hidden');
             } else {
@@ -786,8 +826,8 @@
             const mobile = $('#regOtpMobileLabel').text().replace('+91 ', '');
             const otp = collectOtp('.reg-otp-box');
             $('#regOtp-err').text('');
-            if (otp.length < 6) {
-                $('#regOtp-err').text('Please enter the complete 6-digit OTP');
+            if (otp.length < 4) {
+                $('#regOtp-err').text('Please enter the complete 4-digit OTP');
                 return;
             }
             $('#regVerifyOtpBtn').prop('disabled', true).text('Verifying...');

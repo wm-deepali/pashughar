@@ -125,15 +125,9 @@ Route::controller(MemberAuthController::class)->group(function () {
     Route::get("getusername/{id}", 'getusername');
     Route::post('/check-email', 'checkEmail')->name('check-email');
     Route::post('sendOtp', 'sendMobileOTP')->name('mobileVerify');
-<<<<<<< HEAD
 
     Route::post('send-otp-customer', 'sendMobileOTPCustomer')->name('send-otp-customer');
 
-=======
-    
-    Route::post('send-otp-customer', 'sendMobileOTPCustomer')->name('send-otp-customer');
-    
->>>>>>> 1850ca7f02123f6f36f3ed52af9f4dfd92dfa874
     Route::post('verifyOTP', 'verifyOTP')->name('verifyOTP');
     Route::get('account/verify/{token}', 'verifyAccount')->name('user.verify');
     Route::post('user/register', 'register')->name('user.register');
@@ -173,11 +167,7 @@ Route::controller(MemberAuthController::class)->group(function () {
     Route::get('user/my-subscriptions', 'mySubscription')->name('user.my-subscriptions');
     Route::post('free-subscription', 'free_subscription')->name('free-subscription');
     Route::get('user/my-enquiries', 'allPurchaseEnquiry')->name('user.my-enquiries');
-<<<<<<< HEAD
     Route::get('/subscription/{id}/subscription-invoice', 'downloadInvoice')->name('subscription-invoice');
-=======
-Route::get('/subscription/{id}/subscription-invoice', 'downloadInvoice')->name('subscription-invoice');
->>>>>>> 1850ca7f02123f6f36f3ed52af9f4dfd92dfa874
     Route::get('user/logout', 'logout')->name('user.logout');
 });
 

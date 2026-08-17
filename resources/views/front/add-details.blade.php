@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="{{asset('front/css/vendor/bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{asset('front/css/custom/main.css')}}">
     <link rel="stylesheet" href="{{asset('front/css/custom/user-form.css')}}">
+    
 </head>
 
 <style>
@@ -92,6 +93,21 @@
     .back-link{ font-size:13px; color:#888; cursor:pointer; display:inline-flex; align-items:center; gap:6px; margin-bottom:14px; }
     .back-link:hover{ color: var(--accent); }
 
+    /* Password show/hide */
+    .password-wrap { position: relative; }
+    .password-wrap .pill-input { padding-right: 48px; }
+    .toggle-password {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #999;
+        cursor: pointer;
+        font-size: 15px;
+        user-select: none;
+    }
+    .toggle-password:hover { color: var(--accent); }
+
     #scrollToTopBtn{
         display:none; position:fixed; bottom:20px; right:30px; z-index:9999;
         background-color:#1f4b3f; color:#fff; border:none; border-radius:50%;
@@ -137,13 +153,11 @@
             <button type="button" class="pill-btn" id="sendOtpBtn">Send OTP</button>
         </div>
 
-        {{-- Step 2: OTP (6 digit, same as register flow) --}}
+        {{-- Step 2: OTP (4 digit, same as login/register flow) --}}
         <div id="otpStep" class="step-hidden">
             <span class="back-link" onclick="backToMobile()"><i class="fas fa-arrow-left"></i> Back</span>
-            <div class="auth-subtitle" style="margin-bottom:6px;">Enter the 6-digit code sent to <b id="otpMobileLabel"></b></div>
+            <div class="auth-subtitle" style="margin-bottom:6px;">Enter the 4-digit code sent to <b id="otpMobileLabel"></b></div>
             <div class="otp-row">
-                <input type="text" class="otp-box detail-otp-box" maxlength="1" inputmode="numeric">
-                <input type="text" class="otp-box detail-otp-box" maxlength="1" inputmode="numeric">
                 <input type="text" class="otp-box detail-otp-box" maxlength="1" inputmode="numeric">
                 <input type="text" class="otp-box detail-otp-box" maxlength="1" inputmode="numeric">
                 <input type="text" class="otp-box detail-otp-box" maxlength="1" inputmode="numeric">
@@ -183,11 +197,12 @@
                         <option value="">Select City</option>
                     </select>
                 </div>
-                <div class="field-group">
-                    <input type="password" class="pill-input" name="password" placeholder="Password"
+                <div class="field-group password-wrap">
+                    <input type="password" class="pill-input" name="password" id="detailPassword" placeholder="Password"
                         pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                         title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
                         required>
+                    <i class="fas fa-eye toggle-password" data-target="detailPassword"></i>
                 </div>
 
                 @php $adminsetting = \App\Models\OtherSetting::first(); @endphp
@@ -273,6 +288,19 @@ function isNumber(evt) {
 }
 $('#mobileInput').on('keypress', isNumber);
 
+/* Password show/hide toggle */
+$(document).on('click', '.toggle-password', function () {
+    const targetId = $(this).data('target');
+    const input = document.getElementById(targetId);
+    if (input.type === 'password') {
+        input.type = 'text';
+        $(this).removeClass('fa-eye').addClass('fa-eye-slash');
+    } else {
+        input.type = 'password';
+        $(this).removeClass('fa-eye-slash').addClass('fa-eye');
+    }
+});
+
 $('#sendOtpBtn').on('click', function(){
     const mobile = $('#mobileInput').val().trim();
     $('#mobileInput-err').text('');
@@ -312,8 +340,8 @@ $('#verifyOtpBtn').on('click', function(){
     const mobile = $('#otpMobileLabel').text().replace('+91 ', '');
     const otp = collectOtp();
     $('#detailOtp-err').text('');
-    if(otp.length < 6){
-        $('#detailOtp-err').text('Please enter the complete 6-digit OTP');
+    if(otp.length < 4){
+        $('#detailOtp-err').text('Please enter the complete 4-digit OTP');
         return;
     }
     $('#verifyOtpBtn').prop('disabled', true).text('Verifying...');

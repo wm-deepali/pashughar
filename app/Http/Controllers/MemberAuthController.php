@@ -80,7 +80,7 @@ class MemberAuthController extends Controller
 
     public function sendMobileOTP(Request $request)
     {
-        // Generate a six-digit OTP
+        // Generate a four-digit OTP (kept consistent with login OTP length)
         $validator = Validator::make($request->all(), [
             'mobile' => 'required|max:10|min:10|unique:members,mobile',
         ]);
@@ -90,7 +90,7 @@ class MemberAuthController extends Controller
                 'error' => $validator->errors()->first('mobile')
             ], 422);
         }
-        $otp = rand(100000, 999999);
+        $otp = rand(1000, 9999);
         $mobile_number = $request->mobile;
 
         OTP::where('mobile', $mobile_number)->delete();
@@ -1088,204 +1088,6 @@ class MemberAuthController extends Controller
 
         return redirect()->route('user.thankyou')->withSuccess('Payment submitted Successfully.');
     }
-
-
-    // public function free_subscription(Request $request)
-    // {
-    //     dd($request->all());
-    //     if (Auth::guard('member')->check()) {
-    //         $validator = Validator::make($request->all(), [
-    //             'id' => 'required',
-    //             'payment_method' => 'required',
-    //             'amount' => 'required',
-    //             'transaction_id' => 'required',
-    //             'payment_date' => 'required',
-    //             'screenshot' => 'required',
-    //         ]);
-    //         $orderId = $request->orderId;
-    //         if ($validator->fails()) {
-    //             return redirect()->route('user.checkout', $orderId)
-    //                 ->withErrors('All fields are required!');
-    //         }
-    //         if ($request->has('address')) {
-    //             $user_id = Auth::guard('member')->user()->id;
-    //             $user = Member::findOrFail($user_id);
-
-    //             $user->city = $request->city;
-    //             $user->address = $request->address;
-    //             $user->state = $request->state;
-    //             $user->country = 1;
-    //             $user->zipcode = $request->zipcode;
-
-    //             $user->save();
-    //         }
-    //         $user_id = Auth::guard('member')->user()->id;
-    //         $subscription_id = $request->id;
-    //         $paid_amount = $request->amount;
-
-    //         $rand = mt_rand(1500, 5000);
-
-    //         $result = DB::table('subscriptions')->where('status', 1)->where('id', $subscription_id)->get();
-    //         $subscriptionTT = $result[0];
-    //         $adminsetting = OtherSetting::first();
-    //         $adminsetting2 = InvoiceSetting::first();
-    //         $user = Member::findOrFail($user_id);
-    //         $no_of_ads = $result[0]->no_of_ads;
-    //         $ads_validity = $result[0]->ad_validity;
-    //         $categorysubscriptions = CategorySubscription::where('subscription_id', $subscription_id)->pluck('category_id');
-    //         foreach ($categorysubscriptions as $categoryId) {
-    //             $category_id_data[] = $categoryId;
-    //         }
-    //         $category_id = implode(", ", $category_id_data);
-    //         $package_validity = $result[0]->subscription_validity;
-    //         $dates = date("d-m-Y");
-    //         $date = date_create($dates);
-    //         date_add($date, date_interval_create_from_date_string($package_validity . "days"));
-    //         $subscription_expiry = date_format($date, "Y-m-d");
-    //         $paymentmethod = $request->payment_method;
-    //         $remark = $request->remark;
-    //         if ($request->hasFile('screenshot')) {
-    //             $path = $request->file('screenshot')->store('screenshot', 'public');// Example storage locatio
-    //             $screenshot = $path;
-    //         } else {
-    //             $screenshot = '';
-    //         }
-    //         $payment_status = 'Pending';
-    //         $mrp = $result[0]->mrp;
-    //         $offered_price = $result[0]->offer_price;
-    //         $discount_amount = $result[0]->discount;
-    //         if ($adminsetting2->state == $user->state) {
-    //             $gst_type = "CGST + SGST";
-    //             $gst_percent = $adminsetting2->cgst + $adminsetting2->sgst;
-    //             $total_gst = $offered_price * ($adminsetting2->cgst + $adminsetting2->sgst) / 100;
-    //         } else {
-    //             $gst_type = "IGST";
-    //             $gst_percent = $adminsetting2->igst;
-    //             $total_gst = $offered_price * ($adminsetting2->igst) / 100;
-    //         }
-
-    //         $transaction_id = $request->transaction_id;
-
-    //         $subscriber_exists = DB::table('subscription_orders')->where('user_id', $user_id)->where('category_id', $category_id)->exists();
-    //         $subscriber_history_check = DB::table('subscription_history')->where('user_id', $user_id)->whereDate('subscription_expiry', '>=', date('Y-m-d'))->exists();
-    //         if ($subscriber_history_check == true) {
-
-    //             $subscriber_history_free = DB::table('subscription_history')->where('user_id', $user_id)->where('payment_method', 'free')->where('remaining_ads', '>', 0)->exists();
-    //             if ($subscriber_history_free) {
-    //                 return redirect()->route('user.checkout', $orderId)
-    //                     ->withErrors('You are already subscribed to a free subscription..');
-
-
-    //             }
-
-    //             $subscriptionhistorypending = SubscriptionHistory::where('user_id', $user_id)->whereDate('subscription_expiry', '>=', Carbon::now())->where('payment_status', 'Pending')->exists();
-
-    //             $subscriptionhistory = SubscriptionHistory::where('user_id', $user_id)->where('remaining_ads', '>', 0)->where('payment_status', 'Completed')->exists();
-
-    //             if ($subscriptionhistorypending) {
-    //                 return redirect()->back()->withErrors('Our Team is reviewing your payment detail once it is verified we will notify you on your email, thank you for your patience.');
-    //             } else if ($subscriptionhistory) {
-    //                 return redirect()->back()->withErrors('Ads are already available to publish in your active subscription. Please use all the ads in the bucket first.');
-    //             }
-
-
-    //         }
-    //         $o_number = $transaction_id;
-    //         $subscriber_exists = DB::table('subscription_orders')->where('user_id', $user_id)->where('category_id', $category_id)->exists();
-
-    //         if ($subscriber_exists) {
-    //             DB::table('subscription_orders')->where('user_id', $user_id)->where('category_id', $category_id)->update(array('user_id' => $user_id, 'subscription_id' => $request->id, 'transaction_id' => $transaction_id, 'payment_method' => $paymentmethod, 'payment_status' => $payment_status, 'used_ads' => '0', 'remaining_ads' => $no_of_ads, 'subscription_validity' => $ads_validity, 'category_id' => $category_id, 'delete_status' => '0', 'status' => '0', 'order_number' => $o_number));
-
-    //         } else {
-    //             $userprofile = new SubscriptionOrder;
-    //             $userprofile->user_id = $user_id;
-    //             $userprofile->subscription_id = $request->id;
-    //             $userprofile->transaction_id = $transaction_id;
-    //             $userprofile->order_number = $o_number;
-    //             $userprofile->payment_method = $paymentmethod;
-    //             $userprofile->payment_status = $payment_status;
-    //             $userprofile->used_ads = '0';
-    //             $userprofile->remaining_ads = $no_of_ads;
-    //             $userprofile->subscription_expiry = $subscription_expiry;
-    //             $userprofile->subscription_validity = $package_validity;
-    //             $userprofile->category_id = $category_id;
-    //             $userprofile->delete_status = '0';
-    //             $userprofile->status = '0';
-    //             $userprofile->save();
-    //             //dd($userprofile);
-    //         }
-
-    //         $data = DB::table('subscription_history')->insert(
-    //             array(
-    //                 'user_id' => $user_id,
-    //                 'subscription_id' => $request->id,
-    //                 'order_number' => $o_number,
-    //                 'transaction_id' => $transaction_id,
-    //                 'payment_method' => $paymentmethod,
-    //                 'payment_date' => $request->payment_date,
-    //                 'remark' => $remark,
-    //                 'screenshot' => $screenshot,
-    //                 'payment_status' => $payment_status,
-    //                 'used_ads' => '0',
-    //                 'remaining_ads' => $no_of_ads,
-    //                 'mrp' => $mrp,
-    //                 'discount_amount' => $discount_amount,
-    //                 'offered_price' => $offered_price,
-    //                 'gst_type' => $gst_type,
-    //                 'gst_amount' => $total_gst,
-    //                 'paid_amount' => $paid_amount,
-    //                 'order_amount_with_gst' => number_format($offered_price, 2) + number_format($total_gst, 2),
-    //                 'wallet_used_amount' => ($offered_price + $total_gst) - $paid_amount,
-    //                 'subscription_expiry' => $subscription_expiry,
-    //                 'subscription_validity' => $package_validity,
-    //                 'category_id' => $category_id,
-    //                 'delete_status' => '0',
-    //                 'status' => '0'
-    //             )
-    //         );
-
-    //         $user->no_of_ads = $user->no_of_ads + $no_of_ads;
-    //         if ($offered_price == 0) {
-    //             $user->user_type = 'Free';
-
-    //             $user->is_buy_free_subscription = 1;
-    //         } else {
-    //             $user->user_type = 'Paid';
-    //         }
-    //         $user->active_subscription_id = $request->id;
-    //         $user->expiry_date = $subscription_expiry;
-
-    //         $user->wallet_points = $user->wallet_points - ((($offered_price + $total_gst) - $paid_amount) * $adminsetting->point_value);
-    //         $user->used_wallet_points = $user->used_wallet_points + ((($offered_price + $total_gst) - ($paid_amount)) * $adminsetting->point_value);
-    //         $user->save();
-
-
-    //         $user->save();
-    //         $user = Member::findOrFail($user_id);
-    //         $wAmount = (($offered_price + $total_gst) - ($paid_amount)) * $adminsetting->point_value;
-    //         if ($wAmount > 0) {
-    //             $WalletAmount = new WalletAmount();
-    //             $WalletAmount->points = $user->wallet_points;
-    //             $WalletAmount->user_id = $user->id;
-    //             $WalletAmount->type = 'Debit';
-    //             $WalletAmount->status = "1";
-    //             $WalletAmount->remaining_points = $wAmount;
-    //             $WalletAmount->description = $result[0]->name . " purchased using wallet";
-    //             $WalletAmount->save();
-    //         }
-
-
-    //         return redirect()->route('user.thankyou')
-    //             ->withSuccess('Payment submitted Successfully.');
-
-
-
-
-    //     } else {
-    //         return redirect()->route('user.login')
-    //             ->withErrors('Please login to access the dashboard.');
-    //     }
-    // }
 
     public function saveaddressinfo(Request $request)
     {
