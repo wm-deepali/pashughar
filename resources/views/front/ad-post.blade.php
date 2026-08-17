@@ -55,8 +55,8 @@
         }
     </style>
     <!--=====================================
-                                ADPOST PART START
-                    =======================================-->
+                                        ADPOST PART START
+                            =======================================-->
     <section class="adpost-part">
         <div class="container">
             <div class="row">
@@ -136,20 +136,20 @@
                                     <div class="form-group">
                                         <label class="form-label">Specifications</label>
                                         <div id="row">
-                                            <div class="input-group mb-3">
+                                            <div class="input-group mb-3 align-items-center">
 
-                                                <input type="text" class="form-control m-input" name="specifications[]">
+                                                <input type="text" class="form-control m-input" name="specifications[]"
+                                                    placeholder="Specification detail">
                                                 <div class="input-group-prepend">
-                                                    <button class="btn btn-danger" id="DeleteRow" type="button">
+                                                    <button class="btn delete-btn-app" id="DeleteRow" type="button">
                                                         <i class="fas fa-trash"></i>
-                                                        Delete
                                                     </button>
                                                 </div>
                                             </div>
                                         </div>
                                         <div id="newinput"></div>
-                                        <button id="rowAdder" style="margin-left:0px" type="button" class="btn btn-dark">
-                                            <i class="fas fa-plus"></i>Add More
+                                        <button id="rowAdder" type="button" class="btn btn-add-more-app">
+                                            <i class="fas fa-plus"></i> Add More
                                         </button>
 
                                     </div>
@@ -252,8 +252,8 @@
         </div>
     </section>
     <!--=====================================
-                                ADPOST PART END
-                    =======================================-->
+                                        ADPOST PART END
+                            =======================================-->
 @endsection
 @push('after-script')
     <script>
@@ -502,11 +502,11 @@
         }
         $("#rowAdder").click(function () {
             newRowAdd =
-                ' <div id="row"><div class="input-group mb-3">' +
-                '<input type="text" class="form-control m-input" name="specifications[]">' +
+                ' <div id="row"><div class="input-group mb-3 align-items-center">' +
+                '<input type="text" class="form-control m-input" name="specifications[]" placeholder="Specification detail">' +
                 '<div class="input-group-append">' +
-                '<button class="btn btn-danger" id="DeleteRow" type="button">' +
-                '<i class="fas fa-trash"></i> Delete</button> </div>' +
+                '<button class="btn delete-btn-app" id="DeleteRow" type="button">' +
+                '<i class="fas fa-trash"></i></button> </div>' +
                 '</div> </div>';
 
             $('#newinput').append(newRowAdd);

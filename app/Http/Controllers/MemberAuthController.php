@@ -624,28 +624,29 @@ class MemberAuthController extends Controller
     }
 
     public function verifyAccount($token)
-    {
-        $verifyUser = MemberVerify::where('token', $token)->first();
+{
+    $verifyUser = MemberVerify::where('token', $token)->first();
 
-        // echo "<pre/>"; print_r($verifyUser); die('sjbfvkjber');
-        $message = 'Sorry your email cannot be identified.';
+    $message = 'Sorry your email cannot be identified.';
 
-        if (!is_null($verifyUser)) {
-            $user = $verifyUser->member;
+    if (!is_null($verifyUser)) {
+        $user = $verifyUser->member;
 
-            if (!$user->email_verified_at) {
-                $verifyUser->member->email_verified_at = date('Y-m-d H:i:s');
-                $verifyUser->member->save();
-                $message = "Your e-mail is verified. You can now login.";
-            } else {
-                $message = "Your e-mail is already verified. You can now login.";
-            }
+        if (is_null($user)) {
+            // MemberVerify row exists but linked member record is missing
+            $message = 'Sorry your email cannot be identified.';
+        } elseif (!$user->email_verified_at) {
+            $user->email_verified_at = date('Y-m-d H:i:s');
+            $user->save();
+            $message = "Your e-mail is verified. You can now login.";
+        } else {
+            $message = "Your e-mail is already verified. You can now login.";
         }
-
-        \Session::put('success', $message);
-        return redirect()->route('user.login');
-
     }
+
+    \Session::put('success', $message);
+    return redirect()->route('user.login');
+}
 
 
     public function addRequiredDetails(Request $request)
