@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="{{asset('front/css/vendor/bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{asset('front/css/custom/main.css')}}">
     <link rel="stylesheet" href="{{asset('front/css/custom/user-form.css')}}">
-    
+
 </head>
 
 <style>
@@ -142,25 +142,19 @@
         display: block;
     }
 
+    .field-hint {
+        font-size: 11px;
+        color: #999;
+        display: block;
+        margin-top: 4px;
+    }
+
     .or-divider {
         text-align: center;
         color: #a3a3a3;
         font-size: 13px;
         margin: 18px 0;
         position: relative;
-    }
-
-    .auth-switch {
-        text-align: center;
-        margin-top: 22px;
-        font-size: 14px;
-        color: #555;
-    }
-
-    .auth-switch a {
-        color: var(--accent);
-        font-weight: 600;
-        text-decoration: none;
     }
 
     .otp-row {
@@ -247,14 +241,6 @@
         outline: none;
     }
 
-    select.pill-input {
-        appearance: none;
-        -webkit-appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='2' fill='none'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 20px center;
-    }
-
     .step-hidden {
         display: none;
     }
@@ -338,6 +324,7 @@
             transform: translateY(0);
         }
     }
+
     /* Password show/hide */
     .password-wrap {
         position: relative;
@@ -407,219 +394,147 @@
 
         <div class="auth-card">
 
-            {{-- ===================== LOGIN VIEW ===================== --}}
-            <div id="loginView">
-                <div class="auth-title">Welcome back!</div>
-                <div class="auth-subtitle">Use your mobile or email to continue</div>
+            <div class="auth-title">Welcome!</div>
+            <div class="auth-subtitle">Login or create an account using your mobile or email</div>
 
-                {{-- Step 1: identifier input --}}
-                <div id="loginIdentifierStep">
-                    <div class="field-group">
-                        <input type="text" id="loginIdentifier" class="pill-input"
-                            placeholder="Enter Mobile Number or Email" autocomplete="off">
-                        <span class="field-error" id="loginIdentifier-err"></span>
-                    </div>
-                    <button type="button" class="pill-btn" id="loginContinueBtn">Continue</button>
-
-                    <div class="or-divider">OR</div>
-                    <button type="button" class="pill-btn-outline" id="googleLoginBtn">
-                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="google">
-                        <span>Login with Google</span>
-                    </button>
+            {{-- ===================== STEP 1: IDENTIFIER ===================== --}}
+            <div id="identifierStep">
+                <div class="field-group">
+                    <input type="text" id="identifierInput" class="pill-input"
+                        placeholder="Enter Mobile Number or Email ID" autocomplete="off">
+                    <span class="field-error" id="identifier-err"></span>
                 </div>
+                <button type="button" class="pill-btn" id="identifierContinueBtn">Continue</button>
 
-                {{-- Step 2a: email + password --}}
-                <div id="loginPasswordStep" class="step-hidden">
-                    <span class="back-link" onclick="backToIdentifier('login')"><i class="fas fa-arrow-left"></i>
-                        Back</span>
-                    <div class="auth-subtitle" style="margin-bottom:6px;">Login as <b id="loginPasswordEmailLabel"></b>
-                    </div>
-                    <form id="loginForm" method="post" action="{{ route('user.authenticate') }}">
-                        @csrf
-                        <input type="hidden" name="email" id="loginEmailHidden">
-                        <div class="field-group password-wrap">
-                            <input type="password" name="password" id="loginPassword" class="pill-input"
-                                placeholder="Password" required>
-                            <i class="fas fa-eye toggle-password" data-target="loginPassword"></i>
-                            <small class="field-error" style="display:none" id="loginPassword-err"></small>
-                        </div>
-                        <div
-                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-                            <label style="font-size:13px; color:#666;"><input type="checkbox" name="remember"> Remember
-                                me</label>
-                            <a href="{{route('forget.password.get')}}"
-                                style="font-size:13px; color:var(--accent);">Forgot password?</a>
-                        </div>
-                        <button type="submit" class="pill-btn">Login</button>
-                    </form>
-                </div>
-
-                {{-- Step 2b: mobile OTP (4 digit) --}}
-                <div id="loginOtpStep" class="step-hidden">
-                    <span class="back-link" onclick="backToIdentifier('login')"><i class="fas fa-arrow-left"></i>
-                        Back</span>
-                    <div class="auth-subtitle" style="margin-bottom:6px;">Enter the 4-digit code sent to <b
-                            id="loginOtpMobileLabel"></b></div>
-                    <div class="otp-row" id="loginOtpBoxes">
-                        <input type="text" class="otp-box login-otp-box" maxlength="1" inputmode="numeric">
-                        <input type="text" class="otp-box login-otp-box" maxlength="1" inputmode="numeric">
-                        <input type="text" class="otp-box login-otp-box" maxlength="1" inputmode="numeric">
-                        <input type="text" class="otp-box login-otp-box" maxlength="1" inputmode="numeric">
-                    </div>
-                    <span class="field-error" id="loginOtp-err"
-                        style="display:block; text-align:center; margin-bottom:10px;"></span>
-                    <div class="resend-row">
-                        Didn't receive code? <a id="loginResendLink" class="disabled">Resend in <span
-                                id="loginResendTimer">30</span>s</a>
-                    </div>
-                    <button type="button" class="pill-btn" id="loginVerifyOtpBtn">Verify & Login</button>
-                </div>
-
-                <div class="auth-switch">
-                    Don't have an account? <a onclick="switchTab('register')">Sign up</a>
-                </div>
+                <div class="or-divider">OR</div>
+                <button type="button" class="pill-btn-outline" id="googleAuthBtn">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="google">
+                    <span>Continue with Google</span>
+                </button>
             </div>
 
-            {{-- ===================== REGISTER VIEW ===================== --}}
-            <div id="registerView" class="step-hidden">
-                <div class="auth-title">Get started!</div>
-                <div class="auth-subtitle">Setup a new account in a minute</div>
+            {{-- ===================== STEP 2: MOBILE OTP (login-existing OR signup-new) ===================== --}}
+            <div id="otpStep" class="step-hidden">
+                <span class="back-link" id="otpBackLink"><i class="fas fa-arrow-left"></i> Back</span>
+                <div class="auth-subtitle" style="margin-bottom:6px;">Enter the 4-digit code sent to <b
+                        id="otpMobileLabel"></b></div>
+                <div class="otp-row" id="otpBoxes">
+                    <input type="text" class="otp-box main-otp-box" maxlength="1" inputmode="numeric">
+                    <input type="text" class="otp-box main-otp-box" maxlength="1" inputmode="numeric">
+                    <input type="text" class="otp-box main-otp-box" maxlength="1" inputmode="numeric">
+                    <input type="text" class="otp-box main-otp-box" maxlength="1" inputmode="numeric">
+                </div>
+                <span class="field-error" id="otp-err"
+                    style="display:block; text-align:center; margin-bottom:10px;"></span>
+                <div class="resend-row">
+                    Didn't receive code? <a id="otpResendLink" class="disabled">Resend in <span
+                            id="otpResendTimer">30</span>s</a>
+                </div>
+                <button type="button" class="pill-btn" id="otpVerifyBtn">Verify</button>
+            </div>
 
-                {{-- Step 1: mobile --}}
-                <div id="regMobileStep">
+            {{-- ===================== STEP 3: MOBILE SIGNUP DETAILS (new mobile, OTP verified) ===================== --}}
+            <div id="mobileSignupDetailsStep" class="step-hidden">
+                <span class="back-link" id="mobileSignupBackLink"><i class="fas fa-arrow-left"></i> Back</span>
+                <div class="auth-subtitle" style="margin-bottom:14px;">Just a few more details to get started</div>
+                <input type="hidden" id="mobileSignupMobileHidden">
+
+                <div class="field-group">
+                    <input type="text" id="mobileSignupFullName" class="pill-input" placeholder="Full Name">
+                    <span class="field-error" id="mobileSignupFullName-err"></span>
+                </div>
+
+                <div class="field-group">
+                    <input type="text" id="mobileSignupEmail" class="pill-input" placeholder="Email Id (Optional)"
+                        autocomplete="off">
+                    <span class="field-error" id="mobileSignupEmail-err"></span>
+                </div>
+
+                <div class="field-group password-wrap step-hidden" id="mobileSignupPasswordGroup">
+                    <input type="password" id="mobileSignupPassword" class="pill-input" placeholder="Password">
+                    <i class="fas fa-eye toggle-password" data-target="mobileSignupPassword"></i>
+                    <span class="field-error" id="mobileSignupPassword-err"></span>
+                    <small class="field-hint">Password to be Alpha Numeric e.g. abc12345</small>
+                </div>
+
+                <button type="button" class="pill-btn" id="mobileSignupSubmitBtn">Create Account</button>
+            </div>
+
+            {{-- ===================== STEP 4: EMAIL LOGIN (existing email, ask password) ===================== --}}
+            <div id="emailPasswordStep" class="step-hidden">
+                <span class="back-link" id="emailPasswordBackLink"><i class="fas fa-arrow-left"></i> Back</span>
+                <div class="auth-subtitle" style="margin-bottom:6px;">Login as <b id="emailPasswordLabel"></b>
+                </div>
+                <input type="hidden" id="emailPasswordEmailHidden">
+
+                <div class="field-group password-wrap">
+                    <input type="password" id="emailPasswordInput" class="pill-input" placeholder="Password">
+                    <i class="fas fa-eye toggle-password" data-target="emailPasswordInput"></i>
+                    <span class="field-error" id="emailPassword-err"></span>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; margin-bottom:16px;">
+                    <a href="{{route('forget.password.get')}}" style="font-size:13px; color:var(--accent);">Forgot
+                        password?</a>
+                </div>
+
+                <button type="button" class="pill-btn" id="emailPasswordSubmitBtn">Login</button>
+            </div>
+
+            {{-- ===================== STEP 5: EMAIL SIGNUP DETAILS (new email) ===================== --}}
+            <div id="emailSignupDetailsStep" class="step-hidden">
+                <span class="back-link" id="emailSignupBackLink"><i class="fas fa-arrow-left"></i> Back</span>
+                <div class="auth-subtitle" style="margin-bottom:14px;">Create your account for <b
+                        id="emailSignupLabel"></b></div>
+                <input type="hidden" id="emailSignupEmailHidden">
+
+                <div class="field-group">
+                    <input type="text" id="emailSignupFullName" class="pill-input" placeholder="Full Name">
+                    <span class="field-error" id="emailSignupFullName-err"></span>
+                </div>
+
+                <div id="emailSignupMobileBlock">
                     <div class="field-group">
                         <div class="mobile-input-group">
                             <span class="mobile-prefix">+91</span>
-                            <input type="text" id="regMobile" maxlength="10" inputmode="numeric"
+                            <input type="text" id="emailSignupMobile" maxlength="10" inputmode="numeric"
                                 placeholder="Enter Mobile Number">
                         </div>
-                        <span class="field-error" id="regMobile-err"></span>
+                        <span class="field-error" id="emailSignupMobile-err"></span>
                     </div>
-                    <button type="button" class="pill-btn" id="regSendOtpBtn">Send OTP</button>
-
-                    <div class="or-divider">OR</div>
-                    <button type="button" class="pill-btn-outline" id="googleSignupBtn">
-                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="google">
-                        <span>Sign up with Google</span>
-                    </button>
+                    <button type="button" class="pill-btn" id="emailSignupSendOtpBtn">Send OTP</button>
                 </div>
 
-                {{-- Step 2: OTP (4 digit) --}}
-                <div id="regOtpStep" class="step-hidden">
-                    <span class="back-link" onclick="backToRegMobile()"><i class="fas fa-arrow-left"></i> Back</span>
+                <div id="emailSignupOtpBlock" class="step-hidden">
                     <div class="auth-subtitle" style="margin-bottom:6px;">Enter the 4-digit code sent to <b
-                            id="regOtpMobileLabel"></b></div>
+                            id="emailSignupOtpMobileLabel"></b></div>
                     <div class="otp-row">
-                        <input type="text" class="otp-box reg-otp-box" maxlength="1" inputmode="numeric">
-                        <input type="text" class="otp-box reg-otp-box" maxlength="1" inputmode="numeric">
-                        <input type="text" class="otp-box reg-otp-box" maxlength="1" inputmode="numeric">
-                        <input type="text" class="otp-box reg-otp-box" maxlength="1" inputmode="numeric">
+                        <input type="text" class="otp-box email-signup-otp-box" maxlength="1" inputmode="numeric">
+                        <input type="text" class="otp-box email-signup-otp-box" maxlength="1" inputmode="numeric">
+                        <input type="text" class="otp-box email-signup-otp-box" maxlength="1" inputmode="numeric">
+                        <input type="text" class="otp-box email-signup-otp-box" maxlength="1" inputmode="numeric">
                     </div>
-                    <span class="field-error" id="regOtp-err"
+                    <span class="field-error" id="emailSignupOtp-err"
                         style="display:block; text-align:center; margin-bottom:10px;"></span>
                     <div class="resend-row">
-                        Didn't receive code? <a id="regResendLink" class="disabled">Resend in <span
-                                id="regResendTimer">30</span>s</a>
+                        Didn't receive code? <a id="emailSignupResendLink" class="disabled">Resend in <span
+                                id="emailSignupResendTimer">30</span>s</a>
                     </div>
-                    <button type="button" class="pill-btn" id="regVerifyOtpBtn">Verify</button>
+                    <button type="button" class="pill-btn" id="emailSignupVerifyOtpBtn">Verify Mobile</button>
                 </div>
 
-                {{-- Step 3: rest of the form --}}
-                <div id="regDetailsStep" class="step-hidden">
-                    <form id="registerForm" method="post" action="{{ route('user.register') }}"
-                        enctype="multipart/form-data">
-                        @csrf
-                        <input type="hidden" name="mobile" id="regMobileHidden">
-
-                        <div class="field-group">
-                            <input type="text" class="pill-input" name="full_name" placeholder="Full Name" required>
-                        </div>
-                        <div class="field-group">
-                            <input type="text" class="pill-input" name="email" id="email_id_register"
-                                placeholder="Email (optional)" autocomplete="off">
-                            <span class="field-error" id="email_feedback" style="display:none;">Email already
-                                exists</span>
-                        </div>
-                        <div class="field-group">
-                            <select name="state" id="regState" class="pill-input">
-                                <option value="">Select State</option>
-                                @isset($states)
-                                    @foreach($states as $state)
-                                        <option value="{{ $state->id }}">{{ $state->name }}</option>
-                                    @endforeach
-                                @endisset
-                            </select>
-                        </div>
-                        <div class="field-group">
-                            <select name="city" id="regCity" class="pill-input">
-                                <option value="">Select City</option>
-                            </select>
-                        </div>
-                        <div class="field-group password-wrap">
-                            <input type="password" class="pill-input" name="password" id="regPassword"
-                                placeholder="Password"
-                                pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-                                title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"
-                                required>
-                            <i class="fas fa-eye toggle-password" data-target="regPassword"></i>
-                        </div>
-
-                        @php $adminsetting = \App\Models\OtherSetting::first(); @endphp
-                        @if($adminsetting->is_referral_enable == "1")
-                            <div class="field-group">
-                                <input type="text" class="pill-input referralCode" name="referralto"
-                                    placeholder="Enter Referral Code (optional)">
-                                <span id="errors" style="color:brown; font-size:12px;"></span>
-                                <input type="text" name="isRef" id="is_valid_refer" value="0" style="display:none;">
-                            </div>
-                            <div class="field-group">
-                                <input type="text" class="pill-input" placeholder="Referred by" id="names"
-                                    value="{{ Session::get('name') ?? '' }}" readonly>
-                            </div>
-                        @endif
-
-                        <div class="field-group">
-                            <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.key') }}"></div>
-                        </div>
-
-                        <button type="submit" class="pill-btn">Create Account</button>
-                    </form>
+                <div class="field-group password-wrap step-hidden" id="emailSignupPasswordGroup">
+                    <input type="password" id="emailSignupPassword" class="pill-input" placeholder="Password">
+                    <i class="fas fa-eye toggle-password" data-target="emailSignupPassword"></i>
+                    <span class="field-error" id="emailSignupPassword-err"></span>
+                    <small class="field-hint">Password to be Alpha Numeric e.g. abc12345</small>
                 </div>
 
-                <div class="auth-switch" id="registerSwitchFooter">
-                    Already have an account? <a onclick="switchTab('login')">Sign in</a>
-                </div>
+                <button type="button" class="pill-btn step-hidden" id="emailSignupSubmitBtn">Create Account</button>
             </div>
 
         </div>
     </section>
-
-    <div class="modal fade" id="resendVerificationModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <form method="POST" action="{{ route('verification.resend') }}">
-                @csrf
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Resend Verification Email</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Enter your registered email to resend the verification link:</p>
-                        <input type="email" class="form-control" name="email" value="{{ session('resend_email') }}"
-                            required>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Send Link</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-    @if(session('resend_email'))
-        <script>$(function () { $('#resendVerificationModal').modal('show'); });</script>
-    @endif
 
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
@@ -632,27 +547,25 @@
     <script>
         const CSRF = '{{ csrf_token() }}';
 
-        function switchTab(tab) {
-            if (tab === 'register') {
-                $('#loginView').addClass('step-hidden');
-                $('#registerView').removeClass('step-hidden');
-            } else {
-                $('#registerView').addClass('step-hidden');
-                $('#loginView').removeClass('step-hidden');
-            }
+        /* ---------- Step visibility ---------- */
+        const STEP_IDS = ['identifierStep', 'otpStep', 'mobileSignupDetailsStep', 'emailPasswordStep', 'emailSignupDetailsStep'];
+
+        function showStep(id) {
+            STEP_IDS.forEach(function (s) {
+                if (s === id) $('#' + s).removeClass('step-hidden');
+                else $('#' + s).addClass('step-hidden');
+            });
         }
 
-        function backToIdentifier() {
-            $('#loginPasswordStep, #loginOtpStep').addClass('step-hidden');
-            $('#loginIdentifierStep').removeClass('step-hidden');
-            clearInterval(window.loginTimerInterval);
+        function resetToIdentifier() {
+            showStep('identifierStep');
+            $('#identifierInput').val('');
+            $('#identifier-err').text('');
+            clearInterval(window.otpResendLink_interval);
+            clearInterval(window.emailSignupResendLink_interval);
         }
 
-        function backToRegMobile() {
-            $('#regOtpStep').addClass('step-hidden');
-            $('#regMobileStep').removeClass('step-hidden');
-            clearInterval(window.regTimerInterval);
-        }
+        $('#otpBackLink, #mobileSignupBackLink, #emailPasswordBackLink, #emailSignupBackLink').on('click', resetToIdentifier);
 
         /* ---------- OTP box auto-advance ---------- */
         function wireOtpBoxes(selector) {
@@ -671,8 +584,8 @@
                 });
             });
         }
-        wireOtpBoxes('.login-otp-box');
-        wireOtpBoxes('.reg-otp-box');
+        wireOtpBoxes('.main-otp-box');
+        wireOtpBoxes('.email-signup-otp-box');
 
         function collectOtp(selector) {
             let otp = '';
@@ -708,113 +621,113 @@
             }
         });
 
-        /* ============ LOGIN: identifier detection ============ */
-        $('#loginContinueBtn').on('click', function () {
-            const val = $('#loginIdentifier').val().trim();
-            $('#loginIdentifier-err').text('');
+        /* ---------- Password validation (Alpha Numeric, min 8 chars) ---------- */
+        function validatePasswordValue(pwd) {
+            if (!pwd || pwd.length < 8) return 'Password must be at least 8 characters';
+            if (!/[A-Za-z]/.test(pwd)) return 'Password should be Alpha Numeric, use atleast One alphabet';
+            if (!/[0-9]/.test(pwd)) return 'Password should be Alpha Numeric, use atleast One numerical number';
+            if (!/^[A-Za-z0-9]+$/.test(pwd)) return 'Password should be Alpha Numeric';
+            return null;
+        }
+
+        let currentMobile = '';
+        let currentEmail = '';
+        let otpMode = ''; // 'login-mobile' | 'signup-mobile'
+
+        /* ============ STEP 1: Identify ============ */
+        $('#identifierContinueBtn').on('click', function () {
+            const val = $('#identifierInput').val().trim();
+            $('#identifier-err').text('');
 
             const mobilePattern = /^[6-9]\d{9}$/;
             const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 
-            if (mobilePattern.test(val)) {
-                sendLoginOtp(val);
-            } else if (emailPattern.test(val)) {
-                $('#loginEmailHidden').val(val);
-                $('#loginPasswordEmailLabel').text(val);
-                $('#loginIdentifierStep').addClass('step-hidden');
-                $('#loginPasswordStep').removeClass('step-hidden');
-            } else {
-                $('#loginIdentifier-err').text('Enter a valid 10-digit mobile number or email address');
+            if (!mobilePattern.test(val) && !emailPattern.test(val)) {
+                $('#identifier-err').text('Enter a valid 10-digit mobile number or email address');
+                return;
             }
+
+            $('#identifierContinueBtn').prop('disabled', true).text('Please wait...');
+
+            $.ajax({
+                url: "{{ route('check-identifier') }}",
+                type: 'POST',
+                data: { identifier: val, _token: CSRF },
+                dataType: 'json',
+                success: function (result) {
+                    $('#identifierContinueBtn').prop('disabled', false).text('Continue');
+                    if (!result.success) {
+                        $('#identifier-err').text(result.message || 'Something went wrong.');
+                        return;
+                    }
+                    if (result.type === 'mobile') {
+                        currentMobile = val;
+                        if (result.exists) {
+                            sendLoginOtp(val);
+                        } else {
+                            sendSignupMobileOtp(val);
+                        }
+                    } else {
+                        currentEmail = val;
+                        if (result.exists) {
+                            $('#emailPasswordEmailHidden').val(val);
+                            $('#emailPasswordLabel').text(val);
+                            $('#emailPasswordInput').val('');
+                            $('#emailPassword-err').text('');
+                            showStep('emailPasswordStep');
+                        } else {
+                            $('#emailSignupEmailHidden').val(val);
+                            $('#emailSignupLabel').text(val);
+                            $('#emailSignupFullName').val('');
+                            $('#emailSignupMobile').val('');
+                            $('#emailSignupMobileBlock').removeClass('step-hidden');
+                            $('#emailSignupOtpBlock').addClass('step-hidden');
+                            $('#emailSignupPasswordGroup').addClass('step-hidden');
+                            $('#emailSignupSubmitBtn').addClass('step-hidden');
+                            showStep('emailSignupDetailsStep');
+                        }
+                    }
+                },
+                error: function () {
+                    $('#identifierContinueBtn').prop('disabled', false).text('Continue');
+                    Swal.fire({ icon: 'error', title: 'Oops...', text: 'Something went wrong, please try again.' });
+                }
+            });
         });
 
+        /* ============ STEP 2: Mobile OTP (login-existing OR signup-new) ============ */
         function sendLoginOtp(mobile) {
-            $('#loginContinueBtn').prop('disabled', true);
             $.ajax({
                 url: "{{ URL::to('send/otp') }}",
                 type: 'POST',
                 data: { mobile_number: mobile, _token: CSRF },
                 dataType: 'json',
                 success: function (result) {
-                    $('#loginContinueBtn').prop('disabled', false);
                     if (result.success) {
-                        $('#loginOtpMobileLabel').text('+91 ' + mobile);
-                        $('#loginIdentifierStep').addClass('step-hidden');
-                        $('#loginOtpStep').removeClass('step-hidden');
-                        $('.login-otp-box').val('');
-                        $('.login-otp-box').first().focus();
-                        startResendTimer('loginResendLink', 'loginResendTimer', 30, function () { sendLoginOtp(mobile); });
+                        otpMode = 'login-mobile';
+                        openOtpStep(mobile);
                     } else {
                         let msg = result.code == 422 ? Object.values(result.errors)[0][0] : 'Please retry after sometime.';
                         Swal.fire({ icon: 'error', title: 'Oops...', text: msg });
                     }
                 },
                 error: function () {
-                    $('#loginContinueBtn').prop('disabled', false);
                     Swal.fire({ icon: 'error', title: 'Oops...', text: 'Something went wrong, please try again.' });
                 }
             });
         }
 
-        $('#loginVerifyOtpBtn').on('click', function () {
-            const mobile = $('#loginOtpMobileLabel').text().replace('+91 ', '');
-            const otp = collectOtp('.login-otp-box');
-            $('#loginOtp-err').text('');
-            if (otp.length < 4) {
-                $('#loginOtp-err').text('Please enter the complete 4-digit OTP');
-                return;
-            }
-            $('#loginVerifyOtpBtn').prop('disabled', true).text('Verifying...');
-            $.ajax({
-                url: "{{ URL::to('verify/otp') }}",
-                type: 'POST',
-                data: { mobile_number: mobile, otp: otp, _token: CSRF },
-                dataType: 'json',
-                success: function (result) {
-                    $('#loginVerifyOtpBtn').prop('disabled', false).text('Verify & Login');
-                    if (result.success) {
-                        window.location.href = result.redirect || "{{ route('user.dashboard') }}";
-                    } else {
-                        let msg = result.code == 422 ? Object.values(result.errors)[0][0] : (result.message || 'Incorrect OTP');
-                        $('#loginOtp-err').text(msg);
-                    }
-                },
-                error: function () {
-                    $('#loginVerifyOtpBtn').prop('disabled', false).text('Verify & Login');
-                    Swal.fire({ icon: 'error', title: 'Oops...', text: 'Something went wrong, please try again.' });
-                }
-            });
-        });
-
-        /* ============ REGISTER: mobile -> OTP -> details ============ */
-        $('#regSendOtpBtn').on('click', function () {
-            const mobile = $('#regMobile').val().trim();
-            $('#regMobile-err').text('');
-            if (!/^[6-9]\d{9}$/.test(mobile)) {
-                $('#regMobile-err').text('Enter a valid 10-digit Indian mobile number');
-                return;
-            }
-            sendRegisterOtp(mobile);
-        });
-
-        function sendRegisterOtp(mobile) {
-            $('#regSendOtpBtn').prop('disabled', true);
+        function sendSignupMobileOtp(mobile) {
             $.post("{{ route('mobileVerify') }}", { mobile: mobile, _token: CSRF })
                 .done(function (data) {
-                    $('#regSendOtpBtn').prop('disabled', false);
                     if (data.success) {
-                        $('#regOtpMobileLabel').text('+91 ' + mobile);
-                        $('#regMobileStep').addClass('step-hidden');
-                        $('#regOtpStep').removeClass('step-hidden');
-                        $('.reg-otp-box').val('');
-                        $('.reg-otp-box').first().focus();
-                        startResendTimer('regResendLink', 'regResendTimer', 30, function () { sendRegisterOtp(mobile); });
+                        otpMode = 'signup-mobile';
+                        openOtpStep(mobile);
                     } else {
                         Swal.fire({ icon: 'error', title: 'Oops...', text: 'Please retry after sometime.' });
                     }
                 })
                 .fail(function (response) {
-                    $('#regSendOtpBtn').prop('disabled', false);
                     const msg = response.responseJSON && response.responseJSON.error
                         ? response.responseJSON.error
                         : (response.responseJSON && response.responseJSON.mobile ? response.responseJSON.mobile[0] : 'This mobile number may already be registered.');
@@ -822,139 +735,326 @@
                 });
         }
 
-        $('#regVerifyOtpBtn').on('click', function () {
-            const mobile = $('#regOtpMobileLabel').text().replace('+91 ', '');
-            const otp = collectOtp('.reg-otp-box');
-            $('#regOtp-err').text('');
+        function openOtpStep(mobile) {
+            $('#otpMobileLabel').text('+91 ' + mobile);
+            $('#otp-err').text('');
+            $('.main-otp-box').val('');
+            showStep('otpStep');
+            $('.main-otp-box').first().focus();
+            startResendTimer('otpResendLink', 'otpResendTimer', 30, function () {
+                if (otpMode === 'login-mobile') sendLoginOtp(mobile);
+                else sendSignupMobileOtp(mobile);
+            });
+        }
+
+        $('#otpVerifyBtn').on('click', function () {
+            const otp = collectOtp('.main-otp-box');
+            $('#otp-err').text('');
             if (otp.length < 4) {
-                $('#regOtp-err').text('Please enter the complete 4-digit OTP');
+                $('#otp-err').text('Please enter the complete 4-digit OTP');
                 return;
             }
-            $('#regVerifyOtpBtn').prop('disabled', true).text('Verifying...');
+            $('#otpVerifyBtn').prop('disabled', true).text('Verifying...');
+
+            if (otpMode === 'login-mobile') {
+                $.ajax({
+                    url: "{{ URL::to('verify/otp') }}",
+                    type: 'POST',
+                    data: { mobile_number: currentMobile, otp: otp, _token: CSRF },
+                    dataType: 'json',
+                    success: function (result) {
+                        $('#otpVerifyBtn').prop('disabled', false).text('Verify');
+                        if (result.success) {
+                            window.location.href = result.redirect || "{{ route('user.dashboard') }}";
+                        } else {
+                            let msg = result.code == 422 ? Object.values(result.errors)[0][0] : (result.message || 'Incorrect OTP');
+                            $('#otp-err').text(msg);
+                        }
+                    },
+                    error: function () {
+                        $('#otpVerifyBtn').prop('disabled', false).text('Verify');
+                        Swal.fire({ icon: 'error', title: 'Oops...', text: 'Something went wrong, please try again.' });
+                    }
+                });
+            } else {
+                $.ajax({
+                    url: "{{ route('verifyOTP') }}",
+                    type: 'POST',
+                    data: { mobile: currentMobile, otp: otp, _token: CSRF },
+                    dataType: 'json',
+                    success: function (data) {
+                        $('#otpVerifyBtn').prop('disabled', false).text('Verify');
+                        if (data.success) {
+                            clearInterval(window.otpResendLink_interval);
+                            $('#mobileSignupMobileHidden').val(currentMobile);
+                            $('#mobileSignupFullName').val('');
+                            $('#mobileSignupEmail').val('');
+                            $('#mobileSignupPasswordGroup').addClass('step-hidden');
+                            $('#mobileSignupPassword').val('');
+                            $('#mobileSignupFullName-err, #mobileSignupEmail-err, #mobileSignupPassword-err').text('');
+                            showStep('mobileSignupDetailsStep');
+                        } else {
+                            $('#otp-err').text('You entered an incorrect OTP.');
+                        }
+                    },
+                    error: function () {
+                        $('#otpVerifyBtn').prop('disabled', false).text('Verify');
+                        Swal.fire({ icon: 'error', title: 'Oops...', text: 'Something went wrong, please try again.' });
+                    }
+                });
+            }
+        });
+
+        /* ============ STEP 3: Mobile signup details ============ */
+        $('#mobileSignupEmail').on('input', function () {
+            const val = $(this).val().trim();
+            $('#mobileSignupEmail-err').text('');
+            if (val) {
+                $('#mobileSignupPasswordGroup').removeClass('step-hidden');
+            } else {
+                $('#mobileSignupPasswordGroup').addClass('step-hidden');
+                $('#mobileSignupPassword').val('');
+                $('#mobileSignupPassword-err').text('');
+            }
+        });
+
+        $('#mobileSignupEmail').on('blur', function () {
+            const email = $(this).val().trim();
+            if (!email) return;
             $.ajax({
-                url: "{{ route('verifyOTP') }}",
-                type: 'POST',
-                data: { mobile: mobile, otp: otp, _token: CSRF },
-                dataType: 'json',
+                url: '{{ route("check-email") }}',
+                method: 'POST',
+                data: { email: email, _token: CSRF },
                 success: function (data) {
-                    $('#regVerifyOtpBtn').prop('disabled', false).text('Verify');
-                    if (data.success) {
-                        $('#regMobileHidden').val(mobile);
-                        $('#regOtpStep').addClass('step-hidden');
-                        $('#registerSwitchFooter').addClass('step-hidden');
-                        $('#regDetailsStep').removeClass('step-hidden');
+                    if (data.exists) { $('#mobileSignupEmail-err').text('Email already exists'); }
+                }
+            });
+        });
+
+        $('#mobileSignupPassword').on('blur', function () {
+            const val = $(this).val();
+            $('#mobileSignupPassword-err').text(val ? (validatePasswordValue(val) || '') : '');
+        });
+
+        $('#mobileSignupSubmitBtn').on('click', function () {
+            const fullName = $('#mobileSignupFullName').val().trim();
+            const email = $('#mobileSignupEmail').val().trim();
+            const password = $('#mobileSignupPassword').val();
+            const mobile = $('#mobileSignupMobileHidden').val();
+
+            $('#mobileSignupFullName-err, #mobileSignupEmail-err, #mobileSignupPassword-err').text('');
+
+            if (!fullName) {
+                $('#mobileSignupFullName-err').text('Full Name is required');
+                return;
+            }
+
+            if (email) {
+                const pwdErr = validatePasswordValue(password);
+                if (pwdErr) {
+                    $('#mobileSignupPassword-err').text(pwdErr);
+                    return;
+                }
+            }
+
+            $('#mobileSignupSubmitBtn').prop('disabled', true).text('Please wait...');
+            $.ajax({
+                url: "{{ route('register.via.mobile') }}",
+                type: 'POST',
+                data: { full_name: fullName, email: email, password: password, mobile: mobile, _token: CSRF },
+                dataType: 'json',
+                success: function (result) {
+                    if (result.success) {
+                        window.location.href = result.redirect;
                     } else {
-                        $('#regOtp-err').text('You entered an incorrect OTP.');
+                        $('#mobileSignupSubmitBtn').prop('disabled', false).text('Create Account');
+                        if (result.errors) {
+                            const firstErr = Object.values(result.errors)[0][0];
+                            Swal.fire({ icon: 'error', title: 'Oops...', text: firstErr });
+                        } else {
+                            Swal.fire({ icon: 'error', title: 'Oops...', text: result.message || 'Something went wrong.' });
+                        }
                     }
                 },
                 error: function () {
-                    $('#regVerifyOtpBtn').prop('disabled', false).text('Verify');
+                    $('#mobileSignupSubmitBtn').prop('disabled', false).text('Create Account');
                     Swal.fire({ icon: 'error', title: 'Oops...', text: 'Something went wrong, please try again.' });
                 }
             });
         });
 
-        /* ============ Register form: email check + captcha ============ */
-        function checkEmailExists() {
-            var email = $('#email_id_register').val();
-            var emailFeedback = $('#email_feedback');
-            if (email.trim() === '') { emailFeedback.hide(); return; }
-
-            var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-            if (emailPattern.test(email)) {
-                $.ajax({
-                    url: '{{ route("check-email") }}',
-                    method: 'POST',
-                    data: { email: email, _token: CSRF },
-                    success: function (data) {
-                        if (data.exists) { emailFeedback.text('Email already exists').show(); }
-                        else { emailFeedback.hide(); }
-                    }
-                });
-            } else {
-                emailFeedback.text('Invalid email address').show();
+        /* ============ STEP 4: Email login (existing email) ============ */
+        $('#emailPasswordSubmitBtn').on('click', function () {
+            const email = $('#emailPasswordEmailHidden').val();
+            const password = $('#emailPasswordInput').val();
+            $('#emailPassword-err').text('');
+            if (!password) {
+                $('#emailPassword-err').text('Password is required');
+                return;
             }
-        }
-        $('#email_id_register').on('input change', checkEmailExists);
-
-        $('#registerForm').submit(function (event) {
-            var recaptchaResponse = grecaptcha.getResponse();
-            if (recaptchaResponse.length === 0) {
-                event.preventDefault();
-                Swal.fire({ icon: 'error', title: 'Captcha Required', text: 'Please complete the reCAPTCHA before submitting the form.' });
-                return false;
-            }
-            if ($('#is_valid_refer').length && $('#is_valid_refer').val() == 0 && $('.referralCode').val() && $('.referralCode').val().trim() !== '') {
-                event.preventDefault();
-                Swal.fire({ icon: 'error', title: 'Not a valid referral code!', text: 'Please check the entered referral code' });
-            }
-        });
-
-        /* ============ State -> City ajax ============ */
-        $('#regState').on('change', function () {
-            var stateId = $(this).val();
-            var citySelect = $('#regCity');
-            citySelect.html('<option value="">Select City</option>');
-            if (!stateId) return;
-            $.post("{{ route('cities-by-state') }}", { state_id: stateId, _token: CSRF }, function (data) {
-                citySelect.html(data);
-            });
-        });
-
-
-        /* ============ Referral code ============ */
-        function getUrlParameter(name) {
-            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-            var results = regex.exec(location.search);
-            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-        }
-        $(document).ready(function () {
-            var referralCode = getUrlParameter('referralCode');
-            if (referralCode) {
-                $('.referralCode').val(referralCode);
-                setTimeout(function () { $(".referralCode").trigger('keyup'); }, 100);
-            }
-            $(".referralCode").keyup(function () {
-                let referral = $(this).val();
-                if (referral !== "") {
-                    $.ajax({
-                        type: "GET",
-                        url: "{{url('getusername')}}/" + referral,
-                        success: function (data) {
-                            if (data.status == 1) {
-                                $('#is_valid_refer').val('1');
-                                $("#names").val(data.name);
-                                $("#errors").html("");
-                            } else if (data.status == 3) {
-                                $('#is_valid_refer').val('1');
-                                $("#names").val("");
-                                $(".referralCode").val("");
-                                $("#errors").html("This referral code(" + referral + ") does not fulfill the Active Paid Subscription criteria.");
-                            } else {
-                                $('#is_valid_refer').val('0');
-                                $("#names").val("");
-                                $("#errors").html("Not Found");
+            $('#emailPasswordSubmitBtn').prop('disabled', true).text('Please wait...');
+            $.ajax({
+                url: "{{ route('user.authenticate') }}",
+                type: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                data: { email: email, password: password, _token: CSRF },
+                dataType: 'json',
+                success: function (result) {
+                    $('#emailPasswordSubmitBtn').prop('disabled', false).text('Login');
+                    if (result.success) {
+                        window.location.href = result.redirect;
+                    } else if (result.message && result.message.indexOf('not been verified') !== -1) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Email not verified',
+                            text: result.message,
+                            showCancelButton: true,
+                            confirmButtonText: 'Resend Verification Email',
+                        }).then(function (res) {
+                            if (res.isConfirmed) {
+                                $.post("{{ route('verification.resend') }}", { email: email, _token: CSRF }, function (r) {
+                                    Swal.fire({ icon: 'success', title: 'Sent', text: r.message });
+                                }, 'json');
                             }
-                        }
-                    });
-                } else {
-                    $('#is_valid_refer').val('0');
-                    $("#names").val("");
-                    $("#errors").html("");
+                        });
+                    } else if (result.errors) {
+                        const firstErr = Object.values(result.errors)[0][0];
+                        $('#emailPassword-err').text(firstErr);
+                    } else {
+                        $('#emailPassword-err').text(result.message || 'Something went wrong.');
+                    }
+                },
+                error: function () {
+                    $('#emailPasswordSubmitBtn').prop('disabled', false).text('Login');
+                    Swal.fire({ icon: 'error', title: 'Oops...', text: 'Something went wrong, please try again.' });
                 }
             });
-
-            if (referralCode) {
-                switchTab('register');
-            }
         });
 
-        /* ============ Google buttons ============ */
-        $('#googleLoginBtn, #googleSignupBtn').on('click', function () {
+        /* ============ STEP 5: Email signup (new email) ============ */
+        $('#emailSignupSendOtpBtn').on('click', function () {
+            const mobile = $('#emailSignupMobile').val().trim();
+            $('#emailSignupMobile-err').text('');
+            if (!/^[6-9]\d{9}$/.test(mobile)) {
+                $('#emailSignupMobile-err').text('Enter a valid 10-digit Indian mobile number');
+                return;
+            }
+            sendEmailSignupOtp(mobile);
+        });
+
+        function sendEmailSignupOtp(mobile) {
+            $('#emailSignupSendOtpBtn').prop('disabled', true);
+            $.post("{{ route('mobileVerify') }}", { mobile: mobile, _token: CSRF })
+                .done(function (data) {
+                    $('#emailSignupSendOtpBtn').prop('disabled', false);
+                    if (data.success) {
+                        currentMobile = mobile;
+                        $('#emailSignupOtpMobileLabel').text('+91 ' + mobile);
+                        $('#emailSignupMobileBlock').addClass('step-hidden');
+                        $('#emailSignupOtpBlock').removeClass('step-hidden');
+                        $('#emailSignupOtp-err').text('');
+                        $('.email-signup-otp-box').val('');
+                        $('.email-signup-otp-box').first().focus();
+                        startResendTimer('emailSignupResendLink', 'emailSignupResendTimer', 30, function () { sendEmailSignupOtp(mobile); });
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'Oops...', text: 'Please retry after sometime.' });
+                    }
+                })
+                .fail(function (response) {
+                    $('#emailSignupSendOtpBtn').prop('disabled', false);
+                    const msg = response.responseJSON && response.responseJSON.error
+                        ? response.responseJSON.error
+                        : (response.responseJSON && response.responseJSON.mobile ? response.responseJSON.mobile[0] : 'This mobile number may already be registered.');
+                    Swal.fire({ icon: 'error', title: 'Oops...', text: msg });
+                });
+        }
+
+        $('#emailSignupVerifyOtpBtn').on('click', function () {
+            const otp = collectOtp('.email-signup-otp-box');
+            $('#emailSignupOtp-err').text('');
+            if (otp.length < 4) {
+                $('#emailSignupOtp-err').text('Please enter the complete 4-digit OTP');
+                return;
+            }
+            $('#emailSignupVerifyOtpBtn').prop('disabled', true).text('Verifying...');
+            $.ajax({
+                url: "{{ route('verifyOTP') }}",
+                type: 'POST',
+                data: { mobile: currentMobile, otp: otp, _token: CSRF },
+                dataType: 'json',
+                success: function (data) {
+                    $('#emailSignupVerifyOtpBtn').prop('disabled', false).text('Verify Mobile');
+                    if (data.success) {
+                        clearInterval(window.emailSignupResendLink_interval);
+                        $('#emailSignupOtpBlock').addClass('step-hidden');
+                        $('#emailSignupPasswordGroup').removeClass('step-hidden');
+                        $('#emailSignupSubmitBtn').removeClass('step-hidden');
+                    } else {
+                        $('#emailSignupOtp-err').text('You entered an incorrect OTP.');
+                    }
+                },
+                error: function () {
+                    $('#emailSignupVerifyOtpBtn').prop('disabled', false).text('Verify Mobile');
+                    Swal.fire({ icon: 'error', title: 'Oops...', text: 'Something went wrong, please try again.' });
+                }
+            });
+        });
+
+        $('#emailSignupPassword').on('blur', function () {
+            const val = $(this).val();
+            $('#emailSignupPassword-err').text(val ? (validatePasswordValue(val) || '') : '');
+        });
+
+        $('#emailSignupSubmitBtn').on('click', function () {
+            const fullName = $('#emailSignupFullName').val().trim();
+            const password = $('#emailSignupPassword').val();
+            const email = $('#emailSignupEmailHidden').val();
+            const mobile = currentMobile;
+
+            $('#emailSignupFullName-err, #emailSignupPassword-err').text('');
+
+            if (!fullName) {
+                $('#emailSignupFullName-err').text('Full Name is required');
+                return;
+            }
+            const pwdErr = validatePasswordValue(password);
+            if (pwdErr) {
+                $('#emailSignupPassword-err').text(pwdErr);
+                return;
+            }
+
+            $('#emailSignupSubmitBtn').prop('disabled', true).text('Please wait...');
+            $.ajax({
+                url: "{{ route('register.via.email') }}",
+                type: 'POST',
+                data: { full_name: fullName, email: email, mobile: mobile, password: password, _token: CSRF },
+                dataType: 'json',
+                success: function (result) {
+                    if (result.success) {
+                        window.location.href = result.redirect;
+                    } else {
+                        $('#emailSignupSubmitBtn').prop('disabled', false).text('Create Account');
+                        if (result.errors) {
+                            const firstErr = Object.values(result.errors)[0][0];
+                            Swal.fire({ icon: 'error', title: 'Oops...', text: firstErr });
+                        } else {
+                            Swal.fire({ icon: 'error', title: 'Oops...', text: result.message || 'Something went wrong.' });
+                        }
+                    }
+                },
+                error: function () {
+                    $('#emailSignupSubmitBtn').prop('disabled', false).text('Create Account');
+                    Swal.fire({ icon: 'error', title: 'Oops...', text: 'Something went wrong, please try again.' });
+                }
+            });
+        });
+
+        /* ============ Google button ============ */
+        $('#googleAuthBtn').on('click', function () {
             window.location.href = "{{ route('google.redirect') }}";
         });
 
+        /* ============ Top flash alerts auto-fade ============ */
         $(function () {
             setTimeout(function () {
                 $('#successAlert, #errorAlert, #validationAlert').fadeOut(400, function () { $(this).remove(); });

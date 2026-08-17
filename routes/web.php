@@ -124,6 +124,7 @@ Route::controller(RazorpayPaymentController::class)->group(function () {
 Route::controller(MemberAuthController::class)->group(function () {
     Route::get("getusername/{id}", 'getusername');
     Route::post('/check-email', 'checkEmail')->name('check-email');
+    Route::post('/check-identifier', 'checkIdentifier')->name('check-identifier');
     Route::post('sendOtp', 'sendMobileOTP')->name('mobileVerify');
 
     Route::post('send-otp-customer', 'sendMobileOTPCustomer')->name('send-otp-customer');
@@ -131,6 +132,8 @@ Route::controller(MemberAuthController::class)->group(function () {
     Route::post('verifyOTP', 'verifyOTP')->name('verifyOTP');
     Route::get('account/verify/{token}', 'verifyAccount')->name('user.verify');
     Route::post('user/register', 'register')->name('user.register');
+    Route::post('user/register-via-mobile', 'registerViaMobile')->name('register.via.mobile');
+    Route::post('user/register-via-email', 'registerViaEmail')->name('register.via.email');
     Route::post('/authenticate', 'authenticate')->name('user.authenticate');
     Route::post('send/otp', 'sendOtp')->name('sendotp');
     Route::post('verify/otp', 'verifymobilenumber')->name('verifymobilenumber');

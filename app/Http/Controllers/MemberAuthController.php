@@ -60,6 +60,43 @@ class MemberAuthController extends Controller
         return response()->json(['exists' => $exists]);
     }
 
+    /**
+     * Unified Login/Signup Step 1: detect whether the identifier entered
+     * is a mobile number or an email, and whether it already exists.
+     * The frontend uses this single response to branch into the correct
+     * next step (login OTP / signup OTP / login password / signup details).
+     */
+    public function checkIdentifier(Request $request)
+    {
+        $identifier = trim((string) $request->input('identifier'));
+
+        $mobilePattern = '/^[6-9]\d{9}$/';
+        $emailPattern = '/^[^\s@]+@[^\s@]+\.[^\s@]+$/';
+
+        if (preg_match($mobilePattern, $identifier)) {
+            $exists = Member::where('mobile', $identifier)->exists();
+            return response()->json([
+                'success' => true,
+                'type' => 'mobile',
+                'exists' => $exists,
+            ]);
+        }
+
+        if (preg_match($emailPattern, $identifier)) {
+            $exists = Member::where('email', $identifier)->exists();
+            return response()->json([
+                'success' => true,
+                'type' => 'email',
+                'exists' => $exists,
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Enter a valid 10-digit mobile number or email address',
+        ]);
+    }
+
     public function getusername($id)
     {
         $data = DB::table('members')->where('referral_code', $id)->first();
@@ -226,71 +263,109 @@ class MemberAuthController extends Controller
 
     public function authenticate(Request $request)
     {
+        $isAjax = $request->ajax() || $request->wantsJson();
 
         if (Auth::guard('member')->check()) {
             return view('front.dashboard');
-        } else {
-            $credentials = $request->validate([
-                'email' => 'required|email',
-                'password' => 'required'
-            ]);
-
-
-            $credentials = $request->only('email', 'password');
-            $member = Member::where('email', $request->email)->first();
-            if (!empty($member)) {
-                if ($member->email_verified_at == NULL) {
-                    $token = Str::random(64);
-                    MemberVerify::create([
-                        'member_id' => $member->id,
-                        'token' => $token
-                    ]);
-                    $mailData = ['token' => $token];
-                    Mail::to($request->email)->send(new EmailVerificationEmail($mailData));
-
-                    return redirect()->route('user.login')
-                        ->with('error', 'Your email has not been verified yet. Verification email sent. Please check your inbox, spam, or junk folder. Sometimes it may take up to 2-3 minutes.')
-                        ->with('resend_email', $request->email); // pass email for modal
-                } else if ($member->status != 'Active') {
-                    return redirect()->route('user.login')
-                        ->withErrors('Your account has been blocked please contact to Admin.');
-                } else {
-
-                    if (Auth::guard('member')->attempt($credentials)) {
-                        $revew = DB::table('ad_reviews_temp')->where('email', $request->email)->first();
-
-                        if (isset($revew) && !empty($revew)) {
-                            $ad = Ad::where('id', $revew->ad_id)->with('category')->first();
-                            return redirect()->route('ad-details', [$ad->category->name, $ad->slug])->withErrors('Please complete your review!');
-                        }
-
-                        if (session()->has('post_login_redirect')) {
-                            $redirect = session()->pull('post_login_redirect');
-                            return redirect($redirect)->withSuccess('You have successfully logged in!');
-                        }
-
-                        return redirect()->route('user.dashboard')
-                            ->withSuccess('You have successfully logged in!');
-                    }
-                }
-            } else {
-                return back()->withErrors(['email' => 'Invalid email'])->onlyInput('email');
-            }
-
-            return back()->withErrors(['email' => 'Invalid credentials'])->onlyInput('email');
         }
 
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            if ($isAjax) {
+                return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+            }
+            return back()->withErrors($validator)->withInput();
+        }
+
+        $credentials = $request->only('email', 'password');
+        $member = Member::where('email', $request->email)->first();
+
+        if (empty($member)) {
+            $message = 'This email is not registered with us.';
+            if ($isAjax) {
+                return response()->json(['success' => false, 'message' => $message]);
+            }
+            return back()->withErrors(['email' => $message])->onlyInput('email');
+        }
+
+        if ($member->email_verified_at == NULL) {
+            $token = Str::random(64);
+            MemberVerify::create([
+                'member_id' => $member->id,
+                'token' => $token
+            ]);
+            $mailData = ['token' => $token];
+            Mail::to($request->email)->send(new EmailVerificationEmail($mailData));
+
+            $message = 'Your email has not been verified yet. Verification email sent. Please check your inbox, spam, or junk folder. Sometimes it may take up to 2-3 minutes.';
+
+            if ($isAjax) {
+                return response()->json(['success' => false, 'message' => $message]);
+            }
+
+            return redirect()->route('user.login')
+                ->with('error', $message)
+                ->with('resend_email', $request->email);
+        }
+
+        if ($member->status != 'Active') {
+            $message = 'Your account has been blocked please contact to Admin.';
+            if ($isAjax) {
+                return response()->json(['success' => false, 'message' => $message]);
+            }
+            return redirect()->route('user.login')->withErrors($message);
+        }
+
+        if (!Auth::guard('member')->attempt($credentials)) {
+            $message = 'Password do not match, kindly re-enter the correct password';
+            if ($isAjax) {
+                return response()->json(['success' => false, 'message' => $message]);
+            }
+            return back()->withErrors(['email' => $message])->onlyInput('email');
+        }
+
+        $revew = DB::table('ad_reviews_temp')->where('email', $request->email)->first();
+
+        if (isset($revew) && !empty($revew)) {
+            $ad = Ad::where('id', $revew->ad_id)->with('category')->first();
+            $redirect = route('ad-details', [$ad->category->name, $ad->slug]);
+
+            if ($isAjax) {
+                return response()->json(['success' => true, 'redirect' => $redirect, 'message' => 'Please complete your review!']);
+            }
+            return redirect($redirect)->withErrors('Please complete your review!');
+        }
+
+        $redirect = session()->has('post_login_redirect')
+            ? session()->pull('post_login_redirect')
+            : route('user.dashboard');
+
+        if ($isAjax) {
+            return response()->json(['success' => true, 'redirect' => $redirect]);
+        }
+
+        return redirect($redirect)->withSuccess('You have successfully logged in!');
     }
 
 
     public function resendVerification(Request $request)
     {
+        $isAjax = $request->ajax() || $request->wantsJson();
+
         $request->validate(['email' => 'required|email|exists:members,email']);
 
         $member = Member::where('email', $request->email)->first();
 
         if ($member->email_verified_at) {
-            return back()->with('success', 'Your email is already verified.');
+            $message = 'Your email is already verified.';
+            if ($isAjax) {
+                return response()->json(['success' => true, 'message' => $message]);
+            }
+            return back()->with('success', $message);
         }
 
         $token = Str::random(64);
@@ -301,7 +376,11 @@ class MemberAuthController extends Controller
 
         Mail::to($request->email)->send(new EmailVerificationEmail(['token' => $token]));
 
-        return back()->with('success', 'Verification link has been resent! Please check your email.');
+        $message = 'Verification link has been resent! Please check your email.';
+        if ($isAjax) {
+            return response()->json(['success' => true, 'message' => $message]);
+        }
+        return back()->with('success', $message);
     }
 
     public function register(Request $request)
@@ -385,6 +464,163 @@ class MemberAuthController extends Controller
 
         return redirect()->route('user.login')
             ->withSuccess('Please check your email for the verification link.');
+    }
+
+    /**
+     * Unified flow — signup started by entering a NEW mobile number.
+     * Mobile is already OTP-verified by this point (verifyOTP()).
+     * Only Full Name + optional Email are collected; Password is only
+     * required when an Email is supplied.
+     */
+    public function registerViaMobile(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'mobile' => 'required|digits:10|unique:members,mobile',
+            'full_name' => 'required|string|max:250',
+            'email' => 'nullable|email|max:250|unique:members,email',
+            'password' => [
+                $request->filled('email') ? 'required' : 'nullable',
+                function ($attribute, $value, $fail) use ($request) {
+                    if (!$request->filled('email') || !$value) {
+                        return;
+                    }
+                    if (strlen($value) < 8) {
+                        $fail('Password must be at least 8 characters');
+                    } elseif (!preg_match('/[A-Za-z]/', $value)) {
+                        $fail('Password should be Alpha Numeric, use atleast One alphabet');
+                    } elseif (!preg_match('/[0-9]/', $value)) {
+                        $fail('Password should be Alpha Numeric, use atleast One numerical number');
+                    } elseif (!preg_match('/^[A-Za-z0-9]+$/', $value)) {
+                        $fail('Password should be Alpha Numeric');
+                    }
+                },
+            ],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+        }
+
+        $adminsetting = OtherSetting::first();
+
+        $member = new Member();
+        $namePart = substr(ucfirst($request->full_name), 0, 4);
+        $mobilePart = rand(1000, 9999);
+        $user_id = $namePart . $mobilePart;
+
+        $member->full_name = ucfirst($request->full_name);
+        $member->email = $request->filled('email') ? $request->email : null;
+        $member->mobile = $request->mobile;
+        $member->member_id = 'PGHAR' . date('Y') . rand(1000, 9999);
+        $member->referral_code = $user_id;
+        $member->mobile_verified_at = date('Y-m-d H:i:s');
+        $member->password = $request->filled('password') ? Hash::make($request->password) : Hash::make(Str::random(16));
+        $member->wallet_points = $adminsetting->welcome_bonus;
+        $member->no_of_ads = 0;
+        $member->membership_expiry_at = date('Y-m-d', strtotime(date('d-m-Y H:i:s') . ' + ' . $adminsetting->user_expiry . ' days'));
+        $member->save();
+
+        if ($adminsetting->welcome_bonus > 0) {
+            $walletamount = new WalletAmount();
+            $walletamount->points = $adminsetting->welcome_bonus;
+            $walletamount->user_id = $member->id;
+            $walletamount->type = 'Credit';
+            $walletamount->status = "1";
+            $walletamount->remaining_points = $adminsetting->welcome_bonus;
+            $walletamount->description = $adminsetting->welcome_bonus . " Points Eared from Welcome Bonus";
+            $walletamount->save();
+        }
+
+        if ($request->filled('email')) {
+            $token = Str::random(64);
+            MemberVerify::create(['member_id' => $member->id, 'token' => $token]);
+            Mail::to($request->email)->send(new EmailVerificationEmail(['token' => $token]));
+        }
+
+        $this->addFreeSubscription($member->id);
+
+        Auth::guard('member')->login($member);
+
+        $redirect = session()->has('post_login_redirect')
+            ? session()->pull('post_login_redirect')
+            : route('user.dashboard');
+
+        return response()->json(['success' => true, 'redirect' => $redirect]);
+    }
+
+    /**
+     * Unified flow — signup started by entering a NEW email address.
+     * Collects Full Name + Mobile (OTP-verified inline) + Password.
+     */
+    public function registerViaEmail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|max:250|unique:members,email',
+            'full_name' => 'required|string|max:250',
+            'mobile' => 'required|digits:10|unique:members,mobile',
+            'password' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    if (strlen($value) < 8) {
+                        $fail('Password must be at least 8 characters');
+                    } elseif (!preg_match('/[A-Za-z]/', $value)) {
+                        $fail('Password should be Alpha Numeric, use atleast One alphabet');
+                    } elseif (!preg_match('/[0-9]/', $value)) {
+                        $fail('Password should be Alpha Numeric, use atleast One numerical number');
+                    } elseif (!preg_match('/^[A-Za-z0-9]+$/', $value)) {
+                        $fail('Password should be Alpha Numeric');
+                    }
+                },
+            ],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+        }
+
+        $adminsetting = OtherSetting::first();
+
+        $member = new Member();
+        $namePart = substr(ucfirst($request->full_name), 0, 4);
+        $mobilePart = rand(1000, 9999);
+        $user_id = $namePart . $mobilePart;
+
+        $member->full_name = ucfirst($request->full_name);
+        $member->email = $request->email;
+        $member->mobile = $request->mobile;
+        $member->member_id = 'PGHAR' . date('Y') . rand(1000, 9999);
+        $member->referral_code = $user_id;
+        $member->mobile_verified_at = date('Y-m-d H:i:s');
+        $member->password = Hash::make($request->password);
+        $member->wallet_points = $adminsetting->welcome_bonus;
+        $member->no_of_ads = 0;
+        $member->membership_expiry_at = date('Y-m-d', strtotime(date('d-m-Y H:i:s') . ' + ' . $adminsetting->user_expiry . ' days'));
+        $member->save();
+
+        if ($adminsetting->welcome_bonus > 0) {
+            $walletamount = new WalletAmount();
+            $walletamount->points = $adminsetting->welcome_bonus;
+            $walletamount->user_id = $member->id;
+            $walletamount->type = 'Credit';
+            $walletamount->status = "1";
+            $walletamount->remaining_points = $adminsetting->welcome_bonus;
+            $walletamount->description = $adminsetting->welcome_bonus . " Points Eared from Welcome Bonus";
+            $walletamount->save();
+        }
+
+        $token = Str::random(64);
+        MemberVerify::create(['member_id' => $member->id, 'token' => $token]);
+        Mail::to($request->email)->send(new EmailVerificationEmail(['token' => $token]));
+
+        $this->addFreeSubscription($member->id);
+
+        Auth::guard('member')->login($member);
+
+        $redirect = session()->has('post_login_redirect')
+            ? session()->pull('post_login_redirect')
+            : route('user.dashboard');
+
+        return response()->json(['success' => true, 'redirect' => $redirect]);
     }
 
     public function verifyAccount($token)
