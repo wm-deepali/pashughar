@@ -36,13 +36,10 @@
         }
 
         .middle {
-            /*transition: .5s ease;*/
             opacity: 1;
             position: absolute;
             top: 15%;
             left: 24%;
-            /*transform: translate(-50%, -50%);*/
-            /*-ms-transform: translate(-50%, -50%);*/
             text-align: center;
         }
 
@@ -53,10 +50,108 @@
         .img-div:hover .middle {
             opacity: 1;
         }
+
+        .mandatory-mark {
+            color: #999;
+            font-size: 9px;
+            font-weight: 400;
+            margin-left: 6px;
+        }
+
+        /* Dropdown arrow fix for Category / Price Type / other custom-select fields */
+        select.custom-select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 36px;
+        }
+
+        /* Email verify / OTP buttons — clean pill style */
+        .email-verify-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn-verify-inline {
+            background: #1f4b3f;
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            padding: 0 20px;
+            height: 44px;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: background .2s ease, opacity .2s ease;
+            flex-shrink: 0;
+        }
+
+        .btn-verify-inline:hover {
+            background: #2c6b57;
+        }
+
+        .btn-verify-inline:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+        }
+
+        .otp-verify-box {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .otp-verify-box input {
+            max-width: 160px;
+            height: 44px;
+            border-radius: 10px;
+            border: 1px solid #e2e0dc;
+            background: #f7f7f6;
+            padding: 0 16px;
+            font-size: 15px;
+            letter-spacing: 2px;
+        }
+
+        .otp-verify-box input:focus {
+            outline: none;
+            border-color: #2c6b57;
+            background: #fff;
+        }
+
+        .email-verify-msg {
+            display: block;
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+        .field-example {
+            color: #999;
+            font-size: 11px;
+            font-weight: 400;
+            display: block;
+            margin-top: 4px;
+        }
+
+        /* Focus hote hi placeholder hide ho jaaye */
+        .form-control::placeholder {
+            transition: opacity 0.2s ease;
+            opacity: 1;
+        }
+
+        .form-control:focus::placeholder {
+            opacity: 0;
+        }
     </style>
     <!--=====================================
-                                        ADPOST PART START
-                            =======================================-->
+                                                                                ADPOST PART START
+                                                                    =======================================-->
     <section class="adpost-part">
         <div class="container">
             <div class="row">
@@ -72,15 +167,18 @@
                             <div class="row">
                                 <div class="col-lg-12">
                                     <div class="form-group">
-                                        <label class="form-label">Ad Title</label>
+                                        <label class="form-label">Ad Title <span
+                                                class="mandatory-mark">(Mandatory)</span></label>
                                         <input type="text" class="form-control" name="title"
-                                            placeholder="Type your product title here" required>
+                                            placeholder="Example: Sirohi Goat for Sale / 2 साल की Sirohi बकरी बिक्री के लिए"
+                                            required>
                                     </div>
                                 </div>
 
                                 <div class="col-lg-6 category_div">
                                     <div class="form-group">
-                                        <label class="form-label">Category</label>
+                                        <label class="form-label">Category <span
+                                                class="mandatory-mark">(Mandatory)</span></label>
                                         <select class="form-control custom-select" name="category_id" id="category_id"
                                             required>
                                             <option value="">Select Category</option>
@@ -100,14 +198,16 @@
 
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label class="form-label">Price</label>
+                                        <label class="form-label">Price <span
+                                                class="mandatory-mark">(Mandatory)</span></label>
                                         <input type="number" class="form-control" name="price"
                                             placeholder="Enter your pricing amount" required>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label class="form-label">Price Type</label>
+                                        <label class="form-label">Price Type <span
+                                                class="mandatory-mark">(Mandatory)</span></label>
                                         <select class="form-control custom-select" name="price_type" id="price_type"
                                             required>
                                             <option value="Fixed">Fixed</option>
@@ -118,15 +218,18 @@
                                 </div>
                                 <div class="col-lg-12" id="locationdiv">
                                     <div class="form-group">
-                                        <label class="form-label">Location</label>
+                                        <label class="form-label">Location <span
+                                                class="mandatory-mark">(Mandatory)</span></label>
                                         <input type="text" class="form-control" name="location" id="location" required>
                                     </div>
                                 </div>
                                 <div class="col-lg-12">
                                     <div class="form-group">
-                                        <label class="form-label">ad description</label>
+                                        <label class="form-label">ad description <span
+                                                class="mandatory-mark">(Mandatory)</span></label>
                                         <textarea class="form-control" name="description"
-                                            placeholder="Describe your message" required></textarea>
+                                            placeholder="Example: Enter Detail / अपने पशु के बारे में जानकारी लिखें। जैसे: 2 साल की Sirohi बकरी है, वजन लगभग 40 किलो है। स्वस्थ है।"
+                                            required></textarea>
                                     </div>
                                 </div>
 
@@ -139,7 +242,7 @@
                                             <div class="input-group mb-3 align-items-center">
 
                                                 <input type="text" class="form-control m-input" name="specifications[]"
-                                                    placeholder="Specification detail">
+                                                    placeholder="Example: 2 Years / 2 साल की गाय है">
                                                 <div class="input-group-prepend">
                                                     <button class="btn delete-btn-app" id="DeleteRow" type="button">
                                                         <i class="fas fa-trash"></i>
@@ -147,6 +250,10 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <small class="field-example">यहाँ आप अपने पशु के बारे में अतिरिक्त जानकारी दे सकते
+                                            हैं, जैसे वह कितना दूध देता है, उसका स्वास्थ्य कैसा है, Vaccination कराया गया है
+                                            या नहीं आदि। "Add More" पर क्लिक करके आप एक-एक करके अलग-अलग जानकारी भी जोड़ सकते
+                                            हैं।</small>
                                         <div id="newinput"></div>
                                         <button id="rowAdder" type="button" class="btn btn-add-more-app">
                                             <i class="fas fa-plus"></i> Add More
@@ -156,7 +263,8 @@
                                 </div>
                                 <div class="col-lg-12">
                                     <div class="form-group">
-                                        <label class="form-label">Ad Multiple Image </label>
+                                        <label class="form-label">Ad Multiple Image <span
+                                                class="mandatory-mark">(Mandatory)</span></label>
                                         <input type="file" id="image" class="form-control" name="image[]"
                                             multiple="multiple" accept="image/png, image/jpeg" required>
                                         <div class="gallery"></div>
@@ -167,43 +275,13 @@
                         </div>
                         <div class="adpost-card">
                             <div class="adpost-title">
-                                <h3>SEO Details</h3>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Meta Title</label>
-                                        <input type="text" class="form-control" id="meta_title" name="meta_title"
-                                            value="{{ old('meta_title') }}" placeholder="Enter Meta Title" required>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Meta Keywords</label>
-                                        <input type="text" class="form-control" id="meta_keyword" name="meta_keyword"
-                                            value="{{ old('meta_keyword') }}" placeholder="Meta keywords here" required>
-                                    </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <div class="form-group">
-                                        <label class="form-label">Meta Description </label>
-                                        <textarea class="form-control" name="meta_description"
-                                            placeholder="Meta Description" required></textarea>
-
-                                    </div>
-                                </div>
-
-
-                            </div>
-                        </div>
-                        <div class="adpost-card">
-                            <div class="adpost-title">
                                 <h3>Author Information</h3>
                             </div>
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label class="form-label">Name</label>
+                                        <label class="form-label">Name <span
+                                                class="mandatory-mark">(Mandatory)</span></label>
                                         <input type="text" class="form-control" name="author_name"
                                             value="{{Auth::guard('member')->user()->full_name ?? ''}}"
                                             placeholder="Your Name" required>
@@ -211,15 +289,32 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label class="form-label">Email</label>
-                                        <input type="email" class="form-control" name="author_email"
-                                            value="{{Auth::guard('member')->user()->email ?? ''}}" placeholder="Your Email"
-                                            required>
+                                        <label class="form-label">Email <span
+                                                class="mandatory-mark">(Optional)</span></label>
+                                        <div class="email-verify-row">
+                                            <input type="email" class="form-control" name="author_email" id="author_email"
+                                                value="{{Auth::guard('member')->user()->email ?? ''}}"
+                                                data-verified-email="{{ Auth::guard('member')->user()->email_verified_at ? Auth::guard('member')->user()->email : '' }}"
+                                                placeholder="Your Email (optional)">
+                                            <button type="button" class="btn-verify-inline" id="verifyEmailBtn"
+                                                style="display:none;">Verify Now</button>
+                                        </div>
+                                        <span id="emailVerifyMsg" class="email-verify-msg"></span>
+
+                                        {{-- OTP box, hidden until Verify Now is clicked --}}
+                                        <div id="emailOtpBox" class="otp-verify-box" style="display:none;">
+                                            <input type="text" id="emailOtpInput" maxlength="4" inputmode="numeric"
+                                                placeholder="Enter OTP">
+                                            <button type="button" class="btn-verify-inline" id="submitEmailOtpBtn">Submit
+                                                OTP</button>
+                                        </div>
+                                        <input type="hidden" id="email_is_verified" value="0">
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label class="form-label">Number</label>
+                                        <label class="form-label">Number <span
+                                                class="mandatory-mark">(Mandatory)</span></label>
                                         <input type="number" class="form-control" name="author_mobile"
                                             value="{{Auth::guard('member')->user()->mobile ?? ''}}"
                                             placeholder="Your Number" required>
@@ -227,7 +322,8 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label class="form-label">Address</label>
+                                        <label class="form-label">Address <span
+                                                class="mandatory-mark">(Mandatory)</span></label>
                                         <input type="text" class="form-control" name="author_address"
                                             value="{{Auth::guard('member')->user()->address ?? ''}}"
                                             placeholder="Your Address" required>
@@ -252,47 +348,109 @@
         </div>
     </section>
     <!--=====================================
-                                        ADPOST PART END
-                            =======================================-->
+                                                                                ADPOST PART END
+                                                                    =======================================-->
 @endsection
+
 @push('after-script')
+
     <script>
+        const CSRF_AD = '{{ csrf_token() }}';
+        const originalVerifiedEmail = $('#author_email').data('verified-email');
 
+        function toggleVerifyButton() {
+            const currentEmail = $('#author_email').val().trim();
+            $('#emailOtpBox').hide();
+            $('#emailVerifyMsg').text('');
 
+            if (currentEmail === '') {
+                // Email khali hai — ye optional field hai, verify karne ki zaroorat nahi
+                $('#verifyEmailBtn').hide();
+                $('#email_is_verified').val('1');
+            } else if (originalVerifiedEmail && currentEmail === originalVerifiedEmail) {
+                // Ye wahi email hai jo pehle se verified hai — dobara verify mat karwao
+                $('#verifyEmailBtn').hide();
+                $('#email_is_verified').val('1');
+            } else {
+                // Naya ya unverified email — pehle verify karwana padega
+                $('#verifyEmailBtn').show();
+                $('#email_is_verified').val('0');
+            }
+        }
+        toggleVerifyButton();
+        $('#author_email').on('input', toggleVerifyButton);
 
-
-
-
-
-        /* $(function() {
-            // Multiple images preview in browser
-            var imagesPreview = function(input, placeToInsertImagePreview) {
-
-                if (input.files) {
-                    var filesAmount = input.files.length;
-
-                    for (i = 0; i < filesAmount; i++) {
-                        var reader = new FileReader();
-
-                        reader.onload = function(event) {
-                            $($.parseHTML('<img>')).attr('src', event.target.result).appendTo(placeToInsertImagePreview);
-                        }
-
-                        reader.readAsDataURL(input.files[i]);
+        $('#verifyEmailBtn').on('click', function () {
+            const email = $('#author_email').val().trim();
+            if (!email) {
+                Swal.fire({ icon: 'error', title: 'Oops...', text: 'Please enter an email first.' });
+                return;
+            }
+            $('#verifyEmailBtn').prop('disabled', true).text('Sending...');
+            $.ajax({
+                url: "{{ route('send.ad.email.otp') }}",
+                type: 'POST',
+                data: { email: email, _token: CSRF_AD },
+                dataType: 'json',
+                success: function (result) {
+                    $('#verifyEmailBtn').prop('disabled', false).text('Verify Now');
+                    if (result.success) {
+                        $('#emailVerifyMsg').css('color', '#1f8a4c').text(result.message);
+                        $('#emailOtpBox').show();
+                        $('#emailOtpInput').val('').focus();
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'Oops...', text: result.message });
                     }
+                },
+                error: function () {
+                    $('#verifyEmailBtn').prop('disabled', false).text('Verify Now');
+                    Swal.fire({ icon: 'error', title: 'Oops...', text: 'Something went wrong, please try again.' });
                 }
-
-            };
-
-            $('#image').on('change', function() {
-                imagesPreview(this, 'div.gallery');
             });
-        });*/
+        });
+
+        $('#submitEmailOtpBtn').on('click', function () {
+            const email = $('#author_email').val().trim();
+            const otp = $('#emailOtpInput').val().trim();
+            if (otp.length < 4) {
+                Swal.fire({ icon: 'error', title: 'Oops...', text: 'Please enter the complete 4-digit OTP' });
+                return;
+            }
+            $('#submitEmailOtpBtn').prop('disabled', true).text('Verifying...');
+            $.ajax({
+                url: "{{ route('verify.ad.email.otp') }}",
+                type: 'POST',
+                data: { email: email, otp: otp, _token: CSRF_AD },
+                dataType: 'json',
+                success: function (result) {
+                    $('#submitEmailOtpBtn').prop('disabled', false).text('Submit OTP');
+                    if (result.success) {
+                        $('#emailVerifyMsg').css('color', '#1f8a4c').text(result.message);
+                        $('#emailOtpBox').hide();
+                        $('#verifyEmailBtn').hide();
+                        $('#email_is_verified').val('1');
+                    } else {
+                        $('#emailVerifyMsg').css('color', '#c0392b').text(result.message);
+                    }
+                },
+                error: function () {
+                    $('#submitEmailOtpBtn').prop('disabled', false).text('Submit OTP');
+                    Swal.fire({ icon: 'error', title: 'Oops...', text: 'Something went wrong, please try again.' });
+                }
+            });
+        });
+
+        $('.adpost-form').on('submit', function (event) {
+            const currentEmail = $('#author_email').val().trim();
+            if (currentEmail !== '' && $('#email_is_verified').val() != '1') {
+                event.preventDefault();
+                Swal.fire({ icon: 'warning', title: 'Email not verified', text: 'Please verify your email before posting the ad.' });
+            }
+        });
 
         $(document).ready(function () {
             var fileArr = [];
             $("#image").change(function () {
-                // check if fileArr length is greater than 0
                 if (fileArr.length > 0) fileArr = [];
 
                 $('.gallery').html("");
@@ -355,32 +513,14 @@
                     }
                 },
             });
-
-            //  let brand_category_id = $(this).val();
-            // $.ajax({
-            //     url: `{{ URL::to('fetch-brand/${brand_category_id}') }}`,
-            //     type: 'GET',
-            //     dataType: 'json',
-            //     success: function(result) {
-            //         if (result.success) {
-            //             $('.category_div').after(result.html);
-
-            //         } else {
-            //             //toastr.error('error encountered ' + result.msgText);
-            //         }
-            //     },
-            // });
-
-
         });
-        //if($("#subcategory_id").length != 0) {
 
         $(document).on('change', '#subcategory_id', function (event) {
             let subcategory_id = $(this).val();
             let category_id = $('#category_id').val();
             fetchformData(category_id, subcategory_id);
         });
-        // }
+
         $(document).on('change', '#brand_category_id', function (event) {
 
             let brand_category_id = $(this).val();
@@ -424,7 +564,6 @@
                             $(branddiv).insertAfter($(locationdiv));
                         }
 
-
                         var yearInput = document.getElementById("yeardiv");
                         var monthInput = document.getElementById("monthdiv");
                         var approxInput = document.getElementById("approxdiv");
@@ -457,7 +596,6 @@
                             $(wtInInput).insertAfter($(wtInput));
                         }
 
-
                         if (typeof (yearInput) != 'undefined' && yearInput != null && typeof (avgwtInput) != 'undefined' && avgwtInput != null) {
                             $(avgwtInput).insertAfter($(approxInput));
                             $(avgwtInInput).insertAfter($(avgwtInput));
@@ -468,21 +606,17 @@
                             $(wtInInput).insertAfter($(wtInput));
                         }
 
-
                     } else {
                         toastr.error('error encountered ' + result.msgText);
                     }
                 },
             });
         }
-        //if($("#vehicle_type").length != 0) {
 
         $(document).on('change', '#vehicle_type', function (event) {
             let vehicle_type = $(this).val();
-            //alert(vehicle_type);
             fetchfueltype(vehicle_type);
         });
-        //}
 
         function fetchfueltype(vehicle_type) {
             $('#fuel_type').html("")
@@ -503,7 +637,7 @@
         $("#rowAdder").click(function () {
             newRowAdd =
                 ' <div id="row"><div class="input-group mb-3 align-items-center">' +
-                '<input type="text" class="form-control m-input" name="specifications[]" placeholder="Specification detail">' +
+                '<input type="text" class="form-control m-input" name="specifications[]" placeholder="Example: Weight: 40 Kg / वजन: 40 किलो">' +
                 '<div class="input-group-append">' +
                 '<button class="btn delete-btn-app" id="DeleteRow" type="button">' +
                 '<i class="fas fa-trash"></i></button> </div>' +
@@ -515,4 +649,5 @@
             $(this).parents("#row").remove();
         })
     </script>
+
 @endpush

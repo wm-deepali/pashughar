@@ -42,7 +42,7 @@ use App\Mail\EmailVerificationEmail;
 use App\Mail\MailForgotPassword;
 use Carbon\Carbon;
 use App\Models\WhatsappClick;
-
+use Illuminate\Support\Facades\Cache;
 
 class MemberAuthController extends Controller
 {
@@ -407,9 +407,6 @@ class MemberAuthController extends Controller
         $adminsetting = OtherSetting::first();
 
         $member = new Member();
-        $namePart = substr(ucfirst($request->full_name), 0, 4);
-        $mobilePart = rand(1000, 9999);
-        $user_id = $namePart . $mobilePart;
 
         $member->full_name = ucfirst($request->full_name);
         $member->email = $request->filled('email') ? $request->email : null;
@@ -419,7 +416,7 @@ class MemberAuthController extends Controller
         $member->city = $request->city;
         $member->referralto = $request->referralto;
         $member->member_id = 'PGHAR' . date('Y') . rand(1000, 9999);
-        $member->referral_code = $user_id;
+        $member->referral_code = $this->generateReferralCode();
         $member->mobile_verified_at = date('Y-m-d H:i:s');
         $member->password = Hash::make($request->password);
         $member->wallet_points = $adminsetting->welcome_bonus;
@@ -478,23 +475,6 @@ class MemberAuthController extends Controller
             'mobile' => 'required|digits:10|unique:members,mobile',
             'full_name' => 'required|string|max:250',
             'email' => 'nullable|email|max:250|unique:members,email',
-            'password' => [
-                $request->filled('email') ? 'required' : 'nullable',
-                function ($attribute, $value, $fail) use ($request) {
-                    if (!$request->filled('email') || !$value) {
-                        return;
-                    }
-                    if (strlen($value) < 8) {
-                        $fail('Password must be at least 8 characters');
-                    } elseif (!preg_match('/[A-Za-z]/', $value)) {
-                        $fail('Password should be Alpha Numeric, use atleast One alphabet');
-                    } elseif (!preg_match('/[0-9]/', $value)) {
-                        $fail('Password should be Alpha Numeric, use atleast One numerical number');
-                    } elseif (!preg_match('/^[A-Za-z0-9]+$/', $value)) {
-                        $fail('Password should be Alpha Numeric');
-                    }
-                },
-            ],
         ]);
 
         if ($validator->fails()) {
@@ -504,37 +484,29 @@ class MemberAuthController extends Controller
         $adminsetting = OtherSetting::first();
 
         $member = new Member();
-        $namePart = substr(ucfirst($request->full_name), 0, 4);
-        $mobilePart = rand(1000, 9999);
-        $user_id = $namePart . $mobilePart;
 
         $member->full_name = ucfirst($request->full_name);
         $member->email = $request->filled('email') ? $request->email : null;
         $member->mobile = $request->mobile;
         $member->member_id = 'PGHAR' . date('Y') . rand(1000, 9999);
-        $member->referral_code = $user_id;
+        $member->referral_code = $this->generateReferralCode();
         $member->mobile_verified_at = date('Y-m-d H:i:s');
-        $member->password = $request->filled('password') ? Hash::make($request->password) : Hash::make(Str::random(16));
+        $member->email_verified_at = $request->filled('email') ? date('Y-m-d H:i:s') : null;
+        $member->password = Hash::make(Str::random(16));
         $member->wallet_points = $adminsetting->welcome_bonus;
         $member->no_of_ads = 0;
         $member->membership_expiry_at = date('Y-m-d', strtotime(date('d-m-Y H:i:s') . ' + ' . $adminsetting->user_expiry . ' days'));
         $member->save();
 
         if ($adminsetting->welcome_bonus > 0) {
-            $walletamount = new WalletAmount();
-            $walletamount->points = $adminsetting->welcome_bonus;
-            $walletamount->user_id = $member->id;
-            $walletamount->type = 'Credit';
-            $walletamount->status = "1";
-            $walletamount->remaining_points = $adminsetting->welcome_bonus;
-            $walletamount->description = $adminsetting->welcome_bonus . " Points Eared from Welcome Bonus";
-            $walletamount->save();
-        }
-
-        if ($request->filled('email')) {
-            $token = Str::random(64);
-            MemberVerify::create(['member_id' => $member->id, 'token' => $token]);
-            Mail::to($request->email)->send(new EmailVerificationEmail(['token' => $token]));
+            WalletAmount::create([
+                'points' => $adminsetting->welcome_bonus,
+                'user_id' => $member->id,
+                'type' => 'Credit',
+                'status' => "1",
+                'remaining_points' => $adminsetting->welcome_bonus,
+                'description' => $adminsetting->welcome_bonus . " Points Eared from Welcome Bonus",
+            ]);
         }
 
         $this->addFreeSubscription($member->id);
@@ -558,20 +530,6 @@ class MemberAuthController extends Controller
             'email' => 'required|email|max:250|unique:members,email',
             'full_name' => 'required|string|max:250',
             'mobile' => 'required|digits:10|unique:members,mobile',
-            'password' => [
-                'required',
-                function ($attribute, $value, $fail) {
-                    if (strlen($value) < 8) {
-                        $fail('Password must be at least 8 characters');
-                    } elseif (!preg_match('/[A-Za-z]/', $value)) {
-                        $fail('Password should be Alpha Numeric, use atleast One alphabet');
-                    } elseif (!preg_match('/[0-9]/', $value)) {
-                        $fail('Password should be Alpha Numeric, use atleast One numerical number');
-                    } elseif (!preg_match('/^[A-Za-z0-9]+$/', $value)) {
-                        $fail('Password should be Alpha Numeric');
-                    }
-                },
-            ],
         ]);
 
         if ($validator->fails()) {
@@ -581,36 +539,30 @@ class MemberAuthController extends Controller
         $adminsetting = OtherSetting::first();
 
         $member = new Member();
-        $namePart = substr(ucfirst($request->full_name), 0, 4);
-        $mobilePart = rand(1000, 9999);
-        $user_id = $namePart . $mobilePart;
 
         $member->full_name = ucfirst($request->full_name);
         $member->email = $request->email;
         $member->mobile = $request->mobile;
         $member->member_id = 'PGHAR' . date('Y') . rand(1000, 9999);
-        $member->referral_code = $user_id;
+        $member->referral_code = $this->generateReferralCode();
         $member->mobile_verified_at = date('Y-m-d H:i:s');
-        $member->password = Hash::make($request->password);
+        $member->email_verified_at = date('Y-m-d H:i:s'); // verified in the previous OTP step
+        $member->password = Hash::make(Str::random(16)); // unused placeholder, login is OTP-only
         $member->wallet_points = $adminsetting->welcome_bonus;
         $member->no_of_ads = 0;
         $member->membership_expiry_at = date('Y-m-d', strtotime(date('d-m-Y H:i:s') . ' + ' . $adminsetting->user_expiry . ' days'));
         $member->save();
 
         if ($adminsetting->welcome_bonus > 0) {
-            $walletamount = new WalletAmount();
-            $walletamount->points = $adminsetting->welcome_bonus;
-            $walletamount->user_id = $member->id;
-            $walletamount->type = 'Credit';
-            $walletamount->status = "1";
-            $walletamount->remaining_points = $adminsetting->welcome_bonus;
-            $walletamount->description = $adminsetting->welcome_bonus . " Points Eared from Welcome Bonus";
-            $walletamount->save();
+            WalletAmount::create([
+                'points' => $adminsetting->welcome_bonus,
+                'user_id' => $member->id,
+                'type' => 'Credit',
+                'status' => "1",
+                'remaining_points' => $adminsetting->welcome_bonus,
+                'description' => $adminsetting->welcome_bonus . " Points Eared from Welcome Bonus",
+            ]);
         }
-
-        $token = Str::random(64);
-        MemberVerify::create(['member_id' => $member->id, 'token' => $token]);
-        Mail::to($request->email)->send(new EmailVerificationEmail(['token' => $token]));
 
         $this->addFreeSubscription($member->id);
 
@@ -624,29 +576,29 @@ class MemberAuthController extends Controller
     }
 
     public function verifyAccount($token)
-{
-    $verifyUser = MemberVerify::where('token', $token)->first();
+    {
+        $verifyUser = MemberVerify::where('token', $token)->first();
 
-    $message = 'Sorry your email cannot be identified.';
+        $message = 'Sorry your email cannot be identified.';
 
-    if (!is_null($verifyUser)) {
-        $user = $verifyUser->member;
+        if (!is_null($verifyUser)) {
+            $user = $verifyUser->member;
 
-        if (is_null($user)) {
-            // MemberVerify row exists but linked member record is missing
-            $message = 'Sorry your email cannot be identified.';
-        } elseif (!$user->email_verified_at) {
-            $user->email_verified_at = date('Y-m-d H:i:s');
-            $user->save();
-            $message = "Your e-mail is verified. You can now login.";
-        } else {
-            $message = "Your e-mail is already verified. You can now login.";
+            if (is_null($user)) {
+                // MemberVerify row exists but linked member record is missing
+                $message = 'Sorry your email cannot be identified.';
+            } elseif (!$user->email_verified_at) {
+                $user->email_verified_at = date('Y-m-d H:i:s');
+                $user->save();
+                $message = "Your e-mail is verified. You can now login.";
+            } else {
+                $message = "Your e-mail is already verified. You can now login.";
+            }
         }
-    }
 
-    \Session::put('success', $message);
-    return redirect()->route('user.login');
-}
+        \Session::put('success', $message);
+        return redirect()->route('user.login');
+    }
 
 
     public function addRequiredDetails(Request $request)
@@ -663,10 +615,8 @@ class MemberAuthController extends Controller
             'referralto' => 'nullable|string|max:255',
             'full_name' => 'required|string|max:250',
             'mobile' => 'required|digits:10|unique:members,mobile',
-            'state' => 'nullable',
-            'city' => 'nullable',
-            'password' => 'required|string|min:8'
         ]);
+        // Frontend must run sendOtp/verifyOTP on this mobile before hitting this endpoint
 
         $user_id = session()->get('id_tempuser');
         $member_temp = MemberTemp::find($user_id);
@@ -675,9 +625,6 @@ class MemberAuthController extends Controller
         }
 
         $adminsetting = OtherSetting::first();
-        $namePart = substr(ucfirst($request->full_name), 0, 4);
-        $mobilePart = rand(1000, 9999);
-        $referral_code = $namePart . $mobilePart;
 
         $member = Member::create([
             'full_name' => ucfirst($request->full_name),
@@ -685,33 +632,32 @@ class MemberAuthController extends Controller
             'google_id' => $member_temp->google_id,
             'profile_pic' => $member_temp->profile_pic,
             'mobile_verified_at' => date('Y-m-d H:i:s'),
-            'email_verified_at' => date('Y-m-d H:i:s'), // Google se aaya, verify ki zarurat nahi
+            'email_verified_at' => date('Y-m-d H:i:s'),
         ]);
 
-        $member->password = Hash::make($request->password);
+        $member->password = Hash::make(Str::random(16));
         $member->mobile = $request->mobile;
-        $member->state = $request->state;
-        $member->city = $request->city;
         $member->referralto = $request->referralto;
         $member->member_id = 'PGHAR' . date('Y') . rand(1000, 9999);
-        $member->referral_code = $referral_code;
+        $member->referral_code = $this->generateReferralCode();
         $member->wallet_points = $adminsetting->welcome_bonus;
         $member->no_of_ads = 0;
         $member->membership_expiry_at = date('Y-m-d', strtotime(date('d-m-Y H:i:s') . ' + ' . $adminsetting->user_expiry . ' days'));
         $member->save();
 
         if ($adminsetting->welcome_bonus > 0) {
-            $walletamount = new WalletAmount();
-            $walletamount->points = $adminsetting->welcome_bonus;
-            $walletamount->user_id = $member->id;
-            $walletamount->type = 'Credit';
-            $walletamount->status = "1";
-            $walletamount->remaining_points = $adminsetting->welcome_bonus;
-            $walletamount->description = $adminsetting->welcome_bonus . " Points Eared from Welcome Bonus";
-            $walletamount->save();
+            WalletAmount::create([
+                'points' => $adminsetting->welcome_bonus,
+                'user_id' => $member->id,
+                'type' => 'Credit',
+                'status' => "1",
+                'remaining_points' => $adminsetting->welcome_bonus,
+                'description' => $adminsetting->welcome_bonus . " Points Eared from Welcome Bonus",
+            ]);
         }
+
         $this->addFreeSubscription($member->id);
-        if (isset($request->referralto) && $request->referralto != '') {
+        if (!empty($request->referralto)) {
             $this->addReferralPoints($request->referralto, $member->member_id);
         }
 
@@ -932,6 +878,8 @@ class MemberAuthController extends Controller
         }
 
     }
+
+
     public function verifyUsermobilenumber(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -966,6 +914,149 @@ class MemberAuthController extends Controller
 
 
     }
+
+    public function sendAdEmailOtp(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first('email'),
+            ]);
+        }
+
+        $email = $request->email;
+        $otp = rand(1000, 9999);
+
+        Cache::put('ad_email_otp_' . $email, $otp, now()->addMinutes(10));
+
+        try {
+            Mail::to($email)->send(new \App\Mail\OtpMail($otp, 'verify your email for ad posting', 10));
+
+            return response()->json([
+                'success' => true,
+                'message' => 'OTP Sent on Your Email Id, Kindly Enter OTP to verify',
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unable to send OTP right now, please try again.',
+            ]);
+        }
+    }
+
+    public function verifyAdEmailOtp(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'otp' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first('otp'),
+            ]);
+        }
+
+        $email = $request->email;
+        $cachedOtp = Cache::get('ad_email_otp_' . $email);
+
+        if ($cachedOtp && $cachedOtp == $request->otp) {
+            Cache::forget('ad_email_otp_' . $email);
+
+            $member = Auth::guard('member')->user();
+
+            // Agar member ke profile mein pehle se email nahi hai, to ab save kar do
+            if (empty($member->email)) {
+                // Koi aur member ye email pehle se use to nahi kar raha
+                $emailTaken = Member::where('email', $email)->where('id', '!=', $member->id)->exists();
+
+                if (!$emailTaken) {
+                    $member->email = $email;
+                    $member->email_verified_at = date('Y-m-d H:i:s');
+                    $member->save();
+                }
+            }
+
+            // Session-level verified flag bhi rakh lo (agar member ka email already alag hai to bhi ye email verified count hoga is ad ke liye)
+            Cache::put('ad_email_verified_' . $member->id . '_' . $email, true, now()->addMinutes(30));
+
+            return response()->json(['success' => true, 'message' => 'Email verified successfully!']);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Incorrect OTP']);
+    }
+
+    private function emailOtpKey($email)
+    {
+        return 'auth_email_otp_' . $email;
+    }
+
+    public function sendEmailOtp(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => $validator->errors()->first('email')]);
+        }
+
+        $email = $request->email;
+        $otp = rand(1000, 9999);
+        Cache::put($this->emailOtpKey($email), $otp, now()->addMinutes(10));
+
+        try {
+            Mail::to($email)->send(new \App\Mail\OtpMail($otp, 'login or verify your email', 10));
+            return response()->json(['success' => true, 'message' => 'OTP sent to your email.']);
+        } catch (\Throwable $e) {
+            return response()->json(['success' => false, 'message' => 'Unable to send OTP right now, please try again.']);
+        }
+    }
+
+    public function verifyEmailOtp(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'otp' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => $validator->errors()->first('otp')]);
+        }
+
+        $email = $request->email;
+        $cachedOtp = Cache::get($this->emailOtpKey($email));
+
+        if (!$cachedOtp || $cachedOtp != $request->otp) {
+            return response()->json(['success' => false, 'message' => 'Incorrect OTP']);
+        }
+
+        Cache::forget($this->emailOtpKey($email));
+
+        $member = Member::where('email', $email)->first();
+
+        if ($member) {
+            // Existing user -> OTP alone logs them in, matches mobile login behaviour
+            if ($member->status != 'Active') {
+                return response()->json(['success' => false, 'message' => 'Your account has been blocked, please contact Admin.']);
+            }
+            if (!$member->email_verified_at) {
+                $member->email_verified_at = date('Y-m-d H:i:s');
+            }
+            $member->save();
+            Auth::guard('member')->login($member);
+
+            $redirect = session()->has('post_login_redirect')
+                ? session()->pull('post_login_redirect')
+                : route('user.dashboard');
+
+            return response()->json(['success' => true, 'mode' => 'login', 'redirect' => $redirect]);
+        }
+
+        // New email -> this step is done, frontend now collects Full Name + Mobile
+        return response()->json(['success' => true, 'mode' => 'signup']);
+    }
     public function dashboard()
     {
         if (Auth::guard('member')->check()) {
@@ -986,6 +1077,7 @@ class MemberAuthController extends Controller
                 ->withErrors('Please login to access the dashboard.');
         }
     }
+
     public function profile()
     {
         if (Auth::guard('member')->check()) {
@@ -1384,17 +1476,30 @@ class MemberAuthController extends Controller
                             'category_id' => 'required',
                             'price' => 'required',
                             'description' => 'required',
-                            // 'brand_category'=>'required',
                             'image' => 'required',
                             'location' => 'required',
-                            'meta_title' => 'required|string|max:255',
-                            'meta_keyword' => 'required|string|max:255',
-                            'meta_description' => 'required|string',
+                            'author_email' => 'nullable|email',
                         ]);
                         if ($validator->fails()) {
                             return redirect()->route('user.post-your-ad')
                                 ->withErrors('All fields are required!');
                         }
+
+                        if ($request->filled('author_email')) {
+                            $authorEmail = $request->author_email;
+                            $loggedInEmail = Auth::guard('member')->user()->email;
+                            $isOwnVerifiedEmail = ($authorEmail === $loggedInEmail) && !is_null(Auth::guard('member')->user()->email_verified_at);
+                            $isSessionVerified = Cache::get('ad_email_verified_' . Auth::guard('member')->user()->id . '_' . $authorEmail);
+
+                            if (!$isOwnVerifiedEmail && !$isSessionVerified) {
+                                return redirect()->route('user.post-your-ad')
+                                    ->withErrors('Please verify your email before posting the ad.');
+                            }
+
+                            // verification used, clear it so it doesn't linger
+                            Cache::forget('ad_email_verified_' . Auth::guard('member')->user()->id . '_' . $authorEmail);
+                        }
+
                         $ad = new Ad();
                         $slug = Str::slug($request->title);
                         $ad->title = $request->title;
@@ -1411,12 +1516,13 @@ class MemberAuthController extends Controller
                         $ad->location = $request->location;
                         $ad->expire_at = $expiry;
 
-                        $ad->meta_title = $request->meta_title;
-                        $ad->meta_keyword = $request->meta_keyword;
-                        $ad->meta_description = $request->meta_description;
+                        // SEO auto-generate from title & description — no manual keyword needed
+                        $ad->meta_title = Str::limit($request->title, 255, '');
+                        $ad->meta_description = Str::limit(strip_tags($request->description), 255);
+                        $ad->meta_keyword = null;
 
                         $ad->author_name = $request->author_name ?? Auth::guard('member')->user()->full_name;
-                        $ad->author_email = $request->author_email ?? Auth::guard('member')->user()->email;
+                        $ad->author_email = $request->filled('author_email') ? $request->author_email : null;
                         $ad->author_mobile = $request->author_mobile ?? Auth::guard('member')->user()->mobile;
                         $ad->author_address = $request->author_address ?? NULL;
                         $ad->email_alert = isset($request->email_alert) ? 'yes' : 'no';
@@ -1500,6 +1606,7 @@ class MemberAuthController extends Controller
                 ->withErrors('Please login to access the dashboard.');
         }
     }
+
     public function updateAdPost(Request $request, $adId)
     {
         $id = base64_decode($adId);
@@ -1990,5 +2097,14 @@ class MemberAuthController extends Controller
             return redirect()->route('user.login')
                 ->withErrors('Please login to access the dashboard.');
         }
+    }
+
+    private function generateReferralCode()
+    {
+        do {
+            $code = 'PSG' . rand(100000, 999999);
+        } while (Member::where('referral_code', $code)->exists());
+
+        return $code;
     }
 }

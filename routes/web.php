@@ -46,6 +46,8 @@ Route::get('list-all-ads', [FrontController::class, 'allAds'])->name('list-all-a
 Route::post('cities-by-state', [FrontController::class, 'cities_by_state'])->name('cities-by-state');
 Route::post('save-Subscriber', [FrontController::class, 'saveSubscribers'])->name('save-Subscriber');
 
+
+Route::post('send-purchase-otp', [FrontController::class, 'sendPurchaseOtp'])->name('send.purchase.otp');
 Route::post('save-purchase-enquiry', [FrontController::class, 'savePurchaseEnquiry'])->name('save-purchase-enquiry');
 
 Route::post('save-ad-review', [FrontController::class, 'saveadRreview'])->name('save-ad-review');
@@ -111,6 +113,10 @@ Route::get('signup', function () {
     return redirect()->route('user.login');
 });
 
+Route::post('send-ad-email-otp', [MemberAuthController::class, 'sendAdEmailOtp'])->name('send.ad.email.otp');
+Route::post('verify-ad-email-otp', [MemberAuthController::class, 'verifyAdEmailOtp'])->name('verify.ad.email.otp');
+Route::post('send-email-otp', [MemberAuthController::class, 'sendEmailOtp'])->name('send.email.otp');
+Route::post('verify-email-otp', [MemberAuthController::class, 'verifyEmailOtp'])->name('verify.email.otp');
 
 Route::controller(GoogleController::class)->group(function () {
     Route::get('user/google/redirect', 'redirectToGoogle')->name('google.redirect');

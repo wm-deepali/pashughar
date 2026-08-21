@@ -214,8 +214,7 @@
 
               
                              
-                @if((Auth::guard('member')->user() =='') || Auth::guard('member')->user()->id !=  $ad->user_id)
-                <!-- AUTHOR CARD -->
+                <!-- @if((Auth::guard('member')->user() =='') || Auth::guard('member')->user()->id !=  $ad->user_id)
                 <div class="common-card">
                     <div class="card-header">
                         <h5 class="card-title">Ad Enquiry</h5>
@@ -279,7 +278,7 @@
                        
                     </div>
                 </div>
-                @endif
+                @endif -->
             </div>
             <div class="col-lg-8">
 
@@ -294,10 +293,24 @@
                    
                    <strong><p><i class="fas fa-map"></i> Address: </strong>{{$ad->author_address}}</p>
                    
-                   <div class="d-flex gap-4">
-                       <button class="btn " style="background:#48a571; color:#fff;"><i class="fa-solid fa-copy"></i> Copy Link</button>
-                        <button class="btn btn-primery" style="background:blue; color:#fff;"><i class="fa-solid fa-share-nodes"></i> Share</button>
-                   </div>
+                   <div class="d-flex align-items-center flex-wrap gap-3 mb-3" style="gap:12px;">
+    <button type="button" id="copyLinkBtn" class="btn" style="background:#48a571; color:#fff;">
+        <i class="fa-solid fa-copy"></i> Copy Link
+    </button>
+
+    <div class="share-now-inline">
+        <span style="font-weight:600; margin-right:6px;">Share Now :</span>
+        <a href="javascript:void(0)" class="share-fb" title="Share on Facebook" style="margin-right:10px; color:#1877f2; font-size:20px;">
+            <i class="fab fa-facebook"></i>
+        </a>
+        <a href="javascript:void(0)" class="share-whatsapp" title="Share on WhatsApp" style="margin-right:10px; color:#25D366; font-size:20px;">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+        <a href="javascript:void(0)" class="share-instagram" title="Share on Instagram" style="color:#E1306C; font-size:20px;">
+            <i class="fab fa-instagram"></i>
+        </a>
+    </div>
+</div>
                   
                     <div class="col-12 d-flex gap-3 mt-4">
                      
@@ -406,7 +419,7 @@
             
 
                 <!-- REVIEWS CARD -->
-                <div class="common-card" id="review">
+                <!-- <div class="common-card" id="review">
                     <div class="card-header">
                         <h5 class="card-title">reviews ({{$ad->total_review}})</h5>
                     </div>
@@ -527,7 +540,7 @@
                             </div>
                         </form>
                     </div>
-                </div>
+                </div> -->
                 
             </div>
         </div>
@@ -550,90 +563,74 @@
                         <button class="fas fa-times" data-dismiss="modal"></button>
                     </div>
                     <div class="modal-body"> 
-                        <form id="purcahseForm" method="post">
-                            @csrf
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <input type="hidden" class="form-control" name="ad_id"value="{{$ad->id}}" required>
-                                    <input type="text" class="form-control require" name="name" placeholder="Full Name"  required>
-                                    <input type="hidden" class="form-control" name="type" value="Book Now" required>
+                      <form id="purcahseForm" method="post">
+    @csrf
+    <div class="row">
+        <div class="col-12">
+            <div class="form-group">
+                <input type="hidden" class="form-control" name="ad_id" value="{{$ad->id}}" required>
+                <input type="hidden" class="form-control" name="type" value="Book Now" required>
+                <input type="hidden" class="form-control" name="country" value="India">
+                <input type="text" class="form-control require" name="name" placeholder="Full Name" required>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <input type="text" class="form-control" autocomplete="off" name="email" id="email_id_register" placeholder="Email Id (Optional)">
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <div class="d-flex" style="gap:8px;">
+                    <input type="tel" onkeypress="return isNumber(event)" autocomplete="off" class="form-control require" name="mobile_number" minlength="10" maxlength="10" placeholder="Mobile number" id="phone_number" required>
+                    <button type="button" id="verifyMobileBtn" class="btn" style="background:#1f4b3f; color:#fff; white-space:nowrap;">Verify Now</button>
+                </div>
+                <span id="mobileVerifyMsg" style="display:block; font-size:12px; margin-top:4px;"></span>
 
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <input type="text" class="form-control require" autocomplete="off" name="email" id="email_id_register" placeholder="Email"  required>
+                <div id="purchaseOtpBox" style="display:none; margin-top:10px;">
+                    <div class="d-flex" style="gap:8px;">
+                        <input type="text" id="purchaseOtpInput" maxlength="4" inputmode="numeric" class="form-control" placeholder="Enter OTP" style="max-width:160px;">
+                        <button type="button" id="submitPurchaseOtpBtn" class="btn" style="background:#1f4b3f; color:#fff;">Submit OTP</button>
+                    </div>
+                </div>
+                <input type="hidden" id="mobile_is_verified" value="0">
+            </div>
+        </div>
 
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <input type="tel" onkeypress="return isNumber(event)" autocomplete="off" class="form-control require" name="mobile_number"  minlength="10" maxlength="10" placeholder="Moblie number" id="phone_number" required>
+        <div class="col-lg-12">
+            <div class="form-group">
+                <select class="form-control require custom-select" name="state" id="state_id">
+                    <option value="">Select State</option>
+                    @foreach($states as $state)
+                        <option value="{{$state->id}}">{{$state->name}}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
 
-                                
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" name="telegram_id" placeholder="Telegram Id (if any)" >
-                                   
-                                   
-                                </div>
-                            </div>
-                            <div class="col-lg-12">
-                                        <div class="form-group">
-                                           
-                                            <select class="form-control custom-select require" name="country" required>
-                                                <option>Select Country</option>
-                                                <option value="India">India</option>
-                                            
-                                            </select>
-                                        </div>
-                                    </div>
+        <div class="col-12 cityDiv">
+            <div class="form-group">
+                <select class="form-control custom-select" name="city" id="city">
+                    <option value="">Select City</option>
+                </select>
+            </div>
+        </div>
 
+        <div class="col-12">
+            <div class="form-group">
+                <input type="text" class="form-control" name="detail" placeholder="Enter Detail (Optional)">
+            </div>
+        </div>
 
-
-                            
-                            <div class="col-lg-12">
-                                        <div class="form-group">
-                                           
-                                            <select class="form-control require custom-select" name="state" id="state_id" required>
-                                                <option value="">Select State</option>
-                                            @foreach($states as $state)
-                                            <option value="{{$state->id}}" >{{$state->name}}</option>
-                                            @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                   
-                                    <div class="col-12 cityDiv" >
-                                <div class="form-group">
-                                           
-                                            <select class="form-control custom-select" name="city" id="city">
-                                                <option value="">City</option>  
-                                            </select>
-                                        </div>
-                            </div>
-                                     <div class="col-12">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" name="detail"  placeholder="Detail (If Any)"  required>
-
-
-                                </div>
-                            </div>
-                                   
-                            <div class="col-12">
-                                <div class="form-group price-btn">
-                                    <button type="submit" class="btn btn-inline"style="width:100%;" id="savepurchaseEq">
-
-                                        <span>Submit Enquiry</span>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                        </div>
-                    </form>
+        <div class="col-12">
+            <div class="form-group price-btn">
+                <button type="submit" class="btn btn-inline" style="width:100%;" id="savepurchaseEq">
+                    <span>Submit Enquiry</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
                     </div>
                 </div>
             </div>
@@ -713,58 +710,116 @@ function isNumber(evt) {
     
 });
 $('#savepurchaseEq').click(function (e) {
-        e.preventDefault();
-        $empty = $('form#purcahseForm').find(".require").filter(function() {
+    e.preventDefault();
+    $empty = $('form#purcahseForm').find(".require").filter(function() {
         return this.value === "";
     });
     if($empty.length) {
-        alert('All fields required!');
+        Swal.fire({ icon: 'error', title: 'Oops...', text: 'All mandatory fields are required!' });
         return false;
-    }else{
-        Swal.fire({
-            title: 'Are you sure?',
-            
-            icon: 'success',
-            showCancelButton: false,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Submit Enquiry'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $("#savepurchaseEq").text('Wait...');
-                $.ajax({
-        		url:'{{route("save-purchase-enquiry")}}',
-        		method:'POST',
-        		data: $("#purcahseForm").serialize(),
-        		success:function(data){
-                    console.log(data);
-                    if (data.success) 
-                    {
-                        Swal.fire(
-                            data.message
-                        );
-                        setTimeout(() => { 
-                            location.reload();
-                        }, 5000);
-                        
+    }
+    if ($('#mobile_is_verified').val() != '1') {
+        Swal.fire({ icon: 'warning', title: 'Mobile not verified', text: 'Please verify your mobile number before submitting.' });
+        return false;
+    }
 
+    Swal.fire({
+        title: 'Are you sure?',
+        icon: 'success',
+        showCancelButton: false,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Submit Enquiry'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $("#savepurchaseEq").text('Wait...');
+            $.ajax({
+                url:'{{route("save-purchase-enquiry")}}',
+                method:'POST',
+                data: $("#purcahseForm").serialize(),
+                success:function(data){
+                    if (data.success) {
+                        Swal.fire(data.message);
+                        setTimeout(() => { location.reload(); }, 5000);
                         $("#savepurchaseEq").text('Submit Enquiry');
-                    }else{
+                    } else {
                         $("#savepurchaseEq").text('Submit Enquiry');
-                         Swal.fire(
-                            data.errors
-                            
-                        );
+                        Swal.fire(data.errors);
                     }
-        		}
-        	});
                 }
-        })
-    };
-        
-    
+            });
+        }
     });
-     
+});
+
+     $('#verifyMobileBtn').on('click', function () {
+    const mobile = $('#phone_number').val().trim();
+    if (!/^[6-9]\d{9}$/.test(mobile)) {
+        Swal.fire({ icon: 'error', title: 'Oops...', text: 'Enter a valid 10-digit mobile number.' });
+        return;
+    }
+    $('#verifyMobileBtn').prop('disabled', true).text('Sending...');
+    $.ajax({
+        url: "{{ route('send.purchase.otp') }}",
+        type: 'POST',
+        data: { mobile_number: mobile, _token: "{{ csrf_token() }}" },
+        dataType: 'json',
+        success: function (result) {
+            $('#verifyMobileBtn').prop('disabled', false).text('Verify Now');
+            if (result.success) {
+                $('#mobileVerifyMsg').css('color', '#1f8a4c').text(result.message);
+                $('#purchaseOtpBox').show();
+                $('#purchaseOtpInput').val('').focus();
+            } else {
+                Swal.fire({ icon: 'error', title: 'Oops...', text: result.message });
+            }
+        },
+        error: function () {
+            $('#verifyMobileBtn').prop('disabled', false).text('Verify Now');
+            Swal.fire({ icon: 'error', title: 'Oops...', text: 'Something went wrong, please try again.' });
+        }
+    });
+});
+
+$('#submitPurchaseOtpBtn').on('click', function () {
+    const mobile = $('#phone_number').val().trim();
+    const otp = $('#purchaseOtpInput').val().trim();
+    if (otp.length < 4) {
+        Swal.fire({ icon: 'error', title: 'Oops...', text: 'Please enter the complete 4-digit OTP' });
+        return;
+    }
+    $('#submitPurchaseOtpBtn').prop('disabled', true).text('Verifying...');
+    $.ajax({
+        url: "{{ route('verifyOTP') }}",
+        type: 'POST',
+        data: { mobile: mobile, otp: otp, _token: "{{ csrf_token() }}" },
+        dataType: 'json',
+        success: function (result) {
+            $('#submitPurchaseOtpBtn').prop('disabled', false).text('Submit OTP');
+            if (result.success) {
+                $('#mobileVerifyMsg').css('color', '#1f8a4c').text('Mobile number verified successfully!');
+                $('#purchaseOtpBox').hide();
+                $('#verifyMobileBtn').hide();
+                $('#mobile_is_verified').val('1');
+            } else {
+                $('#mobileVerifyMsg').css('color', '#c0392b').text('Incorrect OTP');
+            }
+        },
+        error: function () {
+            $('#submitPurchaseOtpBtn').prop('disabled', false).text('Submit OTP');
+            Swal.fire({ icon: 'error', title: 'Oops...', text: 'Something went wrong, please try again.' });
+        }
+    });
+});
+
+/* Mobile number change hone pe verified flag reset ho jaaye */
+$('#phone_number').on('input', function () {
+    $('#mobile_is_verified').val('0');
+    $('#verifyMobileBtn').show();
+    $('#purchaseOtpBox').hide();
+    $('#mobileVerifyMsg').text('');
+});
+
 </script>
 <script>
 document.querySelectorAll('.star-rating .rating').forEach(label => {
@@ -845,44 +900,61 @@ $('.ad-review-form').submit(function(event) {
 });
 
 
-$(document).on('click', '.btn:contains("Copy Link")', function() {
-    const dummy = document.createElement('input');
+$('#copyLinkBtn').on('click', function () {
     const url = window.location.href;
-    document.body.appendChild(dummy);
-    dummy.value = url;
-    dummy.select();
-    document.execCommand('copy');
-    document.body.removeChild(dummy);
 
-    Swal.fire({
-        icon: 'success',
-        title: 'Copied!',
-        text: 'Page link copied to clipboard.',
-        timer: 1500,
-        showConfirmButton: false
-    });
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(function () {
+            Swal.fire({ icon: 'success', title: 'Copied!', text: 'Page link copied to clipboard.', timer: 1500, showConfirmButton: false });
+        }).catch(function () {
+            fallbackCopy(url);
+        });
+    } else {
+        fallbackCopy(url);
+    }
+
+    function fallbackCopy(text) {
+        const dummy = document.createElement('textarea');
+        dummy.value = text;
+        document.body.appendChild(dummy);
+        dummy.select();
+        document.execCommand('copy');
+        document.body.removeChild(dummy);
+        Swal.fire({ icon: 'success', title: 'Copied!', text: 'Page link copied to clipboard.', timer: 1500, showConfirmButton: false });
+    }
+});
+$('.share-fb').on('click', function () {
+    const url = window.location.href;
+    const shareUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url);
+    window.open(shareUrl, '_blank', 'width=600,height=400');
 });
 
-
-$(document).on('click', '.btn:contains("Share")', function() {
+$('.share-whatsapp').on('click', function () {
+    const title = @json($ad->title);
+    const shortContent = @json(\Illuminate\Support\Str::limit(strip_tags($ad->description), 100));
     const url = window.location.href;
-    const title = document.title;
+    const text = title + "\n" + shortContent + "\n" + url;
+    const shareUrl = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(text);
+    window.open(shareUrl, '_blank');
+});
 
-    if (navigator.share) {
-        navigator.share({
-            title: title,
-            url: url
-        }).then(() => {
-            console.log('Thanks for sharing!');
-        }).catch(console.error);
-    } else {
+$('.share-instagram').on('click', function () {
+    const title = @json($ad->title);
+    const shortContent = @json(\Illuminate\Support\Str::limit(strip_tags($ad->description), 100));
+    const url = window.location.href;
+    const text = title + "\n" + shortContent + "\n" + url;
+
+    // Instagram doesn't support pre-filled web share links — copy caption then open Instagram
+    navigator.clipboard.writeText(text).then(function () {
         Swal.fire({
             icon: 'info',
-            title: 'Share Link',
-            html: `<input type="text" value="${url}" style="width:100%" readonly>`,
-            confirmButtonText: 'OK'
+            title: 'Caption Copied!',
+            text: 'Instagram par direct post-share possible nahi hai. Caption copy ho gaya hai — Instagram app khol ke paste kar dein.',
+            confirmButtonText: 'Open Instagram'
+        }).then(() => {
+            window.open('https://www.instagram.com/', '_blank');
         });
-    }
+    });
 });
 
 $(document).on('click', '.whatsapp-contact', function(e) {

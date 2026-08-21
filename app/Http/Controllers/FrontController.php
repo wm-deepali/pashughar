@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\OTP;
 use Illuminate\Http\Request;
 use App\Models\Member;
 use App\Models\Ad;
@@ -78,7 +79,7 @@ class FrontController extends Controller
             ->type('trending')
             ->take(6)
             ->get();
-            $data['faqs'] = Faqs::where('status', 1)->where('is_show_home', "yes")->get();
+        $data['faqs'] = Faqs::where('status', 1)->where('is_show_home', "yes")->get();
         // print_r($data['pageCategories']->toarray()); die;
         // dd($data['recommendAds']->toArray());
         return view('front.index', $data);
@@ -89,7 +90,7 @@ class FrontController extends Controller
         $data['page'] = Pages::where('slug', $slug)->first();
         return view('front.page-detail', $data);
     }
-    
+
     public function contactuspage()
     {
         $data['contact'] = ContactusContent::first();
@@ -118,7 +119,7 @@ class FrontController extends Controller
         $data['next'] = Blogs::where('id', '>', $data['blog']->id)
             ->orderBy('id', 'asc')
             ->first();
-            
+
         $data['blogs'] = Blogs::where('slug', '!=', $slug)->get();
         // print_r($data['blog']->toarray()); die;
         return view('front.blog-details', $data);
@@ -333,7 +334,7 @@ class FrontController extends Controller
         if ($request->has('search'))
             $search = $request->query('search');
         $data['ads'] = Ad::whereHas('category')->with('AdImage', 'category')->where('delete_status', '0')->where('status', 'Published')->type($type)->search($min, $max)->SearchData($search)->paginate($perPage)->withQueryString();
-        
+
         $data['categories'] = Category::get();
         return view('front.ad-list', $data);
     }
@@ -547,89 +548,131 @@ class FrontController extends Controller
         }
     }
 
+    public function sendPurchaseOtp(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'mobile_number' => 'required|digits:10',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first('mobile_number'),
+            ]);
+        }
 
+        $otp = rand(1000, 9999);
+        $mobile_number = $request->mobile_number;
+
+        OTP::where('mobile', $mobile_number)->delete();
+        OTP::create([
+            'mobile' => $mobile_number,
+            'otp' => $otp,
+            'expiry' => now()->addMinutes(10),
+        ]);
+
+        $message = "$otp is the One Time Password(OTP) to verify your MOB number at Web Mingo, This OTP is Usable only once and is valid for 10 min,PLS DO NOT SHARE THE OTP WITH ANYONE";
+
+
+        $params = [
+            'authkey' => '133780AWLy8zZpC690b124aP1',
+            'mobiles' => $mobile_number,
+            'sender' => 'WMINGO',
+            'message' => urlencode($message),
+            'route' => '4',
+            'country' => '91',
+            'PE_ID' => '1301160576431389865',
+            'DLT_TE_ID' => '1307161465983326774'
+        ];
+
+        $url = 'http://sms.webmingo.in/api/sendhttp.php?' . http_build_query($params);
+
+        try {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+            curl_exec($ch);
+            curl_close($ch);
+
+            return response()->json(['success' => true, 'message' => 'OTP Sent on Your Mobile Number, Kindly Enter OTP to verify']);
+        } catch (\Throwable $e) {
+            return response()->json(['success' => false, 'message' => 'Unable to send OTP right now, please try again.']);
+        }
+    }
 
     public function savePurchaseEnquiry(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'ad_id' => 'required',
-            'name' => 'required',
-            'email' => 'required',
-            'mobile_number' => 'required',
+            'ad_id' => 'required|exists:ads,id',
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|email',
+            'mobile_number' => 'required|digits:10',
             'telegram_id' => 'nullable',
             'country' => 'required',
-            'state' => 'required',
+            'state' => 'nullable|exists:states,id',
             'city' => 'nullable',
-            'detail' => 'nullable',
+            'detail' => 'nullable|string',
+            'type' => 'required',
         ]);
-        if ($validator->fails()) {
 
+        if ($validator->fails()) {
             return response()->json([
                 'success' => false,
                 'code' => 422,
-                'errors' => 'All file are required',
+                'errors' => $validator->errors()->first(),
             ]);
         }
 
         $enquiry = new PurchaseEnquiry();
-
         $enquiry->ad_id = $request->ad_id;
         $enquiry->name = $request->name;
-        $enquiry->email = $request->email;
+        $enquiry->email = $request->email ?? '';
         $enquiry->mobile_number = $request->mobile_number;
         $enquiry->telegram_id = $request->telegram_id;
         $enquiry->country = $request->country;
-        $enquiry->state = $request->state;
-        $enquiry->city = $request->city ?? "";
+        $enquiry->state = $request->state ?? '';
+        $enquiry->city = $request->city ?? '';
         $enquiry->detail = $request->detail;
         $enquiry->status = 'Pending';
         $enquiry->type = $request->type;
-
-
         $enquiry->save();
 
-        //$mailContent =  Mail::to($request->news_email)->send(new SubscriberEmail());
-
-        if ($enquiry) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Purchase Enquiry Submit Succesfully',
-            ]);
-        } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'Something went wrong!',
-            ]);
-        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Purchase Enquiry Submit Succesfully',
+        ]);
     }
-    
+
     public function submithomepageEnquiry(Request $request)
     {
-        $validatedData = $request->validate([
-            'full_name' => 'required|string|max:255',
-            'email_address' => 'required|email|max:255',
-            'country_code' => 'required|string|max:5',
-            'mobile' => ['required', 'regex:/^[6-9]\d{9}$/'],
-            'isValid' => ['required', 'integer', 'in:1'],
-            'message' => 'nullable|string|max:50',
-        ],[
-        'isValid.required' => 'Mobile number is not verified',
-        'isValid.integer'  => 'Mobile number is not verified',
-        'isValid.in'       => 'Please verify your mobile number before submitting.',
-        ]
+        $validatedData = $request->validate(
+            [
+                'full_name' => 'required|string|max:255',
+                'email_address' => 'required|email|max:255',
+                'country_code' => 'required|string|max:5',
+                'mobile' => ['required', 'regex:/^[6-9]\d{9}$/'],
+                'isValid' => ['required', 'integer', 'in:1'],
+                'message' => 'nullable|string|max:50',
+            ],
+            [
+                'isValid.required' => 'Mobile number is not verified',
+                'isValid.integer' => 'Mobile number is not verified',
+                'isValid.in' => 'Please verify your mobile number before submitting.',
+            ]
         );
-    //dd($validatedData);
-         $enquiry = new CustomerInquiry();
+        //dd($validatedData);
+        $enquiry = new CustomerInquiry();
         $enquiry->full_name = $validatedData['full_name'];
         $enquiry->email_address = $validatedData['email_address'];
         $enquiry->country_code = $validatedData['country_code'];
         $enquiry->mobile_number = $validatedData['mobile'];
         $enquiry->message = $validatedData['message'] ?? null; // handle optional message
         $enquiry->save();
-        
-         $adminsetting = ProfileSetting::first();
+
+        $adminsetting = ProfileSetting::first();
         $mailContent = Mail::to($adminsetting->email)->send(new CustomerInquiryEmail($enquiry));
-        
+
         return response()->json([
             'message' => 'Thank you for your enquiry. We will get back to you soon.'
         ]);

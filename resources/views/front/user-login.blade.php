@@ -131,6 +131,29 @@
         height: 20px;
     }
 
+    .pill-btn-sm {
+        height: 44px;
+        border-radius: var(--radius);
+        border: none;
+        background: var(--accent);
+        color: #fff;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 0 20px;
+        white-space: nowrap;
+        transition: background .2s ease, opacity .2s ease;
+    }
+
+    .pill-btn-sm:hover {
+        background: var(--accent-light);
+    }
+
+    .pill-btn-sm:disabled {
+        opacity: .6;
+        cursor: not-allowed;
+    }
+
     .field-group {
         margin-bottom: 16px;
     }
@@ -241,8 +264,14 @@
         outline: none;
     }
 
-    .step-hidden {
-        display: none;
+    .inline-verify-row {
+        display: flex;
+        gap: 8px;
+        align-items: stretch;
+    }
+
+    .inline-verify-row .pill-input {
+        flex: 1;
     }
 
     .back-link {
@@ -325,28 +354,60 @@
         }
     }
 
-    /* Password show/hide */
-    .password-wrap {
-        position: relative;
+    .verified-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: #1f8a4c;
+        font-weight: 600;
+        margin-top: 6px;
     }
 
-    .password-wrap .pill-input {
-        padding-right: 48px;
+    .step-hidden {
+        display: none;
     }
 
-    .toggle-password {
-        position: absolute;
-        right: 20px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #999;
+    .verified-pill.step-hidden {
+        display: none;
+    }
+
+    .terms-check-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 18px;
+        font-size: 13px;
+        color: #555;
+        line-height: 1.5;
+    }
+
+    .terms-check-row input[type="checkbox"] {
+        margin-top: 3px;
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        accent-color: var(--accent);
         cursor: pointer;
-        font-size: 15px;
-        user-select: none;
     }
 
-    .toggle-password:hover {
+    .terms-check-row label {
+        cursor: pointer;
+    }
+
+    .terms-check-row a {
         color: var(--accent);
+        font-weight: 600;
+        text-decoration: underline;
+    }
+
+    .terms-check-row a:hover {
+        color: var(--accent-light);
+    }
+
+    .pill-btn-sm.block-btn {
+        width: 100%;
+        display: block;
     }
 </style>
 
@@ -433,11 +494,33 @@
                 <button type="button" class="pill-btn" id="otpVerifyBtn">Verify</button>
             </div>
 
-            {{-- ===================== STEP 3: MOBILE SIGNUP DETAILS (new mobile, OTP verified) ===================== --}}
+            {{-- ===================== STEP 2B: EMAIL OTP (login-existing OR signup-new) ===================== --}}
+            <div id="emailOtpStep" class="step-hidden">
+                <span class="back-link" id="emailOtpBackLink"><i class="fas fa-arrow-left"></i> Back</span>
+                <div class="auth-subtitle" style="margin-bottom:6px;">Enter the 4-digit code sent to <b
+                        id="emailOtpLabel"></b></div>
+                <div class="otp-row" id="emailOtpBoxes">
+                    <input type="text" class="otp-box email-otp-box" maxlength="1" inputmode="numeric">
+                    <input type="text" class="otp-box email-otp-box" maxlength="1" inputmode="numeric">
+                    <input type="text" class="otp-box email-otp-box" maxlength="1" inputmode="numeric">
+                    <input type="text" class="otp-box email-otp-box" maxlength="1" inputmode="numeric">
+                </div>
+                <span class="field-error" id="emailOtp-err"
+                    style="display:block; text-align:center; margin-bottom:10px;"></span>
+                <div class="resend-row">
+                    Didn't receive code? <a id="emailOtpResendLink" class="disabled">Resend in <span
+                            id="emailOtpResendTimer">30</span>s</a>
+                </div>
+                <button type="button" class="pill-btn" id="emailOtpVerifyBtn">Verify</button>
+            </div>
+
+            {{-- ===================== STEP 3: MOBILE SIGNUP DETAILS (new mobile, OTP verified) =====================
+            --}}
             <div id="mobileSignupDetailsStep" class="step-hidden">
                 <span class="back-link" id="mobileSignupBackLink"><i class="fas fa-arrow-left"></i> Back</span>
                 <div class="auth-subtitle" style="margin-bottom:14px;">Just a few more details to get started</div>
                 <input type="hidden" id="mobileSignupMobileHidden">
+                <input type="hidden" id="mobileSignupEmailVerified" value="0">
 
                 <div class="field-group">
                     <input type="text" id="mobileSignupFullName" class="pill-input" placeholder="Full Name">
@@ -448,45 +531,51 @@
                     <input type="text" id="mobileSignupEmail" class="pill-input" placeholder="Email Id (Optional)"
                         autocomplete="off">
                     <span class="field-error" id="mobileSignupEmail-err"></span>
+                    <button type="button" class="pill-btn-sm block-btn" id="mobileSignupSendEmailOtpBtn"
+                        style="display:none; margin-top:10px;">Verify</button>
+                    <span class="verified-pill step-hidden" id="mobileSignupEmailVerifiedPill">
+                        <i class="fas fa-check-circle"></i> Email verified
+                    </span>
+                </div>
+                <div class="field-group step-hidden" id="mobileSignupEmailOtpGroup">
+                    <div class="otp-row">
+                        <input type="text" class="otp-box mobile-signup-email-otp-box" maxlength="1"
+                            inputmode="numeric">
+                        <input type="text" class="otp-box mobile-signup-email-otp-box" maxlength="1"
+                            inputmode="numeric">
+                        <input type="text" class="otp-box mobile-signup-email-otp-box" maxlength="1"
+                            inputmode="numeric">
+                        <input type="text" class="otp-box mobile-signup-email-otp-box" maxlength="1"
+                            inputmode="numeric">
+                    </div>
+                    <span class="field-error" id="mobileSignupEmailOtp-err"
+                        style="display:block; text-align:center; margin-bottom:10px;"></span>
+                    <div class="resend-row">
+                        Didn't receive code? <a id="mobileSignupEmailResendLink" class="disabled">Resend in <span
+                                id="mobileSignupEmailResendTimer">30</span>s</a>
+                    </div>
+                    <button type="button" class="pill-btn" id="mobileSignupEmailOtpVerifyBtn">Verify Email</button>
                 </div>
 
-                <div class="field-group password-wrap step-hidden" id="mobileSignupPasswordGroup">
-                    <input type="password" id="mobileSignupPassword" class="pill-input" placeholder="Password">
-                    <i class="fas fa-eye toggle-password" data-target="mobileSignupPassword"></i>
-                    <span class="field-error" id="mobileSignupPassword-err"></span>
-                    <small class="field-hint">Password to be Alpha Numeric e.g. abc12345</small>
+                <div class="terms-check-row">
+                    <input type="checkbox" id="mobileSignupTermsCheckbox">
+                    <label for="mobileSignupTermsCheckbox">
+                        I Accept the <a href="{{ route('terms-condition') }}" target="_blank">Terms &
+                            Conditions</a> of PashuGhar Livestock Trade & Marketing
+                    </label>
                 </div>
+                <span class="field-error" id="mobileSignupTerms-err"></span>
 
                 <button type="button" class="pill-btn" id="mobileSignupSubmitBtn">Create Account</button>
             </div>
 
-            {{-- ===================== STEP 4: EMAIL LOGIN (existing email, ask password) ===================== --}}
-            <div id="emailPasswordStep" class="step-hidden">
-                <span class="back-link" id="emailPasswordBackLink"><i class="fas fa-arrow-left"></i> Back</span>
-                <div class="auth-subtitle" style="margin-bottom:6px;">Login as <b id="emailPasswordLabel"></b>
-                </div>
-                <input type="hidden" id="emailPasswordEmailHidden">
-
-                <div class="field-group password-wrap">
-                    <input type="password" id="emailPasswordInput" class="pill-input" placeholder="Password">
-                    <i class="fas fa-eye toggle-password" data-target="emailPasswordInput"></i>
-                    <span class="field-error" id="emailPassword-err"></span>
-                </div>
-
-                <div style="display:flex; justify-content:flex-end; margin-bottom:16px;">
-                    <a href="{{route('forget.password.get')}}" style="font-size:13px; color:var(--accent);">Forgot
-                        password?</a>
-                </div>
-
-                <button type="button" class="pill-btn" id="emailPasswordSubmitBtn">Login</button>
-            </div>
-
-            {{-- ===================== STEP 5: EMAIL SIGNUP DETAILS (new email) ===================== --}}
+            {{-- ===================== STEP 5: EMAIL SIGNUP DETAILS (new email, OTP verified) ===================== --}}
             <div id="emailSignupDetailsStep" class="step-hidden">
                 <span class="back-link" id="emailSignupBackLink"><i class="fas fa-arrow-left"></i> Back</span>
                 <div class="auth-subtitle" style="margin-bottom:14px;">Create your account for <b
                         id="emailSignupLabel"></b></div>
                 <input type="hidden" id="emailSignupEmailHidden">
+                <input type="hidden" id="emailSignupMobileVerified" value="0">
 
                 <div class="field-group">
                     <input type="text" id="emailSignupFullName" class="pill-input" placeholder="Full Name">
@@ -502,7 +591,7 @@
                         </div>
                         <span class="field-error" id="emailSignupMobile-err"></span>
                     </div>
-                    <button type="button" class="pill-btn" id="emailSignupSendOtpBtn">Send OTP</button>
+                    <button type="button" class="pill-btn step-hidden" id="emailSignupSendOtpBtn">Send OTP</button>
                 </div>
 
                 <div id="emailSignupOtpBlock" class="step-hidden">
@@ -523,14 +612,16 @@
                     <button type="button" class="pill-btn" id="emailSignupVerifyOtpBtn">Verify Mobile</button>
                 </div>
 
-                <div class="field-group password-wrap step-hidden" id="emailSignupPasswordGroup">
-                    <input type="password" id="emailSignupPassword" class="pill-input" placeholder="Password">
-                    <i class="fas fa-eye toggle-password" data-target="emailSignupPassword"></i>
-                    <span class="field-error" id="emailSignupPassword-err"></span>
-                    <small class="field-hint">Password to be Alpha Numeric e.g. abc12345</small>
+                <div class="terms-check-row mt-3">
+                    <input type="checkbox" id="emailSignupTermsCheckbox">
+                    <label for="emailSignupTermsCheckbox">
+                        I Accept the <a href="{{ route('terms-condition') }}" target="_blank">Terms &
+                            Conditions</a> of PashuGhar Livestock Trade & Marketing
+                    </label>
                 </div>
+                <span class="field-error" id="emailSignupTerms-err"></span>
 
-                <button type="button" class="pill-btn step-hidden" id="emailSignupSubmitBtn">Create Account</button>
+                <button type="button" class="pill-btn" id="emailSignupSubmitBtn">Create Account</button>
             </div>
 
         </div>
@@ -548,7 +639,7 @@
         const CSRF = '{{ csrf_token() }}';
 
         /* ---------- Step visibility ---------- */
-        const STEP_IDS = ['identifierStep', 'otpStep', 'mobileSignupDetailsStep', 'emailPasswordStep', 'emailSignupDetailsStep'];
+        const STEP_IDS = ['identifierStep', 'otpStep', 'emailOtpStep', 'mobileSignupDetailsStep', 'emailSignupDetailsStep'];
 
         function showStep(id) {
             STEP_IDS.forEach(function (s) {
@@ -562,10 +653,12 @@
             $('#identifierInput').val('');
             $('#identifier-err').text('');
             clearInterval(window.otpResendLink_interval);
+            clearInterval(window.emailOtpResendLink_interval);
+            clearInterval(window.mobileSignupEmailResendLink_interval);
             clearInterval(window.emailSignupResendLink_interval);
         }
 
-        $('#otpBackLink, #mobileSignupBackLink, #emailPasswordBackLink, #emailSignupBackLink').on('click', resetToIdentifier);
+        $('#otpBackLink, #emailOtpBackLink, #mobileSignupBackLink, #emailSignupBackLink').on('click', resetToIdentifier);
 
         /* ---------- OTP box auto-advance ---------- */
         function wireOtpBoxes(selector) {
@@ -585,12 +678,18 @@
             });
         }
         wireOtpBoxes('.main-otp-box');
+        wireOtpBoxes('.email-otp-box');
+        wireOtpBoxes('.mobile-signup-email-otp-box');
         wireOtpBoxes('.email-signup-otp-box');
 
         function collectOtp(selector) {
             let otp = '';
             document.querySelectorAll(selector).forEach(i => otp += i.value);
             return otp;
+        }
+
+        function clearOtpBoxes(selector) {
+            document.querySelectorAll(selector).forEach(i => i.value = '');
         }
 
         function startResendTimer(linkId, timerId, seconds, onResend) {
@@ -608,31 +707,10 @@
             }, 1000);
         }
 
-        /* ---------- Password show/hide toggle ---------- */
-        $(document).on('click', '.toggle-password', function () {
-            const targetId = $(this).data('target');
-            const input = document.getElementById(targetId);
-            if (input.type === 'password') {
-                input.type = 'text';
-                $(this).removeClass('fa-eye').addClass('fa-eye-slash');
-            } else {
-                input.type = 'password';
-                $(this).removeClass('fa-eye-slash').addClass('fa-eye');
-            }
-        });
-
-        /* ---------- Password validation (Alpha Numeric, min 8 chars) ---------- */
-        function validatePasswordValue(pwd) {
-            if (!pwd || pwd.length < 8) return 'Password must be at least 8 characters';
-            if (!/[A-Za-z]/.test(pwd)) return 'Password should be Alpha Numeric, use atleast One alphabet';
-            if (!/[0-9]/.test(pwd)) return 'Password should be Alpha Numeric, use atleast One numerical number';
-            if (!/^[A-Za-z0-9]+$/.test(pwd)) return 'Password should be Alpha Numeric';
-            return null;
-        }
-
         let currentMobile = '';
         let currentEmail = '';
-        let otpMode = ''; // 'login-mobile' | 'signup-mobile'
+        let otpMode = '';       // 'login-mobile' | 'signup-mobile'
+        let emailOtpMode = '';  // 'login-email' | 'signup-email'
 
         /* ============ STEP 1: Identify ============ */
         $('#identifierContinueBtn').on('click', function () {
@@ -669,23 +747,8 @@
                         }
                     } else {
                         currentEmail = val;
-                        if (result.exists) {
-                            $('#emailPasswordEmailHidden').val(val);
-                            $('#emailPasswordLabel').text(val);
-                            $('#emailPasswordInput').val('');
-                            $('#emailPassword-err').text('');
-                            showStep('emailPasswordStep');
-                        } else {
-                            $('#emailSignupEmailHidden').val(val);
-                            $('#emailSignupLabel').text(val);
-                            $('#emailSignupFullName').val('');
-                            $('#emailSignupMobile').val('');
-                            $('#emailSignupMobileBlock').removeClass('step-hidden');
-                            $('#emailSignupOtpBlock').addClass('step-hidden');
-                            $('#emailSignupPasswordGroup').addClass('step-hidden');
-                            $('#emailSignupSubmitBtn').addClass('step-hidden');
-                            showStep('emailSignupDetailsStep');
-                        }
+                        emailOtpMode = result.exists ? 'login-email' : 'signup-email';
+                        sendEmailOtp(val, emailOtpMode);
                     }
                 },
                 error: function () {
@@ -738,7 +801,7 @@
         function openOtpStep(mobile) {
             $('#otpMobileLabel').text('+91 ' + mobile);
             $('#otp-err').text('');
-            $('.main-otp-box').val('');
+            clearOtpBoxes('.main-otp-box');
             showStep('otpStep');
             $('.main-otp-box').first().focus();
             startResendTimer('otpResendLink', 'otpResendTimer', 30, function () {
@@ -789,9 +852,12 @@
                             $('#mobileSignupMobileHidden').val(currentMobile);
                             $('#mobileSignupFullName').val('');
                             $('#mobileSignupEmail').val('');
-                            $('#mobileSignupPasswordGroup').addClass('step-hidden');
-                            $('#mobileSignupPassword').val('');
-                            $('#mobileSignupFullName-err, #mobileSignupEmail-err, #mobileSignupPassword-err').text('');
+                            $('#mobileSignupEmailVerified').val('0');
+                            $('#mobileSignupEmailVerifiedPill').addClass('step-hidden');
+                            $('#mobileSignupEmailOtpGroup').addClass('step-hidden');
+                            $('#mobileSignupSendEmailOtpBtn').hide().prop('disabled', false).text('Verify');
+                            $('#mobileSignupEmail').prop('disabled', false);
+                            $('#mobileSignupFullName-err, #mobileSignupEmail-err').text('');
                             showStep('mobileSignupDetailsStep');
                         } else {
                             $('#otp-err').text('You entered an incorrect OTP.');
@@ -805,63 +871,206 @@
             }
         });
 
-        /* ============ STEP 3: Mobile signup details ============ */
+        /* ============ STEP 2B: Email OTP (login-existing OR signup-new) ============ */
+        function sendEmailOtp(email, mode) {
+            $.ajax({
+                url: "{{ route('send.email.otp') }}",
+                type: 'POST',
+                data: { email: email, _token: CSRF },
+                dataType: 'json',
+                success: function (result) {
+                    if (result.success) {
+                        emailOtpMode = mode;
+                        $('#emailOtpLabel').text(email);
+                        $('#emailOtp-err').text('');
+                        clearOtpBoxes('.email-otp-box');
+                        showStep('emailOtpStep');
+                        $('.email-otp-box').first().focus();
+                        startResendTimer('emailOtpResendLink', 'emailOtpResendTimer', 30, function () {
+                            sendEmailOtp(email, mode);
+                        });
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'Oops...', text: result.message || 'Please retry after sometime.' });
+                    }
+                },
+                error: function () {
+                    Swal.fire({ icon: 'error', title: 'Oops...', text: 'Something went wrong, please try again.' });
+                }
+            });
+        }
+
+        $('#emailOtpVerifyBtn').on('click', function () {
+            const otp = collectOtp('.email-otp-box');
+            $('#emailOtp-err').text('');
+            if (otp.length < 4) {
+                $('#emailOtp-err').text('Please enter the complete 4-digit OTP');
+                return;
+            }
+            $('#emailOtpVerifyBtn').prop('disabled', true).text('Verifying...');
+            $.ajax({
+                url: "{{ route('verify.email.otp') }}",
+                type: 'POST',
+                data: { email: currentEmail, otp: otp, _token: CSRF },
+                dataType: 'json',
+                success: function (result) {
+                    $('#emailOtpVerifyBtn').prop('disabled', false).text('Verify');
+                    if (!result.success) {
+                        $('#emailOtp-err').text(result.message || 'Incorrect OTP');
+                        return;
+                    }
+                    clearInterval(window.emailOtpResendLink_interval);
+                    if (result.mode === 'login') {
+                        window.location.href = result.redirect || "{{ route('user.dashboard') }}";
+                    } else {
+                        $('#emailSignupEmailHidden').val(currentEmail);
+                        $('#emailSignupLabel').text(currentEmail);
+                        $('#emailSignupFullName').val('');
+                        $('#emailSignupMobile').val('');
+                        $('#emailSignupMobileVerified').val('0');
+                        $('#emailSignupSendOtpBtn').addClass('step-hidden');
+                        $('#emailSignupMobileBlock').removeClass('step-hidden');
+                        $('#emailSignupOtpBlock').addClass('step-hidden');
+                        $('#emailSignupFullName-err').text('');
+                        $('#emailSignupMobile-err').removeClass('field-success').addClass('field-error').text('');
+                        showStep('emailSignupDetailsStep');
+                    }
+                },
+                error: function () {
+                    $('#emailOtpVerifyBtn').prop('disabled', false).text('Verify');
+                    Swal.fire({ icon: 'error', title: 'Oops...', text: 'Something went wrong, please try again.' });
+                }
+            });
+        });
+
+        /* ============ STEP 3: Mobile signup details (Full Name + optional Email) ============ */
         $('#mobileSignupEmail').on('input', function () {
-            const val = $(this).val().trim();
+            const emailVal = $(this).val().trim();
+
             $('#mobileSignupEmail-err').text('');
-            if (val) {
-                $('#mobileSignupPasswordGroup').removeClass('step-hidden');
+            $('#mobileSignupEmailVerified').val('0');
+            $('#mobileSignupEmailVerifiedPill').addClass('step-hidden');
+            $('#mobileSignupEmailOtpGroup').addClass('step-hidden');
+
+            if (emailVal.length > 0) {
+                $('#mobileSignupSendEmailOtpBtn').show();
             } else {
-                $('#mobileSignupPasswordGroup').addClass('step-hidden');
-                $('#mobileSignupPassword').val('');
-                $('#mobileSignupPassword-err').text('');
+                $('#mobileSignupSendEmailOtpBtn').hide();
             }
         });
 
-        $('#mobileSignupEmail').on('blur', function () {
-            const email = $(this).val().trim();
-            if (!email) return;
+        $('#mobileSignupSendEmailOtpBtn').on('click', function () {
+            const email = $('#mobileSignupEmail').val().trim();
+            $('#mobileSignupEmail-err').text('');
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            if (!emailPattern.test(email)) {
+                $('#mobileSignupEmail-err').text('Enter a valid email address');
+                return;
+            }
+            $('#mobileSignupSendEmailOtpBtn').prop('disabled', true).text('Sending...');
             $.ajax({
                 url: '{{ route("check-email") }}',
                 method: 'POST',
                 data: { email: email, _token: CSRF },
                 success: function (data) {
-                    if (data.exists) { $('#mobileSignupEmail-err').text('Email already exists'); }
+                    if (data.exists) {
+                        $('#mobileSignupSendEmailOtpBtn').prop('disabled', false).text('Verify');
+                        $('#mobileSignupEmail-err').text('Email already exists');
+                        return;
+                    }
+                    $.ajax({
+                        url: "{{ route('send.email.otp') }}",
+                        type: 'POST',
+                        data: { email: email, _token: CSRF },
+                        dataType: 'json',
+                        success: function (result) {
+                            $('#mobileSignupSendEmailOtpBtn').prop('disabled', false).text('Verify');
+                            if (result.success) {
+                                $('#mobileSignupSendEmailOtpBtn').hide();
+                                $('#mobileSignupEmailOtpGroup').removeClass('step-hidden');
+                                $('#mobileSignupEmailOtp-err').text('');
+                                clearOtpBoxes('.mobile-signup-email-otp-box');
+                                $('.mobile-signup-email-otp-box').first().focus();
+                                startResendTimer('mobileSignupEmailResendLink', 'mobileSignupEmailResendTimer', 30, function () {
+                                    $('#mobileSignupSendEmailOtpBtn').trigger('click');
+                                });
+                            } else {
+                                Swal.fire({ icon: 'error', title: 'Oops...', text: result.message || 'Please retry after sometime.' });
+                            }
+                        },
+                        error: function () {
+                            $('#mobileSignupSendEmailOtpBtn').prop('disabled', false).text('Verify');
+                            Swal.fire({ icon: 'error', title: 'Oops...', text: 'Something went wrong, please try again.' });
+                        }
+                    });
+                },
+                error: function () {
+                    $('#mobileSignupSendEmailOtpBtn').prop('disabled', false).text('Verify');
                 }
             });
         });
 
-        $('#mobileSignupPassword').on('blur', function () {
-            const val = $(this).val();
-            $('#mobileSignupPassword-err').text(val ? (validatePasswordValue(val) || '') : '');
+        $('#mobileSignupEmailOtpVerifyBtn').on('click', function () {
+            const email = $('#mobileSignupEmail').val().trim();
+            const otp = collectOtp('.mobile-signup-email-otp-box');
+            $('#mobileSignupEmailOtp-err').text('');
+            if (otp.length < 4) {
+                $('#mobileSignupEmailOtp-err').text('Please enter the complete 4-digit OTP');
+                return;
+            }
+            $('#mobileSignupEmailOtpVerifyBtn').prop('disabled', true).text('Verifying...');
+            $.ajax({
+                url: "{{ route('verify.email.otp') }}",
+                type: 'POST',
+                data: { email: email, otp: otp, _token: CSRF },
+                dataType: 'json',
+                success: function (result) {
+                    $('#mobileSignupEmailOtpVerifyBtn').prop('disabled', false).text('Verify Email');
+                    if (result.success) {
+                        clearInterval(window.mobileSignupEmailResendLink_interval);
+                        $('#mobileSignupEmailVerified').val('1');
+                        $('#mobileSignupEmailOtpGroup').addClass('step-hidden');
+                        $('#mobileSignupSendEmailOtpBtn').hide();
+                        $('#mobileSignupEmail').prop('disabled', true);
+                        $('#mobileSignupEmailVerifiedPill').removeClass('step-hidden');
+                    } else {
+                        $('#mobileSignupEmailOtp-err').text(result.message || 'Incorrect OTP');
+                    }
+                },
+                error: function () {
+                    $('#mobileSignupEmailOtpVerifyBtn').prop('disabled', false).text('Verify Email');
+                    Swal.fire({ icon: 'error', title: 'Oops...', text: 'Something went wrong, please try again.' });
+                }
+            });
         });
 
         $('#mobileSignupSubmitBtn').on('click', function () {
             const fullName = $('#mobileSignupFullName').val().trim();
             const email = $('#mobileSignupEmail').val().trim();
-            const password = $('#mobileSignupPassword').val();
+            const emailVerified = $('#mobileSignupEmailVerified').val();
             const mobile = $('#mobileSignupMobileHidden').val();
 
-            $('#mobileSignupFullName-err, #mobileSignupEmail-err, #mobileSignupPassword-err').text('');
+            $('#mobileSignupFullName-err, #mobileSignupEmail-err, #mobileSignupTerms-err').text('');
 
             if (!fullName) {
                 $('#mobileSignupFullName-err').text('Full Name is required');
                 return;
             }
 
-            if (email) {
-                const pwdErr = validatePasswordValue(password);
-                if (pwdErr) {
-                    $('#mobileSignupPassword-err').text(pwdErr);
-                    return;
-                }
+            if (email && emailVerified !== '1') {
+                $('#mobileSignupEmail-err').text('Please verify this email before continuing');
+                return;
+            }
+
+            if (!$('#mobileSignupTermsCheckbox').is(':checked')) {
+                $('#mobileSignupTerms-err').text('Please accept the Terms & Conditions to continue');
+                return;
             }
 
             $('#mobileSignupSubmitBtn').prop('disabled', true).text('Please wait...');
             $.ajax({
                 url: "{{ route('register.via.mobile') }}",
                 type: 'POST',
-                data: { full_name: fullName, email: email, password: password, mobile: mobile, _token: CSRF },
+                data: { full_name: fullName, email: email, mobile: mobile, _token: CSRF },
                 dataType: 'json',
                 success: function (result) {
                     if (result.success) {
@@ -883,55 +1092,19 @@
             });
         });
 
-        /* ============ STEP 4: Email login (existing email) ============ */
-        $('#emailPasswordSubmitBtn').on('click', function () {
-            const email = $('#emailPasswordEmailHidden').val();
-            const password = $('#emailPasswordInput').val();
-            $('#emailPassword-err').text('');
-            if (!password) {
-                $('#emailPassword-err').text('Password is required');
-                return;
+        /* ============ STEP 5: Email signup (Full Name + Mobile, mobile OTP verified) ============ */
+        $('#emailSignupMobile').on('input', function () {
+            const mobileVal = $(this).val().trim();
+            $('#emailSignupMobile-err').removeClass('field-success').addClass('field-error').text('');
+            $('#emailSignupMobileVerified').val('0');
+
+            if (mobileVal.length > 0) {
+                $('#emailSignupSendOtpBtn').removeClass('step-hidden');
+            } else {
+                $('#emailSignupSendOtpBtn').addClass('step-hidden');
             }
-            $('#emailPasswordSubmitBtn').prop('disabled', true).text('Please wait...');
-            $.ajax({
-                url: "{{ route('user.authenticate') }}",
-                type: 'POST',
-                headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                data: { email: email, password: password, _token: CSRF },
-                dataType: 'json',
-                success: function (result) {
-                    $('#emailPasswordSubmitBtn').prop('disabled', false).text('Login');
-                    if (result.success) {
-                        window.location.href = result.redirect;
-                    } else if (result.message && result.message.indexOf('not been verified') !== -1) {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Email not verified',
-                            text: result.message,
-                            showCancelButton: true,
-                            confirmButtonText: 'Resend Verification Email',
-                        }).then(function (res) {
-                            if (res.isConfirmed) {
-                                $.post("{{ route('verification.resend') }}", { email: email, _token: CSRF }, function (r) {
-                                    Swal.fire({ icon: 'success', title: 'Sent', text: r.message });
-                                }, 'json');
-                            }
-                        });
-                    } else if (result.errors) {
-                        const firstErr = Object.values(result.errors)[0][0];
-                        $('#emailPassword-err').text(firstErr);
-                    } else {
-                        $('#emailPassword-err').text(result.message || 'Something went wrong.');
-                    }
-                },
-                error: function () {
-                    $('#emailPasswordSubmitBtn').prop('disabled', false).text('Login');
-                    Swal.fire({ icon: 'error', title: 'Oops...', text: 'Something went wrong, please try again.' });
-                }
-            });
         });
 
-        /* ============ STEP 5: Email signup (new email) ============ */
         $('#emailSignupSendOtpBtn').on('click', function () {
             const mobile = $('#emailSignupMobile').val().trim();
             $('#emailSignupMobile-err').text('');
@@ -939,10 +1112,10 @@
                 $('#emailSignupMobile-err').text('Enter a valid 10-digit Indian mobile number');
                 return;
             }
-            sendEmailSignupOtp(mobile);
+            sendEmailSignupMobileOtp(mobile);
         });
 
-        function sendEmailSignupOtp(mobile) {
+        function sendEmailSignupMobileOtp(mobile) {
             $('#emailSignupSendOtpBtn').prop('disabled', true);
             $.post("{{ route('mobileVerify') }}", { mobile: mobile, _token: CSRF })
                 .done(function (data) {
@@ -953,9 +1126,9 @@
                         $('#emailSignupMobileBlock').addClass('step-hidden');
                         $('#emailSignupOtpBlock').removeClass('step-hidden');
                         $('#emailSignupOtp-err').text('');
-                        $('.email-signup-otp-box').val('');
+                        clearOtpBoxes('.email-signup-otp-box');
                         $('.email-signup-otp-box').first().focus();
-                        startResendTimer('emailSignupResendLink', 'emailSignupResendTimer', 30, function () { sendEmailSignupOtp(mobile); });
+                        startResendTimer('emailSignupResendLink', 'emailSignupResendTimer', 30, function () { sendEmailSignupMobileOtp(mobile); });
                     } else {
                         Swal.fire({ icon: 'error', title: 'Oops...', text: 'Please retry after sometime.' });
                     }
@@ -986,9 +1159,9 @@
                     $('#emailSignupVerifyOtpBtn').prop('disabled', false).text('Verify Mobile');
                     if (data.success) {
                         clearInterval(window.emailSignupResendLink_interval);
+                        $('#emailSignupMobileVerified').val('1');
                         $('#emailSignupOtpBlock').addClass('step-hidden');
-                        $('#emailSignupPasswordGroup').removeClass('step-hidden');
-                        $('#emailSignupSubmitBtn').removeClass('step-hidden');
+                        $('#emailSignupMobile-err').removeClass('field-error').addClass('field-success').text('Mobile number verified successfully.');
                     } else {
                         $('#emailSignupOtp-err').text('You entered an incorrect OTP.');
                     }
@@ -1000,26 +1173,26 @@
             });
         });
 
-        $('#emailSignupPassword').on('blur', function () {
-            const val = $(this).val();
-            $('#emailSignupPassword-err').text(val ? (validatePasswordValue(val) || '') : '');
-        });
-
         $('#emailSignupSubmitBtn').on('click', function () {
             const fullName = $('#emailSignupFullName').val().trim();
-            const password = $('#emailSignupPassword').val();
             const email = $('#emailSignupEmailHidden').val();
             const mobile = currentMobile;
+            const mobileVerified = $('#emailSignupMobileVerified').val();
 
-            $('#emailSignupFullName-err, #emailSignupPassword-err').text('');
+            $('#emailSignupFullName-err, #emailSignupTerms-err').text('');
 
             if (!fullName) {
                 $('#emailSignupFullName-err').text('Full Name is required');
                 return;
             }
-            const pwdErr = validatePasswordValue(password);
-            if (pwdErr) {
-                $('#emailSignupPassword-err').text(pwdErr);
+
+            if (mobileVerified !== '1') {
+                $('#emailSignupMobile-err').removeClass('field-success').addClass('field-error').text('Please verify your mobile number to continue');
+                return;
+            }
+
+            if (!$('#emailSignupTermsCheckbox').is(':checked')) {
+                $('#emailSignupTerms-err').text('Please accept the Terms & Conditions to continue');
                 return;
             }
 
@@ -1027,7 +1200,7 @@
             $.ajax({
                 url: "{{ route('register.via.email') }}",
                 type: 'POST',
-                data: { full_name: fullName, email: email, mobile: mobile, password: password, _token: CSRF },
+                data: { full_name: fullName, email: email, mobile: mobile, _token: CSRF },
                 dataType: 'json',
                 success: function (result) {
                     if (result.success) {
