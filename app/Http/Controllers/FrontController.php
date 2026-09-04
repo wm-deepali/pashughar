@@ -165,11 +165,11 @@ class FrontController extends Controller
         $data['teams'] = Teams::where('status', 1)->get();
         return view('front.our-team', $data);
     }
-
     public function categoryList()
     {
         $data['categories'] = Category::get();
         $data['subscriptions'] = Subscription::where('status', 1)->orderBy('offer_price', 'asc')->get();
+        $data['canonical'] = route('list-categories');
         return view('front.categories', $data);
     }
 
@@ -188,12 +188,8 @@ class FrontController extends Controller
         if ($request->has('max'))
             $max = $request->query('max');
 
-        // $decodeId = base64_decode($id);
         $data['category'] = Category::with('subcategory')->where('slug', $slug)->first();
 
-        // $data['ads'] = Ad::with('AdImage')->where('delete_status', '0')->where('status', 'Published')->where('category_id', $decodeId)->type($type)->search($min, $max)->paginate($perPage)->withQueryString();
-        // print_r($request->all()); die;
-        // $decodeId = base64_decode($data['category']->id);
         $query = Ad::with('AdImage')
             ->where('delete_status', '0')
             ->where('status', 'Published')
@@ -211,9 +207,13 @@ class FrontController extends Controller
         $data['ads'] = $query->paginate($perPage)->withQueryString();
 
         $data['categories'] = Category::all();
+        // canonical always points to the clean category URL, ignoring filter/sort/paging query params
+        $data['canonical'] = route('category-details', $data['category']->slug);
+
         return view('front.categories-details', $data);
     }
-    public function subcategoryDetail(Request $request, $name, $id)
+
+    public function subCategoryDetail(Request $request, $categorySlug, $subSlug)
     {
         $min = null;
         $max = null;
@@ -228,22 +228,47 @@ class FrontController extends Controller
         if ($request->has('max'))
             $max = $request->query('max');
 
-        $decodeId = base64_decode($id);
-        $data['subcategory'] = SubCategory::with('ads')->where('id', $decodeId)->first();
-        $data['ads'] = Ad::with('AdImage')->where('delete_status', '0')->where('status', 'Published')->where('subcategory_id', $decodeId)->type($type)->search($min, $max)->paginate($perPage)->withQueryString();
-        return view('front.subcategories', $data);
+        $data['category'] = Category::with('subcategory')->where('slug', $categorySlug)->firstOrFail();
+        $subcategory = $data['category']->subcategory->where('slug', $subSlug)->first();
+
+        if (!$subcategory) {
+            abort(404);
+        }
+
+        $query = Ad::with('AdImage')
+            ->where('delete_status', '0')
+            ->where('status', 'Published')
+            ->where(function ($q) {
+                $q->whereNull('expire_at')->orWhere('expire_at', '>=', now());
+            })
+            ->where('subcategory_id', $subcategory->id)
+            ->type($type)
+            ->search($min, $max);
+
+        $data['ads'] = $query->paginate($perPage)->withQueryString();
+        $data['categories'] = Category::all();
+        $data['currentSubcategory'] = $subcategory;
+        $data['canonical'] = route('subcategory-details', [$categorySlug, $subSlug]);
+
+        // reuse the same categories-details view, just scoped to a subcategory
+        return view('front.categories-details', $data);
     }
 
     public function adDetail($category_name, $slug)
     {
-        $ad = Ad::where('slug', $slug)->first();
-        // dd($ad);
-        if (!empty($ad)) {
-            $ad->views = $ad->views + 1;
-            $ad->save();
+        $ad = Ad::where('slug', $slug)->where('delete_status', '0')->first();
+
+        if (empty($ad)) {
+            abort(404);
         }
 
-        $data['ad'] = Ad::with('category', 'subcategory', 'brand', 'user', 'adFeature', 'AdImage', 'reviews', 'adSpecification')->where('slug', $slug)->where('delete_status', '0')->first();
+        $ad->views = $ad->views + 1;
+        $ad->save();
+
+        $data['ad'] = Ad::with('category', 'subcategory', 'brand', 'user', 'adFeature', 'AdImage', 'reviews', 'adSpecification')
+            ->where('slug', $slug)
+            ->where('delete_status', '0')
+            ->first();
 
         $data['adCount'] = Ad::where('delete_status', '0')->where('status', 'Published')->where('user_id', $ad->user_id)->count();
         $data['states'] = State::where('country_id', 1)->get();

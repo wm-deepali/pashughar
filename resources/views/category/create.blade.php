@@ -114,6 +114,12 @@
                                             value="{{ old('canonical_url') }}" required>
                                     </div>
 
+                                    <div class="form-group">
+                                        <label for="description">Category Description (shown below product listing)</label>
+                                        <textarea class="form-control" id="description" name="description"
+                                            rows="6">{{ old('description') }}</textarea>
+                                    </div>
+
                                     <div class="col-md-12">
                                         <div class="text-md-right">
                                             <!-- Aligns content to the right in medium devices and above -->
@@ -128,6 +134,10 @@
             </div>
         </section>
     </div>
+    <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replace('description');
+    </script>
     <script>
 
         document.getElementById('name').addEventListener('keyup', function () {

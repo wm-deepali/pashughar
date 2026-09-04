@@ -50,8 +50,6 @@
 </head>
 <body>
 @include('front.layouts.includes.header')
-@include('front.layouts.includes.sidebar')
-@include('front.layouts.includes.mobile-nav')
 
 @yield('content')
 @include('front.layouts.includes.footer')

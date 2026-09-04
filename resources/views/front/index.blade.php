@@ -843,7 +843,7 @@ Welcome to PashuGhar Livestock Trade & Marketing | Delhi | India
 
         <p class="text">
             Digital Platform to list your livestock and dairy products, get direct enquiries, 
-            and sell at the right market value — without middlemen.
+            and sell at the right market value тАФ without middlemen.
         </p>
 
         <!--<button class="btn-join">Join Us</button>-->
@@ -854,7 +854,7 @@ Welcome to PashuGhar Livestock Trade & Marketing | Delhi | India
 
         <!-- INNER LEFT (CONTENT) -->
         <div class="right-content">
-            <h3>Connecting Livestock & Dairy Sellers with Buyers — Simply & Transparently</h3>
+            <h3>Connecting Livestock & Dairy Sellers with Buyers тАФ Simply & Transparently</h3>
 
             <p class="text">
                 We help sellers list livestock and dairy products easily and connect directly 
@@ -863,7 +863,7 @@ Welcome to PashuGhar Livestock Trade & Marketing | Delhi | India
                 bulk trade, locally and globally.
             </p>
             <div class="cta-btn-group1">
-            <a href="#" class="cta-btn1 buyer">I’m a Buyer</a>
+            <a href="#" class="cta-btn1 buyer">IтАЩm a Buyer</a>
             <a href="#" class="cta-btn1 seller"> FREE Listing</a>
         </div>
         </div>
@@ -874,7 +874,7 @@ Welcome to PashuGhar Livestock Trade & Marketing | Delhi | India
                 <li><i class="fa-solid fa-check"></i> MSME Registered Business</li>
                 <li><i class="fa-solid fa-check"></i> Platform for Livestock & Dairy Trading</li>
                 <li><i class="fa-solid fa-check"></i> Serving Sellers & Buyers Across India & Globally</li>
-                <li><i class="fa-solid fa-check"></i> Aligned with India’s Livestock & Dairy Ecosystem</li>
+                <li><i class="fa-solid fa-check"></i> Aligned with IndiaтАЩs Livestock & Dairy Ecosystem</li>
                 <li><i class="fa-solid fa-check"></i> Built for Farmers, Traders & Agri Businesses</li>
             </ul>
         </div>
@@ -896,19 +896,19 @@ Welcome to PashuGhar Livestock Trade & Marketing | Delhi | India
         <div class="usp-left">
             <div class="usp-box">
                 <i class="fa-regular fa-rectangle-list"></i>
-                <h3>🆓 Free Classified Listing</h3>
+                <h3>ЁЯЖУ Free Classified Listing</h3>
                 <p>List livestock and dairy products without any listing fee or hidden charges.</p>
             </div>
 
             <div class="usp-box">
                <i class="fa-regular fa-handshake"></i>
-                <h3>🤝 Direct Buyer–Seller Connect</h3>
-                <p>Buyers and sellers communicate directly via call or WhatsApp — no brokers involved.</p>
+                <h3>ЁЯдЭ Direct BuyerтАУSeller Connect</h3>
+                <p>Buyers and sellers communicate directly via call or WhatsApp тАФ no brokers involved.</p>
             </div>
 
             <div class="usp-box">
                 <i class="fa-solid fa-earth-europe"></i>
-                <h3>🌍 Local & Global Reach</h3>
+                <h3>ЁЯМН Local & Global Reach</h3>
                 <p>Reach buyers not only from your local area but also from other regions and countries.</p>
             </div>
         </div>
@@ -917,7 +917,7 @@ Welcome to PashuGhar Livestock Trade & Marketing | Delhi | India
         <div class="usp-image">
             <div class="center-tag">
                 <i class="fa-solid fa-user-gear"></i>
-                <h3>PashuGhar.com is built to simplify livestock and dairy trading by directly connecting buyers and sellers on a transparent, affordable, and easy-to-use platform — locally and globally.</h3>
+                <h3>PashuGhar.com is built to simplify livestock and dairy trading by directly connecting buyers and sellers on a transparent, affordable, and easy-to-use platform тАФ locally and globally.</h3>
                 <p>We focus on solving real problems faced by farmers, traders, and buyers by removing middlemen, reducing costs, and improving market access.</p>
             </div>
             <img src="https://kjcdn.gumlet.io/media/28715/mela.png" alt="USP Image">
@@ -928,19 +928,19 @@ Welcome to PashuGhar Livestock Trade & Marketing | Delhi | India
         <div class="usp-right">
             <div class="usp-box">
                 <i class="fa-brands fa-product-hunt"></i>
-                <h3>🐄 Wide Product Coverage</h3>
+                <h3>ЁЯРД Wide Product Coverage</h3>
                 <p>Supports Cow, Buffalo, Goat, Sheep, Camel, Chicken, Fish, Poultry & Dairy Products.</p>
             </div>
 
             <div class="usp-box">
                 <i class="fa-solid fa-person-circle-check"></i>
-                <h3>⚡ Simple & Easy to Use</h3>
+                <h3>тЪб Simple & Easy to Use</h3>
                 <p>Quick registration, easy listing process, and user-friendly interface for everyone.</p>
             </div>
 
             <div class="usp-box">
                 <i class="fa-solid fa-indian-rupee-sign"></i>
-                <h3>💰 Fair Market Pricing</h3>
+                <h3>ЁЯТ░ Fair Market Pricing</h3>
                 <p>More visibility brings more enquiries, helping sellers get the right market value.</p>
             </div>
         </div>
@@ -990,7 +990,7 @@ Welcome to PashuGhar Livestock Trade & Marketing | Delhi | India
 <!--                            </ol>-->
 <!--                            <h3 class="feature-title"><a href="{{route('ad-details', [base64_encode($fad->id), $fad->slug])}}">{{Str::of($fad->description)->words(10, ' ...')}}</a></h3>-->
 <!--                            <div class="feature-meta">-->
-<!--                                <span class="feature-price">₹ {{$fad->price}}</span>-->
+<!--                                <span class="feature-price">тВ╣ {{$fad->price}}</span>-->
 <!--                                <div class="d-flex justify-content-between">-->
 <!--                                <span class="feature-time"><i class="fas fa-clock"></i>{{$fad->created_at->diffForHumans()}}</span>&nbsp;&nbsp;-->
 <!--                                <span class="feature-time text-right"><i class="fas fa-eye"></i>{{$fad->views ?? '0'}}</span>-->
@@ -1086,7 +1086,7 @@ Stay updated with new ads posted by sellers across different categories and loca
                                     <span><i class="fas fa-clock"></i>{{$rad->created_at->diffForHumans()}}</span>
                                 </div>
                                 <div class="product-info">
-                                    <h5 class="product-price">₹ {{$rad->price}}</h5>
+                                    <h5 class="product-price">тВ╣ {{$rad->price}}</h5>
                                     <div class="product-btn">
                                     <span><i class="fas fa-eye"></i> {{$rad->views}}</span>
                                     </div>
@@ -1144,7 +1144,7 @@ Stay updated with new ads posted by sellers across different categories and loca
                     <p>
                         Create your seller account on PashuGhar.com to start listing livestock 
                         and dairy products. / <br>
-                        PashuGhar.com पर अपना seller account बनाएं और listing शुरू करें।
+                        PashuGhar.com рдкрд░ рдЕрдкрдирд╛ seller account рдмрдирд╛рдПрдВ рдФрд░ listing рд╢реБрд░реВ рдХрд░реЗрдВред
                     </p>
                 </div>
 
@@ -1156,7 +1156,7 @@ Stay updated with new ads posted by sellers across different categories and loca
                     <p>
                         Add photos, quantity, location, and price details. You can list multiple 
                         livestock or products. / <br>
-                        फोटो, संख्या, स्थान और दाम की जानकारी डालें। आप एक से अधिक पशु या उत्पाद list कर सकते हैं।
+                        рдлреЛрдЯреЛ, рд╕рдВрдЦреНрдпрд╛, рд╕реНрдерд╛рди рдФрд░ рджрд╛рдо рдХреА рдЬрд╛рдирдХрд╛рд░реА рдбрд╛рд▓реЗрдВред рдЖрдк рдПрдХ рд╕реЗ рдЕрдзрд┐рдХ рдкрд╢реБ рдпрд╛ рдЙрддреНрдкрд╛рдж list рдХрд░ рд╕рдХрддреЗ рд╣реИрдВред
                     </p>
                 </div>
 
@@ -1167,7 +1167,7 @@ Stay updated with new ads posted by sellers across different categories and loca
                     <h3>Reach Local & Global Buyers</h3>
                     <p>
                         Your listings become visible to buyers across locations, helping you get wider reach. / <br>
-                        आपकी listing लोकल और अंतरराष्ट्रीय buyers को दिखाई देती है, जिससे पहुँच बढ़ती है।
+                        рдЖрдкрдХреА listing рд▓реЛрдХрд▓ рдФрд░ рдЕрдВрддрд░рд░рд╛рд╖реНрдЯреНрд░реАрдп buyers рдХреЛ рджрд┐рдЦрд╛рдИ рджреЗрддреА рд╣реИ, рдЬрд┐рд╕рд╕реЗ рдкрд╣реБрдБрдЪ рдмрдврд╝рддреА рд╣реИред
                     </p>
                 </div>
 
@@ -1177,8 +1177,8 @@ Stay updated with new ads posted by sellers across different categories and loca
                     <h4>Step 4</h4>
                     <h3>Receive Direct Enquiries</h3>
                     <p>
-                        Buyers contact you directly via call or WhatsApp — no brokers involved. / <br>
-                        खरीदार आपसे सीधे call या WhatsApp के माध्यम से संपर्क करते हैं — बिना किसी दलाल के।
+                        Buyers contact you directly via call or WhatsApp тАФ no brokers involved. / <br>
+                        рдЦрд░реАрджрд╛рд░ рдЖрдкрд╕реЗ рд╕реАрдзреЗ call рдпрд╛ WhatsApp рдХреЗ рдорд╛рдзреНрдпрдо рд╕реЗ рд╕рдВрдкрд░реНрдХ рдХрд░рддреЗ рд╣реИрдВ тАФ рдмрд┐рдирд╛ рдХрд┐рд╕реА рджрд▓рд╛рд▓ рдХреЗред
                     </p>
                 </div>
 
@@ -1190,7 +1190,7 @@ Stay updated with new ads posted by sellers across different categories and loca
                     <p>
                         Discuss price and delivery directly with buyers and complete the deal 
                         with confidence. / <br>
-                        दाम और डिलीवरी की शर्तें सीधे buyer से तय करें और सौदा पूरा करें।
+                        рджрд╛рдо рдФрд░ рдбрд┐рд▓реАрд╡рд░реА рдХреА рд╢рд░реНрддреЗрдВ рд╕реАрдзреЗ buyer рд╕реЗ рддрдп рдХрд░реЗрдВ рдФрд░ рд╕реМрджрд╛ рдкреВрд░рд╛ рдХрд░реЗрдВред
                     </p>
                 </div>
 
@@ -1263,7 +1263,7 @@ These sponsored ads help buyers discover relevant livestock and dairy products f
                                     <span><i class="fas fa-clock"></i>{{$rad->created_at->diffForHumans()}}</span>
                                 </div>
                                 <div class="product-info">
-                                    <h5 class="product-price">₹ {{$rad->price}}</h5>
+                                    <h5 class="product-price">тВ╣ {{$rad->price}}</h5>
                                     <div class="product-btn">
                                     <span><i class="fas fa-eye"></i> {{$rad->views}}</span>
                                     </div>
@@ -1350,7 +1350,7 @@ These sponsored ads help buyers discover relevant livestock and dairy products f
 
                     <div class="faq-phone-group">
                         <select class="faq-country" name="country_code">
-                            <option value="+91">🇮🇳 +91</option>
+                            <option value="+91">ЁЯЗоЁЯЗ│ +91</option>
                             </select>
                     
                         <input type="tel" onkeypress="return isNumber(event)" class="faq-input phone-input" name="mobile_number" id="mobile-number" autocomplete="off" placeholder="Mobile Number" value="{{ old('mobile_number') }}">
@@ -1446,7 +1446,7 @@ These sponsored ads help buyers discover relevant livestock and dairy products f
 <!--                                    <span><i class="fas fa-clock"></i>{{$rad->created_at->diffForHumans()}}</span>-->
 <!--                                </div>-->
 <!--                        <div class="product-info">-->
-<!--                            <h5 class="product-price">₹ {{$tad->price ?? '0'}}</h5>-->
+<!--                            <h5 class="product-price">тВ╣ {{$tad->price ?? '0'}}</h5>-->
 <!--                            <div class="product-btn">-->
 <!--                            <span><i class="fas fa-eye"></i> {{$tad->views}}</span>-->
 <!--                            </div>-->
@@ -1524,7 +1524,7 @@ These sponsored ads help buyers discover relevant livestock and dairy products f
                                     <span><i class="fas fa-clock"></i>{{$rad->created_at->diffForHumans()}}</span>
                                 </div>
                                 <div class="product-info">
-                                    <h5 class="product-price">₹ {{$rad->price}}</h5>
+                                    <h5 class="product-price">тВ╣ {{$rad->price}}</h5>
                                     <div class="product-btn">
                                     <span><i class="fas fa-eye"></i> {{$rad->views}}</span>
                                     </div>
@@ -1613,7 +1613,7 @@ These sponsored ads help buyers discover relevant livestock and dairy products f
                         @php
                         $slugName = strtolower(str_replace('_', '-', str_replace(' ', '-', $subcat->name)));
                         @endphp
-                        <li><a href="{{route('sub-details', ['subcategoryname'=>$slugName, 'id'=>base64_encode($subcat->id)])}}"><h6>{{$subcat->name}}</h6><p>({{isset($subcat->ads) && $subcat->ads !='' ? $subcat->ads->where('status', 'Published')->count() : 0}})</p></a></li>
+                        <li><a href="#"><h6>{{$subcat->name}}</h6><p>({{isset($subcat->ads) && $subcat->ads !='' ? $subcat->ads->where('status', 'Published')->count() : 0}})</p></a></li>
                         @endforeach
                         @endif
                     </ul> -->
@@ -1652,7 +1652,7 @@ These sponsored ads help buyers discover relevant livestock and dairy products f
                         @php
                         $slugName = strtolower(str_replace('_', '-', str_replace(' ', '-', $subcat->name)));
                         @endphp
-                        <li><a href="{{route('sub-details', ['subcategoryname'=>$slugName, 'id'=>base64_encode($subcat->id)])}}"><h6>{{$subcat->name}}</h6><p>({{isset($subcat->ads) && $subcat->ads !='' ? $subcat->ads->where('status', 'Published')->count() : 0}})</p></a></li>
+                        <li><a href="#"><h6>{{$subcat->name}}</h6><p>({{isset($subcat->ads) && $subcat->ads !='' ? $subcat->ads->where('status', 'Published')->count() : 0}})</p></a></li>
                         @endforeach
                         @endif
                     </ul>
@@ -1751,9 +1751,9 @@ These sponsored ads help buyers discover relevant livestock and dairy products f
                          <h4>{{$subscription->name}}</h4>
                         <i class="{{$subscription->icon}}"></i>
                         @if($subscription->discount > 0 && $subscription->offer_price > 0)
-                        <h3><span style="font-size:20px">₹</span> {{$subscription->offer_price}} <strike class="strike">{{$subscription->mrp}}</strike> <span class="discount">{{$subscription->discount}}%</span></h3>
+                        <h3><span style="font-size:20px">тВ╣</span> {{$subscription->offer_price}} <strike class="strike">{{$subscription->mrp}}</strike> <span class="discount">{{$subscription->discount}}%</span></h3>
                         @else
-                        <h3><span style="font-size:20px">₹</span> {{$subscription->offer_price}}</h3>
+                        <h3><span style="font-size:20px">тВ╣</span> {{$subscription->offer_price}}</h3>
                         @endif
                        <div class="price-btn">
                         @if(Auth::guard('member')->user() !='' && !empty(Auth::guard('member')->user()))
@@ -1820,7 +1820,7 @@ These sponsored ads help buyers discover relevant livestock and dairy products f
                 <div class="price-card">
                     <div class="price-head">
                         <i class="{{$subscription->icon}}"></i>
-                        <h3>₹ {{$subscription->offer_price}}</h3>
+                        <h3>тВ╣ {{$subscription->offer_price}}</h3>
                         <h4>{{$subscription->name}}</h4>
                     </div>
                     <ul class="price-list">
@@ -1902,8 +1902,8 @@ These sponsored ads help buyers discover relevant livestock and dairy products f
         </p>
 
         <div class="cta-btn-group">
-            <a href="#" class="cta-btn buyer">I’m a Buyer</a>
-            <a href="#" class="cta-btn seller">I’m a Seller</a>
+            <a href="#" class="cta-btn buyer">IтАЩm a Buyer</a>
+            <a href="#" class="cta-btn seller">IтАЩm a Seller</a>
         </div>
 
     </div>
@@ -1959,7 +1959,7 @@ These sponsored ads help buyers discover relevant livestock and dairy products f
                                     <span><i class="fas fa-clock"></i>{{$rad->created_at->diffForHumans()}}</span>
                                 </div>
                                 <div class="product-info">
-                                    <h5 class="product-price">₹ {{$rad->price}}</h5>
+                                    <h5 class="product-price">тВ╣ {{$rad->price}}</h5>
                                     <div class="product-btn">
                                     <span><i class="fas fa-eye"></i> {{$rad->views}}</span>
                                     </div>
@@ -2009,10 +2009,10 @@ These sponsored ads help buyers discover relevant livestock and dairy products f
                 <div class="testi-card">
 
                     <!--<h4 class="testi-name">Seller Perspective</h4>-->
-                    <div class="testi-rating">★★★★★</div>
-                    <p class="testi-text">“PashuGhar looks like a much-needed platform for livestock sellers.
-The idea of listing animals for free and connecting directly with buyers is very helpful.”</p>
-<p>— Livestock Seller</p>
+                    <div class="testi-rating">тШЕтШЕтШЕтШЕтШЕ</div>
+                    <p class="testi-text">тАЬPashuGhar looks like a much-needed platform for livestock sellers.
+The idea of listing animals for free and connecting directly with buyers is very helpful.тАЭ</p>
+<p>тАФ Livestock Seller</p>
                 </div>
             </div>
 
@@ -2021,10 +2021,10 @@ The idea of listing animals for free and connecting directly with buyers is very
                 <div class="testi-card">
                     <!--<img src="https://sipl.ind.in/wp-content/uploads/2022/07/dummy-user.png" class="testi-img" alt="">-->
                     <!--<h4 class="testi-name">Aman Verma</h4>-->
-                    <div class="testi-rating">★★★★★</div>
-                    <p class="testi-text">“Selling livestock beyond the local market has always been difficult.
-A platform like PashuGhar can make the process easier and more transparent.”</p>
-<p>— Farmer</p>
+                    <div class="testi-rating">тШЕтШЕтШЕтШЕтШЕ</div>
+                    <p class="testi-text">тАЬSelling livestock beyond the local market has always been difficult.
+A platform like PashuGhar can make the process easier and more transparent.тАЭ</p>
+<p>тАФ Farmer</p>
                 </div>
             </div>
 
@@ -2033,10 +2033,10 @@ A platform like PashuGhar can make the process easier and more transparent.”</
                 <div class="testi-card">
                     
                     <!--<h4 class="testi-name">Sneha Patel</h4>-->
-                    <div class="testi-rating">★★★★☆</div>
-                    <p class="testi-text">“Finding genuine livestock sellers online is not easy.
-PashuGhar’s classified approach seems simple and useful for buyers like us.”</p>
-<p>— Livestock Buyer</p>
+                    <div class="testi-rating">тШЕтШЕтШЕтШЕтШЖ</div>
+                    <p class="testi-text">тАЬFinding genuine livestock sellers online is not easy.
+PashuGharтАЩs classified approach seems simple and useful for buyers like us.тАЭ</p>
+<p>тАФ Livestock Buyer</p>
                 </div>
             </div>
 
@@ -2045,28 +2045,28 @@ PashuGhar’s classified approach seems simple and useful for buyers like us.”
                 <div class="testi-card">
                     
                     
-                    <div class="testi-rating">★★★★★</div>
-                    <p class="testi-text">“Direct communication with buyers without middlemen is a big advantage.
-PashuGhar appears to solve a real problem in livestock and dairy trading.”</p>
-<p>— Dairy Product Seller</p>
+                    <div class="testi-rating">тШЕтШЕтШЕтШЕтШЕ</div>
+                    <p class="testi-text">тАЬDirect communication with buyers without middlemen is a big advantage.
+PashuGhar appears to solve a real problem in livestock and dairy trading.тАЭ</p>
+<p>тАФ Dairy Product Seller</p>
                 </div>
             </div>
              <div class="swiper-slide">
                 <div class="testi-card">
                     
                     
-                    <div class="testi-rating">★★★★★</div>
-                    <p class="testi-text">“A single platform for livestock and dairy listings can save a lot of time.
-PashuGhar has strong potential for both retail and bulk sellers.”</p>
-<p>— Livestock Trader</p>
+                    <div class="testi-rating">тШЕтШЕтШЕтШЕтШЕ</div>
+                    <p class="testi-text">тАЬA single platform for livestock and dairy listings can save a lot of time.
+PashuGhar has strong potential for both retail and bulk sellers.тАЭ</p>
+<p>тАФ Livestock Trader</p>
                 </div>
             </div>
 
         </div>
 
         <!-- SLIDER CONTROLS -->
-        <!--<div class="testi-prev">❮</div>-->
-        <!--<div class="testi-next">❯</div>-->
+        <!--<div class="testi-prev">тЭо</div>-->
+        <!--<div class="testi-next">тЭп</div>-->
         <div class="swiper-pagination"></div>
     </div>
 </section>

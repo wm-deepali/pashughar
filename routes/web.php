@@ -35,11 +35,11 @@ use App\Http\Controllers\ContactusContentController;
 |
 */
 
-Route::get('/', [FrontController::class, 'index']);
+Route::get('/', [FrontController::class, 'index'])->name('index');
+Route::get('sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
 Route::get('list-categories', [FrontController::class, 'categoryList'])->name('list-categories');
 Route::get('/category/{slug}', [FrontController::class, 'categoryDetail'])->name('category-details');
-
-Route::get('sub-details/{subcategoryname}/{id}', [FrontController::class, 'subcategoryDetail'])->name('sub-details');
+Route::get('/category/{categorySlug}/{subSlug}', [FrontController::class, 'subCategoryDetail'])->name('subcategory-details');
 
 Route::get('subscription-plan', [FrontController::class, 'purchaseSubscription'])->name('subscription-plan');
 Route::get('list-all-ads', [FrontController::class, 'allAds'])->name('list-all-ads');
@@ -59,20 +59,20 @@ Route::get('contact-us', [FrontController::class, 'contactuspage'])->name('conta
 
 Route::post('homepage-enquiry-submit', [FrontController::class, 'submithomepageEnquiry'])->name('homepage-enquiry-submit');
 
-Route::get('/linkstorage', function () {
-    Artisan::call('storage:link');
-    $data = Artisan::call('storage:link');
-    return $data;
-});
+Route::middleware('auth')->group(function () {
+    Route::get('/linkstorage', function () {
+        Artisan::call('storage:link');
+        return Artisan::output();
+    });
 
-Route::get('/clear-cache', function () {
-    Artisan::call('cache:clear');
-    Artisan::call('config:clear');
-    Artisan::call('config:cache');
-    Artisan::call('view:clear');
-    Artisan::call('route:clear');
-
-    return "Cleared!";
+    Route::get('/clear-cache', function () {
+        Artisan::call('cache:clear');
+        Artisan::call('config:clear');
+        Artisan::call('config:cache');
+        Artisan::call('view:clear');
+        Artisan::call('route:clear');
+        return "Cleared!";
+    });
 });
 
 Route::get('veterinary-registration', function () {
@@ -90,8 +90,9 @@ Route::get('terms-condition', function () {
 
 Route::get('our-team', [FrontController::class, 'ourTeam'])->name('our-team');
 
-Route::get('blog-listing', [FrontController::class, 'blog'])->name('blog-listing');
+Route::get('/blogs', [FrontController::class, 'blog'])->name('blogs');
 Route::get('/blogs/{slug}', [FrontController::class, 'blogdetail'])->name('blogs.show');
+Route::post('/blogs/{slug}/share', [FrontController::class, 'incrementShare'])->name('blogs.share');
 Route::post('Add-Comment', [FrontController::class, 'addComment'])->name('comment.store');
 
 Route::get('submit-bulk-stock-request', [EnquiryController::class, 'bulkEnquiry'])->name('submit-bulk-stock-request');
@@ -104,6 +105,7 @@ Route::post('getAdsBySearch', [FrontController::class, 'getAdsBySearch'])->name(
 
 Route::get('search', [FrontController::class, 'search'])->name('search');
 Route::post('save-contact-us', [FrontController::class, 'saveContactUs'])->name('save-contact-us');
+Route::get('thank-you/{type}', [FrontController::class, 'thankYou'])->name('thank-you');
 
 Route::post('add-save-ad-post', [MemberAuthController::class, 'saveAdPost'])->name('add-save-ad-post');
 
@@ -172,6 +174,8 @@ Route::controller(MemberAuthController::class)->group(function () {
     Route::get('user/edit-ad-post/{id}', 'EditAdPost')->name('user.edit-ad-post');
     Route::get('user/delete-ad/{id}', 'deleteAd')->name('user.delete-ad');
     Route::post('user/update-ad-post/{id}', 'updateAdPost')->name('user.update-ad-post');
+    Route::delete('/ad-image/{id}/delete', 'deleteAdImage')->name('user.ad-image.delete');
+    Route::post('/ad-image/{id}/set-default', 'setDefaultAdImage')->name('user.ad-image.set-default');
     Route::get('user/buy-subscription', 'buySubscription')->name('user.buy-subscription');
     Route::get('user/my-subscriptions', 'mySubscription')->name('user.my-subscriptions');
     Route::post('free-subscription', 'free_subscription')->name('free-subscription');
@@ -357,6 +361,9 @@ Route::get('/subscription/{id}/invoice', [App\Http\Controllers\UserController::c
 Route::post('transactions/approve-payment/{id}', [App\Http\Controllers\SubscriptionController::class, 'approvepaymentStatus'])->name('transactions.approve-payment');
 Route::post('transactions/reject-payment/{id}', [App\Http\Controllers\SubscriptionController::class, 'rejectpaymentStatus'])->name('transactions.reject-payment');
 Route::resource('manage-ads', 'App\Http\Controllers\AdController');
+Route::delete('/admin/ad-image/{id}/delete', [App\Http\Controllers\AdController::class, 'deleteAdImage'])->name('manage-ads.image.delete');
+Route::post('/admin/ad-image/{id}/set-default', [App\Http\Controllers\AdController::class, 'setDefaultAdImage'])->name('manage-ads.image.set-default');
+
 Route::post('manage-ads/{id}/extend-expiry', [App\Http\Controllers\AdController::class, 'extendExpiryDate'])->name('manage-ads.extend-expiry');
 Route::get('seller-ads-enquiries/{id?}', [App\Http\Controllers\AdController::class, 'selleradsEnquiries'])->name('seller-ads-enquiries');
 
@@ -392,7 +399,7 @@ Route::delete('delete-customer-inquiry/{id}', [App\Http\Controllers\ContactUsCon
 
 // chandan
 Route::resource('pages', PagesController::class);
-Route::resource('blogs', BlogController::class);
+Route::resource('manage-blogs', BlogController::class);
 
 Route::post('Editor-Image', [PagesController::class, 'addEditorImage'])->name('pages.addEditorImage');
 Route::post('Delete-Image', [PagesController::class, 'deleteEditorImage'])->name('pages.deleteEditorImage');
@@ -409,5 +416,50 @@ Route::resource('sliders', SliderController::class);
 
 Auth::routes();
 
+
+// 1. Purana category-details/{base64 id} → naya /category/{slug}
+Route::get('/category-details/{encodedId}', function ($encodedId) {
+    $id = base64_decode($encodedId, true);
+    if ($id === false || !ctype_digit($id)) {
+        abort(404);
+    }
+    $category = \App\Models\Category::find($id);
+    if ($category && $category->slug) {
+        return redirect()->route('category-details', $category->slug, 301);
+    }
+    abort(404);
+});
+
+// 2. Purana sub-details/{name}/{base64 id} → naya /category/{categorySlug}/{subSlug}
+Route::get('/sub-details/{name}/{encodedId}', function ($name, $encodedId) {
+    $id = base64_decode($encodedId, true);
+    if ($id === false || !ctype_digit($id)) {
+        abort(404);
+    }
+    $subcategory = \App\Models\SubCategory::with('category')->find($id);
+    if ($subcategory && $subcategory->category && $subcategory->slug) {
+        return redirect()->route('subcategory-details', [$subcategory->category->slug, $subcategory->slug], 301);
+    }
+    abort(404);
+});
+
+// 3. Purana ad-details/{base64 id}/{slug-or-anything} → naya /{category_name}/{ad_slug}
+Route::get('/ad-details/{encodedId}/{anything?}', function ($encodedId, $anything = null) {
+    $id = base64_decode($encodedId, true);
+    if ($id === false || !ctype_digit($id)) {
+        abort(404);
+    }
+    $ad = \App\Models\Ad::with('category')->find($id);
+    if ($ad && $ad->category && $ad->slug) {
+        return redirect()->route('ad-details', [$ad->category->name, $ad->slug], 301);
+    }
+    abort(404);
+});
+
 Route::get('/{category_name}/{slug}', [FrontController::class, 'adDetail'])->name('ad-details');
 Route::post('/whatsapp-click', [MemberAuthController::class, 'whatsappClick'])->name('whatsapp.click');
+
+// routes/web.php ke bilkul END me, sabse last line
+Route::fallback(function () {
+    abort(404);
+});

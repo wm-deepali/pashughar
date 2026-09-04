@@ -6,7 +6,7 @@
 
 @section('metatags')
 
-{!! getDetailsPageMetaTag($ad->meta_title ?? 'Pashughar', $ad->meta_keyword, $ad->meta_description, Request::url()) !!}
+{!! getDetailsPageMetaTag($ad->meta_title ?? 'Pashughar', $ad->meta_description, $ad->meta_keyword, Request::url()) !!}
 @endsection
 
 @section('page_name') {{$ad->title}} @endsection
@@ -153,7 +153,7 @@
                                     <div class="common-card">
                     
                     
-                    <h3 class="ad-details-title">{{$ad->title}}</h3>
+                    <h1 class="ad-details-title">{{$ad->title}}</h1>
                    
                     <div class="ad-details-slider-group">
                         <div class="ad-details-slider slider-arrow">
@@ -286,9 +286,9 @@
                 <div class="common-card mobile-view-details-image1">
                     
                     <div class="d-flex justify-content-between">
-                         <h3 class="ad-details-title">{{$ad->title}}</h3>
+                         <h1 class="ad-details-title">{{$ad->title}}</h1>
                     
-                    <h3 class="d-flex" style="color:green;"><span style="font-size:20px;padding-top:8px">₹</span>&nbsp;{{$ad->price}}<span style="font-size:18px;padding-top:5px; padding-left:10px">({{$ad->price_type}})</span></h3>
+                    <h3 class="d-flex" style="color:green;"><span style="font-size:24px;padding-top:0px">₹</span>&nbsp;{{$ad->price}}<span style="font-size:18px;padding-top:5px; padding-left:10px">({{$ad->price_type}})</span></h3>
                     </div>
                    
                    <strong><p><i class="fas fa-map"></i> Address: </strong>{{$ad->author_address}}</p>
@@ -380,20 +380,18 @@
                    
                     </div>
                      
-                       @if(isset($ad->adSpecification) && count($ad->adSpecification) >0)
-                    
-                    <div class="col-12 d-flex gap-3 mt-4">
-                     
-                        <h5 class="col-3 card-title" style="color:green;">Features</h5>
-                    <div class="specification">
-                    @foreach($ad->adSpecification as $speciality )
-                    
-                    <p class=" ad-details-desc"><i class="fa fa-arrow-right"></i> &nbsp;{{$speciality->specification}}</p>
-                    @endforeach
-                    </div>
-                   
-                    </div>
-                    @endif
+                      @if(isset($ad->adSpecification) && count($ad->adSpecification) >0)
+<div class="col-12 d-flex gap-3 mt-4">
+    <h5 class="col-3 card-title" style="color:green;">Features</h5>
+    <div class="specification">
+    @foreach($ad->adSpecification as $speciality )
+        @if(!empty($speciality->specification))
+        <p class="ad-details-desc"><i class="fa fa-arrow-right"></i> &nbsp;{{$speciality->specification}}</p>
+        @endif
+    @endforeach
+    </div>
+</div>
+@endif
                     
                       @if(App\Http\Controllers\FrontController::getfeature($ad->id, 'general_information') !='')
                     <div class="col-12 d-flex gap-3 mt-4">

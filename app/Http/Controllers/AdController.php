@@ -41,7 +41,6 @@ class AdController extends Controller
      */
     public function index(Request $request)
     {
-<<<<<<< HEAD
         // Auto-mark ads as Expired if their expire_at date has passed
         Ad::where('status', 'Published')
             ->whereNotNull('expire_at')
@@ -89,12 +88,6 @@ class AdController extends Controller
         $data['filters'] = $request->only(['category_id', 'subcategory_id', 'date_from', 'date_to']);
 
         return view('ads.index', $data);
-=======
-        
-        $data['ads'] = Ad::with('AdImage', 'brandCategory', 'category', 'subcategory', 'brand', 'user', 'adFeature')->orderBy('created_at','DESC')->get();
-    
-        return view('ads.index',$data);
->>>>>>> 1850ca7f02123f6f36f3ed52af9f4dfd92dfa874
     }
 
     /**
@@ -233,9 +226,9 @@ class AdController extends Controller
             'category_id' => 'required',
             'price' => 'required',
             'description' => 'required',
-            'meta_title' => 'required|string|max:255',
-            'meta_keyword' => 'required|string|max:255',
-            'meta_description' => 'required|string',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_keyword' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string',
 
         ]);
         if ($validator->fails()) {
@@ -252,9 +245,8 @@ class AdController extends Controller
                     }
                 }
                 AdImage::where('ad_id', $id)->delete();
-                // If $file is path to old image
                 foreach ($request->file('image') as $image) {
-                    $path = $image->store('ad_image', 'public');// Example storage locatio
+                    $path = $image->store('ad_image', 'public');
                     AdImage::create([
                         'ad_id' => $id,
                         'image' => $path,
@@ -262,15 +254,6 @@ class AdController extends Controller
 
                 }
             }
-            // if ($request->hasFile('image')) {
-            //     if ($ad->image) {
-            //         Storage::delete($ad->image);
-            //     }
-
-            //     // Store the new image
-            //     $path = $request->file('image')->store('ad_image', 'public');
-            //     $ad->image = $path;
-            // }
 
             $slug = Str::slug($request->title);
             $ad->title = $request->title;
@@ -288,9 +271,18 @@ class AdController extends Controller
             $ad->author_address = $request->author_address;
             $ad->status = $request->status;
 
-            $ad->meta_title = $request->meta_title;
-            $ad->meta_keyword = $request->meta_keyword;
-            $ad->meta_description = $request->meta_description;
+            // SEO fields with fallback if left empty
+            $ad->meta_title = $request->filled('meta_title')
+                ? Str::limit($request->meta_title, 255, '')
+                : Str::limit($request->title, 255, '');
+
+            $ad->meta_keyword = $request->filled('meta_keyword')
+                ? $request->meta_keyword
+                : null;
+
+            $ad->meta_description = $request->filled('meta_description')
+                ? Str::limit($request->meta_description, 255)
+                : Str::limit("{$request->title} - Buy now on PashuGhar at ₹{$request->price}. Location: {$request->author_address}. Contact seller directly.", 255);
 
             $ad->published_date = $request->status == 'Published' ? date('Y-m-d H:i:s') : NULL;
             $ad->admin_edited_at = date('Y-m-d H:i:s');

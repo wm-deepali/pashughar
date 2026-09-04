@@ -251,10 +251,10 @@ class AdminController extends Controller
             'meta_keyword' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
             'canonical_url' => 'nullable|max:255',
-            'bottom_categories' => 'required'
+            'bottom_categories' => 'required',
+            'description' => 'nullable|string',
         ]);
 
-        // Handle the image upload
         $imagePath = null;
         $imagePaths = null;
         if ($request->hasFile('image')) {
@@ -264,7 +264,6 @@ class AdminController extends Controller
             $imagePaths = $request->file('bottom_image')->store('category', 'public');
         }
 
-        // Create the category
         Category::create([
             'name' => $request->input('name'),
             'slug' => $request->slug ?: \Str::slug($request->name),
@@ -275,9 +274,9 @@ class AdminController extends Controller
             'canonical_url' => $request->input('canonical_url'),
             'bottom_categories' => $request->input('bottom_categories'),
             'bottom_image' => $imagePaths,
+            'description' => $request->input('description'),
         ]);
 
-        // Redirect with a success message
         return redirect()->route('master.category.index')->with('success', 'Category created successfully.');
     }
 
@@ -286,24 +285,60 @@ class AdminController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'category_id' => 'required',
+            'slug' => 'nullable|string|max:255|unique:sub_categories,slug',
             'meta_title' => 'nullable|string|max:255',
             'meta_keyword' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
             'canonical_url' => 'nullable|max:255',
+            'description' => 'nullable|string',
         ]);
 
         // Create the category
         SubCategory::create([
             'category_id' => $request->input('category_id'),
             'name' => $request->input('name'),
+            'slug' => $request->input('slug') ?: Str::slug($request->input('name')),
             'meta_title' => $request->input('meta_title'),
             'meta_keyword' => $request->input('meta_keyword'),
             'meta_description' => $request->input('meta_description'),
             'canonical_url' => $request->input('canonical_url'),
+            'description' => $request->input('description'),
         ]);
 
         // Redirect with a success message
         return redirect()->route('master.subcategory.index')->with('success', 'Sub Category created successfully.');
+    }
+
+    public function subcategoriesUpdate(Request $request, $id)
+    {
+        $request->validate([
+            'category_id' => 'required|exists:categories,id',
+            'name' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255|unique:sub_categories,slug,' . $id,
+            'meta_title' => 'nullable|string|max:255',
+            'meta_keyword' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string',
+            'canonical_url' => 'nullable|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        // Find the subcategory by ID
+        $subcategory = SubCategory::findOrFail($id);
+
+        // Update the subcategory with the new data
+        $subcategory->update([
+            'category_id' => $request->category_id,
+            'name' => $request->name,
+            'slug' => $request->slug ?: Str::slug($request->name),
+            'meta_title' => $request->meta_title,
+            'meta_keyword' => $request->meta_keyword,
+            'canonical_url' => $request->canonical_url,
+            'meta_description' => $request->meta_description,
+            'description' => $request->description,
+            // Add other fields as needed
+        ]);
+
+        return redirect()->route('master.subcategory.index')->with('success', 'SubCategory updated successfully.');
     }
 
 
@@ -331,12 +366,11 @@ class AdminController extends Controller
             'meta_description' => 'nullable|string',
             'canonical_url' => 'nullable|string|max:255',
             'bottom_categories' => 'required',
+            'description' => 'nullable|string',
         ]);
 
-        // Find the category by ID
         $category = Category::findOrFail($id);
 
-        // Update category data
         $category->name = $request->input('name');
         $category->slug = $request->slug ?: \Str::slug($request->name);
         $category->meta_title = $request->input('meta_title');
@@ -344,66 +378,29 @@ class AdminController extends Controller
         $category->meta_description = $request->input('meta_description');
         $category->canonical_url = $request->input('canonical_url');
         $category->bottom_categories = $request->input('bottom_categories');
-        $category->canonical_url = $request->input('canonical_url');
+        $category->description = $request->input('description');
 
-
-
-        // Handle image upload
         if ($request->hasFile('image')) {
-            // Delete the old image if it exists
             if ($category->image) {
                 Storage::delete($category->image);
             }
-
-            // Store the new image
             $path = $request->file('image')->store('category', 'public');
             $category->image = $path;
         }
 
         if ($request->hasFile('bottom_image')) {
-            // Delete the old image if it exists
             if ($category->bottom_image) {
                 Storage::delete($category->bottom_image);
             }
-
-            // Store the new image
             $paths = $request->file('bottom_image')->store('category', 'public');
             $category->bottom_image = $paths;
         }
 
-
-
-        // Save the updated category
         $category->save();
 
-        // Redirect back with a success message
         return redirect()->route('master.category.index')->with('success', 'Category updated successfully');
-
     }
 
-    public function subcategoriesUpdate(Request $request, $id)
-    {
-        $request->validate([
-            'category_id' => 'required|exists:categories,id',
-            'name' => 'required|string|max:255',
-        ]);
-
-        // Find the subcategory by ID
-        $subcategory = SubCategory::findOrFail($id);
-
-        // Update the subcategory with the new data
-        $subcategory->update([
-            'category_id' => $request->category_id,
-            'name' => $request->name,
-            'meta_title' => $request->meta_title,
-            'meta_keyword' => $request->meta_keyword,
-            'canonical_url' => $request->canonical_url,
-            'meta_description' => $request->meta_description,
-            // Add other fields as needed
-        ]);
-
-        return redirect()->route('master.subcategory.index')->with('success', 'SubCategory updated successfully.');
-    }
 
     public function categoriesDestroy($id)
     {

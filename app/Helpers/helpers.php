@@ -143,6 +143,7 @@ function getOperatingSystemInput()
 
     return $input;
 }
+
 function getMobileOsInput()
 {
     $operatingSystems = MobileOS::all();
@@ -156,6 +157,8 @@ function getMobileOsInput()
 
     return $input;
 }
+
+
 function getOwnerTypeInput()
 {
     $ownerTypes = OwnerType::where('status', 1)->get();
@@ -411,64 +414,392 @@ function featcherformData()
 
 function getCommomPageMetaTag($page)
 {
-    $metaTitle = 'Pashughar'; // default title fallback
+    $metaTitle = 'Pashughar';
     $metaKeword = '';
     $metaDescription = '';
     $canonical = '';
+
+    $ogTitle = '';
+    $ogDescription = '';
+    $ogImage = '';
+    $ogUrl = '';
+    $twitterCard = 'summary_large_image';
+
     $metaData = Seo::where('name', $page)->first();
+
     if (empty($metaData)) {
         $metaData = Seo::where('name', 'default')->first();
     }
 
     if (!empty($metaData)) {
+
+        // Basic SEO
         if (!empty($metaData->meta_title)) {
             $metaTitle = $metaData->meta_title;
         }
-        $metaKeword = $metaData->meta_keyword;
-        $metaDescription = $metaData->meta_description;
-        $canonical = $metaData->canonical;
+
+        $metaKeword = $metaData->meta_keyword ?? '';
+        $metaDescription = $metaData->meta_description ?? '';
+        $canonical = $metaData->canonical ?? '';
+
+        // Open Graph
+        $ogTitle = !empty($metaData->og_title)
+            ? $metaData->og_title
+            : $metaTitle;
+
+        $ogDescription = !empty($metaData->og_description)
+            ? $metaData->og_description
+            : $metaDescription;
+
+        $ogImage = $metaData->og_image ?? '';
+        $ogUrl = $metaData->og_url ?? '';
+
+        // Twitter
+        $twitterCard = !empty($metaData->twitter_card)
+            ? $metaData->twitter_card
+            : 'summary_large_image';
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Canonical URL
+    |--------------------------------------------------------------------------
+    */
 
     if ($canonical != '') {
-        if (strpos($canonical, "http://") !== false || strpos($canonical, "https://") !== false) {
-            $canonical_url = $canonical;
+
+        if (
+            strpos($canonical, 'http://') === 0 ||
+            strpos($canonical, 'https://') === 0
+        ) {
+            $canonicalUrl = $canonical;
         } else {
-            $canonical_url = url('/') . '/' . ltrim($canonical, '/');
+            $canonicalUrl = url('/') . '/' . ltrim($canonical, '/');
         }
+
     } else {
-        $canonical_url = url('/');
+        $canonicalUrl = url()->current();
     }
 
-    $tags = '<title>' . $metaTitle . '</title>
-    <meta name="description" content="' . $metaDescription . '">
-    <meta name="keywords" content="' . $metaKeword . '">
-    <link rel="canonical" href="' . $canonical_url . '">';
+    /*
+    |--------------------------------------------------------------------------
+    | OG URL
+    |--------------------------------------------------------------------------
+    */
+
+    if ($ogUrl != '') {
+
+        if (
+            strpos($ogUrl, 'http://') === 0 ||
+            strpos($ogUrl, 'https://') === 0
+        ) {
+            $ogUrl = $ogUrl;
+        } else {
+            $ogUrl = url('/') . '/' . ltrim($ogUrl, '/');
+        }
+
+    } else {
+        $ogUrl = $canonicalUrl;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | OG Image URL
+    |--------------------------------------------------------------------------
+    */
+
+    if ($ogImage != '') {
+
+        if (
+            strpos($ogImage, 'http://') === 0 ||
+            strpos($ogImage, 'https://') === 0
+        ) {
+            $ogImageUrl = $ogImage;
+        } else {
+            $ogImageUrl = asset('storage/' . ltrim($ogImage, '/'));
+        }
+
+    } else {
+        $ogImageUrl = '';
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Meta Tags
+    |--------------------------------------------------------------------------
+    */
+
+    $tags = '<title>' . e($metaTitle) . '</title>
+    <meta name="description" content="' . e($metaDescription) . '">
+    <meta name="keywords" content="' . e($metaKeword) . '">
+    <link rel="canonical" href="' . e($canonicalUrl) . '">
+
+    <meta property="og:title" content="' . e($ogTitle) . '">
+    <meta property="og:description" content="' . e($ogDescription) . '">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="' . e($ogUrl) . '">';
+
+    if ($ogImageUrl != '') {
+        $tags .= '
+    <meta property="og:image" content="' . e($ogImageUrl) . '">';
+    }
+
+    $tags .= '
+    <meta name="twitter:card" content="' . e($twitterCard) . '">
+    <meta name="twitter:title" content="' . e($ogTitle) . '">
+    <meta name="twitter:description" content="' . e($ogDescription) . '">';
+
+    if ($ogImageUrl != '') {
+        $tags .= '
+    <meta name="twitter:image" content="' . e($ogImageUrl) . '">';
+    }
 
     return $tags;
 }
 
-function getDetailsPageMetaTag($metaTitle, $metaDescription, $metaKeword, $canonical)
+function getCommonPageHeading($page, $default = '')
 {
-    if ($canonical != '') {
-        if (strpos($canonical, "http://") !== false) {
-            $canonical_url = $canonical;
-        } else {
-            $canonical_url = url('/') . '/' . $canonical;
-        }
+    $metaData = Seo::where('name', $page)->first();
 
-    } else {
-        $canonical_url = url('/');
+    if (empty($metaData)) {
+        $metaData = Seo::where('name', 'default')->first();
     }
 
-   $tags = '<title>' . $metaTitle . '</title>
-    <meta name="description" content="' . $metaDescription . '">
-    <meta name="keywords" content="' . $metaKeword . '">
-    <link rel="canonical" href="' . $canonical_url . '">';
+    if (!empty($metaData) && !empty($metaData->heading)) {
+        return $metaData->heading;
+    }
+
+    return $default;
+}
+
+function getDetailsPageMetaTag(
+    $metaTitle,
+    $metaDescription,
+    $metaKeword,
+    $canonical,
+    $ogImage = '',
+    $ogTitle = '',
+    $ogDescription = ''
+) {
+    // Canonical URL (unchanged)
+    if ($canonical != '') {
+        if (strpos($canonical, 'http://') === 0 || strpos($canonical, 'https://') === 0) {
+            $canonicalUrl = $canonical;
+        } else {
+            $canonicalUrl = url('/') . '/' . ltrim($canonical, '/');
+        }
+    } else {
+        $canonicalUrl = url()->current();
+    }
+
+    // OG Image (unchanged)
+    if ($ogImage != '') {
+        if (strpos($ogImage, 'http://') === 0 || strpos($ogImage, 'https://') === 0) {
+            $ogImageUrl = $ogImage;
+        } else {
+            $ogImageUrl = asset('storage/' . ltrim($ogImage, '/'));
+        }
+    } else {
+        $ogImageUrl = '';
+    }
+
+    // Prefer dedicated OG title/description, fallback to meta title/description
+    $finalOgTitle = $ogTitle != '' ? $ogTitle : $metaTitle;
+    $finalOgDescription = $ogDescription != '' ? $ogDescription : $metaDescription;
+
+    $tags = '<title>' . e($metaTitle) . '</title>
+    <meta name="description" content="' . e($metaDescription) . '">
+    <meta name="keywords" content="' . e($metaKeword) . '">
+    <link rel="canonical" href="' . e($canonicalUrl) . '">
+    <!-- Open Graph -->
+    <meta property="og:title" content="' . e($finalOgTitle) . '">
+    <meta property="og:description" content="' . e($finalOgDescription) . '">
+    <meta property="og:url" content="' . e($canonicalUrl) . '">
+    <meta property="og:type" content="website">';
+
+    if ($ogImageUrl != '') {
+        $tags .= '
+    <meta property="og:image" content="' . e($ogImageUrl) . '">';
+    }
+
+    $tags .= '
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="' . e($finalOgTitle) . '">
+    <meta name="twitter:description" content="' . e($finalOgDescription) . '">';
+
+    if ($ogImageUrl != '') {
+        $tags .= '
+    <meta name="twitter:image" content="' . e($ogImageUrl) . '">';
+    }
 
     return $tags;
 }
 
+if (!function_exists('generateAdMetaDescription')) {
+    function generateAdMetaDescription($ad)
+    {
+        $age      = trim((string) \App\Http\Controllers\FrontController::getfeature($ad->id, 'age_in_year'));
+        $category = optional($ad->category)->name ?: '';
+        $location = $ad->location ?? '';
+        $price    = $ad->price ? '₹' . number_format($ad->price) : '';
 
+        $subject = trim($age . ' ' . $category);
+
+        $description = "{$subject} for sale in {$location} for {$price}. Check {$category} details, photos and specifications and send a direct buying enquiry on PashuGhar.";
+
+        // extra spaces clean up (agar age/category/location/price khali ho to)
+        $description = preg_replace('/\s+/', ' ', trim($description));
+
+        return \Illuminate\Support\Str::limit($description, 255, '');
+    }
+}
+
+if (!function_exists('generateAdMetaTitle')) {
+    function generateAdMetaTitle($ad)
+    {
+        // NOTE: 'breed' feature key confirm kar lena featcherformData() se — 
+        // agar alag naam hai (e.g. 'breed_type') to yahan update kar dena
+        $breed    = trim((string) \App\Http\Controllers\FrontController::getfeature($ad->id, 'breed'));
+        $category = optional($ad->category)->name ?: '';
+        $city     = $ad->location ?? '';
+        $price    = $ad->price ? '₹' . number_format($ad->price) : '';
+
+        if ($breed && $category && $city && $price) {
+            $title = "{$breed} {$category} for Sale in {$city} | {$price} | PashuGhar";
+        } elseif ($category && $city && $price) {
+            $title = "{$category} for Sale in {$city} | {$price} | PashuGhar";
+        } elseif ($category && $city) {
+            $title = "{$category} for Sale in {$city} | PashuGhar";
+        } elseif ($category && $price) {
+            $title = "{$category} for Sale | {$price} | PashuGhar";
+        } else {
+            $title = "{$category} for Sale in India | PashuGhar";
+        }
+
+        return \Illuminate\Support\Str::limit($title, 255, '');
+    }
+}
+
+
+function getAdJsonLd($ad)
+{
+    $canonicalUrl = url()->current();
+
+    $ogImage = '';
+    if (isset($ad->adImage) && count($ad->adImage) > 0) {
+        $ogImage = asset('storage/' . $ad->adImage[0]->image);
+    }
+
+    $categoryName = $ad->category->name ?? '';
+    $subCategoryName = $ad->subCategory->name ?? null; // adjust relation name if different
+
+    // --------------------------------------------------------------------
+    // 1. BreadcrumbList — Home > Category > [CategoryName] > [SubCategoryName?] > Ad Title
+    // --------------------------------------------------------------------
+    $itemListElement = [
+        [
+            '@type' => 'ListItem',
+            'position' => 1,
+            'name' => 'Home',
+            'item' => url('/'),
+        ],
+        [
+            '@type' => 'ListItem',
+            'position' => 2,
+            'name' => 'Category',
+            'item' => route('list-all-ads'),
+        ],
+    ];
+
+    $position = 3;
+
+    if (isset($ad->category)) {
+        $itemListElement[] = [
+            '@type' => 'ListItem',
+            'position' => $position,
+            'name' => $categoryName,
+            'item' => route('category-details', $ad->category->slug),
+        ];
+        $position++;
+    }
+
+    if (!empty($ad->subcategory_id) && isset($ad->subCategory) && !empty($ad->subCategory->slug)) {
+        $itemListElement[] = [
+            '@type' => 'ListItem',
+            'position' => $position,
+            'name' => $subCategoryName,
+            'item' => route('subcategory-details', [$ad->category->slug, $ad->subCategory->slug]),
+        ];
+        $position++;
+    }
+
+    $itemListElement[] = [
+        '@type' => 'ListItem',
+        'position' => $position,
+        'name' => $ad->title,
+        'item' => $canonicalUrl,
+    ];
+
+    $breadcrumb = [
+        '@context' => 'https://schema.org',
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => $itemListElement,
+    ];
+
+    $schemas = [$breadcrumb];
+
+    // --------------------------------------------------------------------
+    // 2. Product + Offer (only when a real price exists) — unchanged
+    // --------------------------------------------------------------------
+    if (!empty($ad->price) && is_numeric($ad->price) && $ad->price > 0) {
+
+        $availability = (isset($ad->status) && $ad->status == 'Published')
+            ? 'https://schema.org/InStock'
+            : 'https://schema.org/OutOfStock';
+
+        $product = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Product',
+            'name' => $ad->title,
+            'description' => strip_tags($ad->description ?? ''),
+            'category' => $categoryName,
+            'offers' => [
+                '@type' => 'Offer',
+                'price' => (string) $ad->price,
+                'priceCurrency' => 'INR',
+                'url' => $canonicalUrl,
+                'availability' => $availability,
+            ],
+        ];
+
+        if (!empty($ogImage)) {
+            $product['image'] = $ogImage;
+        }
+
+        if (!empty($ad->condition)) {
+            $conditionMap = [
+                'new' => 'https://schema.org/NewCondition',
+                'used' => 'https://schema.org/UsedCondition',
+                'refurbished' => 'https://schema.org/RefurbishedCondition',
+            ];
+            $key = strtolower($ad->condition);
+            if (isset($conditionMap[$key])) {
+                $product['offers']['itemCondition'] = $conditionMap[$key];
+            }
+        }
+
+        $schemas[] = $product;
+    }
+
+    $output = '';
+    foreach ($schemas as $schema) {
+        $output .= '<script type="application/ld+json">'
+            . json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+            . '</script>' . "\n";
+    }
+
+    return $output;
+}
 
 function gethomepageSlider()
 {

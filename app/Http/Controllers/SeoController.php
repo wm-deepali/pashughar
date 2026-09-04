@@ -24,7 +24,7 @@ class SeoController extends Controller
     {
         $data['seo'] = Seo::with('slugname')->orderBy('created_at','DESC')->get();
         return view('seo.index',$data);
-    }
+}
 
     /**
      * Show the form for creating a new resource.

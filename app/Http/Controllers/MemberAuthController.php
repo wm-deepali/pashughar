@@ -332,7 +332,7 @@ class MemberAuthController extends Controller
 
         if (isset($revew) && !empty($revew)) {
             $ad = Ad::where('id', $revew->ad_id)->with('category')->first();
-            $redirect = route('ad-details', [$ad->category->name, $ad->slug]);
+            $redirect = route('ad-details', [$ad->category->slug, $ad->slug]);
 
             if ($isAjax) {
                 return response()->json(['success' => true, 'redirect' => $redirect, 'message' => 'Please complete your review!']);
@@ -1455,7 +1455,6 @@ class MemberAuthController extends Controller
 
     public function saveAdPost(Request $request)
     {
-
         if (Auth::guard('member')->check()) {
             if (Auth::guard('member')->user()->no_of_ads > 0) {
                 $user_id = Auth::guard('member')->user()->id;
@@ -1469,7 +1468,6 @@ class MemberAuthController extends Controller
                         $date = date_create($dates);
                         date_add($date, date_interval_create_from_date_string($package_validity . "days"));
                         $expiry = date_format($date, "Y-m-d");
-                        // dd($expiry);
 
                         $validator = Validator::make($request->all(), [
                             'title' => 'required',
@@ -1496,7 +1494,6 @@ class MemberAuthController extends Controller
                                     ->withErrors('Please verify your email before posting the ad.');
                             }
 
-                            // verification used, clear it so it doesn't linger
                             Cache::forget('ad_email_verified_' . Auth::guard('member')->user()->id . '_' . $authorEmail);
                         }
 
@@ -1516,9 +1513,7 @@ class MemberAuthController extends Controller
                         $ad->location = $request->location;
                         $ad->expire_at = $expiry;
 
-                        // SEO auto-generate from title & description — no manual keyword needed
-                        $ad->meta_title = Str::limit($request->title, 255, '');
-                        $ad->meta_description = Str::limit(strip_tags($request->description), 255);
+                        // Meta fields yahan set NAHI karenge - features save hone ke baad karenge (neeche)
                         $ad->meta_keyword = null;
 
                         $ad->author_name = $request->author_name ?? Auth::guard('member')->user()->full_name;
@@ -1546,28 +1541,28 @@ class MemberAuthController extends Controller
                                     'features' => $setval,
                                 ]);
                             }
-
                         }
 
+                        // Features ab DB mein save ho chuke hain - ab Age/Breed use karke meta generate karo
+                        $ad->meta_title = generateAdMetaTitle($ad);
+                        $ad->meta_description = generateAdMetaDescription($ad);
+                        $ad->save();
 
                         if ($request->hasFile('image')) {
                             foreach ($request->file('image') as $image) {
-                                $path = $image->store('ad_image', 'public');// Example storage locatio
+                                $path = $image->store('ad_image', 'public');
                                 AdImage::create([
                                     'ad_id' => $id,
                                     'image' => $path,
                                 ]);
-
                             }
                         }
                         if ($request->has('specifications')) {
-
                             foreach ($request->specifications as $k => $specification) {
                                 AdSpecification::create([
                                     'ad_id' => $id,
                                     'specification' => $specification,
                                 ]);
-
                             }
                         }
                         $subscriber_history = SubscriptionHistory::findOrFail($subscriber_history_check->id);
@@ -1596,7 +1591,6 @@ class MemberAuthController extends Controller
                     return redirect()->route('user.post-your-ad')
                         ->withErrors('Subscription Expired!');
                 }
-
             } else {
                 return redirect()->route('user.post-your-ad')
                     ->withErrors('Ads bucket zero');
@@ -1622,9 +1616,9 @@ class MemberAuthController extends Controller
                     'category_id' => 'required|exists:categories,id',
                     'price' => 'required|numeric|min:1',
                     'description' => 'required|string',
-                    'meta_title' => 'required|string|max:255',
-                    'meta_keyword' => 'required|string|max:255',
-                    'meta_description' => 'required|string',
+                    'meta_title' => 'nullable|string|max:255',
+                    'meta_keyword' => 'nullable|string|max:255',
+                    'meta_description' => 'nullable|string',
                 ]);
                 if ($validator->fails()) {
                     return redirect()->route('user.edit-ad-post', base64_encode($id))
@@ -1649,18 +1643,12 @@ class MemberAuthController extends Controller
                 $ad->author_address = $request->author_address ?? Auth::guard('member')->user()->address;
                 $ad->email_alert = 'no';
                 $ad->status = 'Pending Edit';
-                $ad->meta_title = $request->meta_title;
-                $ad->meta_keyword = $request->meta_keyword;
-                $ad->meta_description = $request->meta_description;
-
-                $ad->save();
+                $ad->save(); // pehle basic fields save - taaki features refresh ho sakein
 
                 $age_approx = $request->has('age_approx') ? 'yes' : '';
-
                 $request->merge(["age_approx" => $age_approx]);
 
                 $data = $request->except('_method', '_token', 'title', 'category_id', 'subcategory_id', 'brand_category', 'brand_id', 'price', 'description', 'tags', 'author_name', 'author_email', 'author_mobile', 'author_address', 'email_alert', 'image', 'status', 'expire_at', 'price_type', 'location', 'specifications', 'meta_title', 'meta_keyword', 'meta_description');
-
 
                 AdFeature::where('ad_id', $ad->id)->delete();
                 $featureData = featcherformData();
@@ -1674,8 +1662,23 @@ class MemberAuthController extends Controller
                             'features' => $setval,
                         ]);
                     }
-
                 }
+
+                // Features refresh ho chuke hain - ab meta fields generate/update karo
+                $ad->meta_title = $request->filled('meta_title')
+                    ? Str::limit($request->meta_title, 255, '')
+                    : generateAdMetaTitle($ad);
+
+                $ad->meta_keyword = $request->filled('meta_keyword')
+                    ? $request->meta_keyword
+                    : null;
+
+                $ad->meta_description = $request->filled('meta_description')
+                    ? Str::limit($request->meta_description, 255)
+                    : generateAdMetaDescription($ad);
+
+                $ad->save();
+
                 AdSpecification::where('ad_id', $ad->id)->delete();
                 if ($request->has('specifications')) {
                     foreach ($request->specifications as $k => $specification) {
@@ -1683,24 +1686,20 @@ class MemberAuthController extends Controller
                             'ad_id' => $id,
                             'specification' => $specification,
                         ]);
-
                     }
                 }
                 if ($request->hasFile('image')) {
                     foreach ($request->file('image') as $image) {
-                        $path = $image->store('ad_image', 'public');// Example storage locatio
+                        $path = $image->store('ad_image', 'public');
                         AdImage::create([
                             'ad_id' => $id,
                             'image' => $path,
                         ]);
-
                     }
                 }
 
                 return redirect()->route('user.my-ads')
                     ->withSuccess('You have successfully updated Ad!');
-
-
             } else {
                 return redirect()->route('user.post-your-ad')
                     ->withErrors('Ad not found');

@@ -115,6 +115,12 @@
                                             value="{{ old('canonical_url', $category->canonical_url) }}">
                                     </div>
 
+                                    <div class="form-group">
+                                        <label for="description">Category Description (shown below product listing)</label>
+                                        <textarea class="form-control" id="description" name="description"
+                                            rows="6">{{ old('description', $category->description) }}</textarea>
+                                    </div>
+
                                     <div class="col-md-12">
                                         <div class="text-md-right">
                                             <button type="submit" class="btn btn-primary">Save Category</button>
@@ -128,7 +134,10 @@
             </div>
         </section>
     </div>
-
+    <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replace('description');
+    </script>
     <script>
 
         // Auto-generate slug from Name field

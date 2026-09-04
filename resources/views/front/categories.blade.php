@@ -145,7 +145,7 @@
                                                 $slugName = strtolower(str_replace('_', '-', str_replace(' ', '-', $subcat->name)));
                                             @endphp
                                             <li><a
-                                                    href="{{route('sub-details', ['subcategoryname' => $slugName, 'id' => base64_encode($subcat->id)])}}">
+                                                    href="#">
                                                     <h6>{{$subcat->name}}</h6>
                                                     <p>({{isset($subcat->ads) && $subcat->ads != '' ? $subcat->ads->where('status', 'Published')->count() : 0}})
                                                     </p>
